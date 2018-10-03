@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+
+<body>
+
+<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<div class="wrapper">
+    <h1 id="name1">AnnotationPlus</h1>
+    <h1>Login</h1>
+    <p>To login to the application please enter your email address and password.
+    If you do no have an account you can create one <a href="/registration">here</a>.</p>
+    <form class="form" th:action="@{/login}" method="POST">
+        <input type="text" id="email" name="email" th:placeholder="Email" class="name">
+        <span id="loginEmailErrorMessage" class="errorMessages" >Email must be a valid email address !</span>
+        <div>
+            <p class="name-help">Please enter your current email address.</p>
+        </div>
+        <input type="password" th:placeholder="Password"
+               id="password" name="password" class="email">
+        <div>
+            <p class="email-help">Please create a password.</p>
+        </div>
+        <input name="Submit" value="Login" id="loginButton" type="Submit"
+                class="submit">
+    </form>
+    <div align="center" th:if="${param.error}">
+        <p style="font-size: 20; color: #FF1C19;">Email or Password invalid, please verify</p>
+    </div>
+</div>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+<script  th:src="@{/js/index.js}"></script>
+
+
+
+
+
+<table id="chartContainer"></table>
+
+
+
+
+<body>
+<div>
+    <p class="greeting-id">The ID is </p>
+    <p class="greeting-content">The content is </p>
+</div>
+</body>
+
+
+
+
+</body>
+
+</html>
