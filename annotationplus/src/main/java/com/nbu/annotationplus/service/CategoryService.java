@@ -10,6 +10,7 @@ import com.nbu.annotationplus.repository.CategoryRepository;
 import com.nbu.annotationplus.repository.UserRepository;
 import com.nbu.annotationplus.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,8 +39,9 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+    public ResponseEntity<Category> createCategory(Category category) {
+        categoryRepository.save(category);
+        return new ResponseEntity<Category>(category, HttpStatus.CREATED);
     }
 
     @Transactional
@@ -50,15 +52,50 @@ public class CategoryService {
         User user = userRepository.findByEmail(userName);
         int userId = user.getId();
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Note", "id", categoryId));
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         int categoryUserId = category.getUserId();
         if(userId == categoryUserId){
             categoryRepository.delete(category);
             return ResponseEntity.ok().build();
         }else{
-            throw new ForbiddenException("Forbidden");
+            throw new ResourceNotFoundException("Category", "id", categoryId);
         }
+    }
 
+    @Transactional
+    public Category updateCategory(Long categoryId, Category categoryDetails) {
+        validateUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userRepository.findByEmail(userName);
+        int userId = user.getId();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+        int categoryUserId = category.getUserId();
+        if(userId == categoryUserId){
+            category.setName(categoryDetails.getName());
+            Category updatedCategory = categoryRepository.save(category);
+            return updatedCategory;
+        }else{
+            throw new ResourceNotFoundException("Category", "id", categoryId);
+        }
+    }
+
+    @Transactional
+    public Category getCategoryById(Long categoryId) {
+        validateUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userRepository.findByEmail(userName);
+        int userId = user.getId();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+        int categoryUserId = category.getUserId();
+        if(userId == categoryUserId){
+            return category;
+        }else{
+            throw new ResourceNotFoundException("Category", "id", categoryId);
+        }
     }
 
     private void validateUser(){
