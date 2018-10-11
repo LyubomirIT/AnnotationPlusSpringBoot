@@ -36,7 +36,7 @@ public class SecurityController {
 
     }
 
-    public static int getSignedUpUser() {
+   /* public static int getSignedUpUser() {
         final SecurityContext ctx = SecurityContextHolder.getContext();
 
         if (ctx == null) {
@@ -58,7 +58,7 @@ public class SecurityController {
 
         final User au = (User)principal;
         return au.getId();
-    }
+    }*/
 
 
   /*  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

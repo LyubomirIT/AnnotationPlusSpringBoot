@@ -32,18 +32,18 @@ public class NoteController {
     UserRepository userRepository;
 
 
-    @GetMapping("/notes")
+   /* @GetMapping("/notes")
     public List<Note> getAllNotes(Authentication authentication) {
-       /* authentication = SecurityContextHolder.getContext().getAuthentication();
+       authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("Authentication:" +authentication);
         if(authentication == null){
             throw new UnauthorizedException("Unauthorized");
-        }*/
+        }
         return noteService.getAllNotes();
-    }
+    }*/
 
     @PostMapping("/notes")
-    public Note createNote(@Valid @RequestBody Note note) {
+    public ResponseEntity<Note> createNote(@Valid @RequestBody Note note) {
         //return noteRepository.save(note);
         return noteService.createNote(note);
     }
@@ -55,11 +55,11 @@ public class NoteController {
         return noteService.getNoteById(noteId);
     }
 
-    @GetMapping("/notess/{userId}")
-    public List <Note> getNoteByUserId(@PathVariable(value = "userId") Long userId) {
+    @GetMapping("/notes")
+    public List <Note> getNotesByUserId() {
         // public List <Note> getNoteByUserId(@PathVariable Long userId){
         //return noteRepository.findByUserId(userId);
-        return noteService.getNoteByUserId(userId);
+        return noteService.getNotesByUserId();
         //.orElseThrow(() -> new ResourceNotFoundException("Note", "id", userId));
     }
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -20,13 +19,15 @@ public class Note {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    private Long categoryId;
+
     @NotNull(message = "Title is a required")
     private String title;
 
     @NotNull(message = "Content is a required")
     private String content;
 
-    @NotNull
     private Long userId;
 
     @Column(nullable = false, updatable = false)
@@ -63,25 +64,27 @@ public class Note {
         this.content = content;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
     }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-
 }
