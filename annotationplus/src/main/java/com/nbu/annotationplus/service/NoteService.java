@@ -117,6 +117,7 @@ public class NoteService {
             note.setTitle(noteDetails.getTitle());
             note.setContent(noteDetails.getContent());
             note.setCategoryId(noteDetails.getCategoryId());
+            categoryService.getCategoryById(noteDetails.getCategoryId());
             Note updatedNote = noteRepository.save(note);
             return updatedNote;
         }else{

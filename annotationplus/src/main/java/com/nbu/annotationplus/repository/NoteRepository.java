@@ -8,7 +8,6 @@ import java.util.List;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
-    //public String eror = "error";
     List<Note> findByUserId(Long userId);
-
+    void deleteAllByCategoryId(Long categoryId);
 }

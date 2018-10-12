@@ -6,6 +6,7 @@ import com.nbu.annotationplus.exception.UnauthorizedException;
 import com.nbu.annotationplus.model.Category;
 import com.nbu.annotationplus.model.User;
 import com.nbu.annotationplus.repository.CategoryRepository;
+import com.nbu.annotationplus.repository.NoteRepository;
 import com.nbu.annotationplus.repository.UserRepository;
 import com.nbu.annotationplus.utils.AuthUtils;
 import com.nbu.annotationplus.utils.ParseUtils;
@@ -27,6 +28,9 @@ public class CategoryService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private NoteRepository noteRepository;
 
     @Transactional
     public List<Category> getAllCategories() {
@@ -61,8 +65,9 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         Long categoryUserId = category.getUserId();
-        if(userId == categoryUserId){
+        if(userId.equals(categoryUserId)){
             categoryRepository.delete(category);
+            noteRepository.deleteAllByCategoryId(categoryId);
             return ResponseEntity.ok().build();
         }else{
             throw new ResourceNotFoundException("Category", "id", categoryId);
@@ -79,7 +84,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         Long categoryUserId = category.getUserId();
-        if(userId == categoryUserId){
+        if(userId.equals(categoryUserId)){
             validateCategory(category);
             category.setUserId(category.getUserId());
             category.setName(categoryDetails.getName());

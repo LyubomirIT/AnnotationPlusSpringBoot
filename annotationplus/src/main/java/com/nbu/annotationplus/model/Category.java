@@ -22,7 +22,6 @@ public class Category {
     @NotNull(message = "Name is required")
     private String name;
 
-    @NotNull(message = "UserId is required")
     private Long userId;
 
     @Column(nullable = false, updatable = false)
