@@ -1,10 +1,10 @@
 package com.nbu.annotationplus.controller;
 
-
-import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.model.User;
 import com.nbu.annotationplus.repository.UserRepository;
+import com.nbu.annotationplus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,30 +15,27 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/users")
     public List<User> getAllUsers(){return userRepository.findAll();}
 
-    @PutMapping("/users/{id}")
-    public User updateNote(@PathVariable(value = "id") int userId,
-                           @Valid @RequestBody User userDetails) {
-
-        User user = userRepository.findById(userId);
-                //.orElseThrow(() -> new ResourceNotFoundException("Note", "id", userId));
-
-        user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
-        user.setPassword(userDetails.getPassword());
-        user.setLastName(userDetails.getLastName());
-
-        User updatedUser = userRepository.save(user);
-        return updatedUser;
+    @GetMapping("/user")
+    public User getCurrentUser(){
+        return userService.getCurrentUser();
     }
 
-    @GetMapping("/users/{id}")
+    @PutMapping("/user")
+    public User updateUser(@Valid @RequestBody User userDetails) {
+       return userService.updateUser(userDetails);
+    }
+
+   /* @GetMapping("/users/{id}")
     public User getUserById(@PathVariable(value = "id") int userId) {
         return userRepository.findById(userId);
                 //.orElseThrow(() -> new ResourceNotFoundException("Note", "id", userId));
-    }
+    }*/
 }
