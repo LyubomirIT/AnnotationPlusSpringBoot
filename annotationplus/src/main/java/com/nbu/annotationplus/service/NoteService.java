@@ -3,10 +3,8 @@ package com.nbu.annotationplus.service;
 import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.exception.UnauthorizedException;
-import com.nbu.annotationplus.model.Category;
 import com.nbu.annotationplus.model.Note;
 import com.nbu.annotationplus.model.User;
-import com.nbu.annotationplus.repository.CategoryRepository;
 import com.nbu.annotationplus.repository.NoteRepository;
 import com.nbu.annotationplus.repository.UserRepository;
 import com.nbu.annotationplus.utils.AuthUtils;
@@ -31,9 +29,6 @@ public class NoteService {
     private UserRepository userRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
     private CategoryService categoryService;
 
     @Transactional
@@ -49,12 +44,6 @@ public class NoteService {
         noteRepository.save(note);
         return new ResponseEntity<Note>(note, HttpStatus.CREATED);
     }
-
-    /*@Transactional
-    public List<Note> getAllNotes(){
-        validateUser();
-        return noteRepository.findAll();
-    }*/
 
     @Transactional
     public Note getNoteById(Long id){

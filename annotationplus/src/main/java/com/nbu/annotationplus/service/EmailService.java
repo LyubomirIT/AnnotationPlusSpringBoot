@@ -20,5 +20,4 @@ public class EmailService {
     public void sendEmail(SimpleMailMessage email) {
         mailSender.send(email);
     }
-}
-*/
+}*/

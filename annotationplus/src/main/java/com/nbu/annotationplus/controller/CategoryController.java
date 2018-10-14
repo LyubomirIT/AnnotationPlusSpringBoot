@@ -1,7 +1,6 @@
 package com.nbu.annotationplus.controller;
 
 import com.nbu.annotationplus.model.Category;
-import com.nbu.annotationplus.repository.CategoryRepository;
 import com.nbu.annotationplus.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class CategoryController {
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @Autowired
     private CategoryService categoryService;
