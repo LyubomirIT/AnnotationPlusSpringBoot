@@ -1,23 +1,44 @@
-/*package com.nbu.annotationplus.service;
+package com.nbu.annotationplus.service;
 
+import com.nbu.annotationplus.model.Mail;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+
+import javax.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
 
 @Service("emailService")
 public class EmailService {
 
-    private JavaMailSender mailSender;
+    @Autowired
+    private JavaMailSender emailSender;
 
     @Autowired
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    private SpringTemplateEngine templateEngine;
 
-    @Async
-    public void sendEmail(SimpleMailMessage email) {
-        mailSender.send(email);
+    public void sendEmail(Mail mail) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message,
+                    MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name());
+
+            Context context = new Context();
+            context.setVariables(mail.getModel());
+            String html = templateEngine.process("email/email-template", context);
+
+            helper.setTo(mail.getTo());
+            helper.setText(html, true);
+            helper.setSubject(mail.getSubject());
+            helper.setFrom(mail.getFrom());
+
+            emailSender.send(message);
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
-}*/
+}

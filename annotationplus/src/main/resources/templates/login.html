@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/test.css}"/>
 </head>
-
 <body>
-
 <link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<div class="navbar">
+    <a id="name1"> AnnotationPluss</a>
+    <p><a href="/login"><i class="fa fa-fw fa-user"></i> Sign In</a></p>
+    <p><a href="/registration"><i class="fa fa-fw fa-user"></i> Sign Up</a></p>
+    <p><a href="/registration"><i class="fa fa-fw fa-user"></i>dsdsdsd</a></p>
+</div>
 <div class="wrapper">
-    <h1 id="name1">AnnotationPlus</h1>
-    <h1>Login</h1>
-    <p>To login to the application please enter your email address and password.
-    If you do no have an account you can create one <a href="/registration">here</a>.</p>
+    <!--<h1 id="name1">AnnotationPlus</h1> -->
+    <h1>Sign In</h1>
+   <!-- <p>To login to the application please enter your email address and password.
+    If you do no have an account you can create one <a href="/registration">here</a>.</p>-->
+    <div align="center">
+    <p style="font-size: 30; color: green;" class="text-success" th:utext="${successMessage}"></p>
+    </div>
     <form class="form" th:action="@{/login}" method="POST">
         <input type="text" id="email" name="email" th:placeholder="Email" class="name">
         <span id="loginEmailErrorMessage" class="errorMessages" >Email must be a valid email address !</span>
@@ -29,36 +36,18 @@
         <div>
             <p class="email-help">Please create a password.</p>
         </div>
-        <input name="Submit" value="Login" id="loginButton" type="Submit"
+        <input name="Submit" value="Sign In" id="loginButton" type="Submit"
                 class="submit">
     </form>
     <div align="center" th:if="${param.error}">
-        <p style="font-size: 20; color: #FF1C19;">Email or Password invalid, please verify</p>
+        <p style="font-size: 30; color: #FF1C19;">Invalid Email and/or Password, please try again</p>
     </div>
+    <p style="text-align: right">
+    <a href="/forgot-password" style="display: block" >Forgot password?</a>
+        <a href="/registration" style="display: block">Sign up for free>> </a>
+     </p>
 </div>
 <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-
 <script  th:src="@{/js/index.js}"></script>
-
-
-
-
-
-<table id="chartContainer"></table>
-
-
-
-
-<body>
-<div>
-    <p class="greeting-id">The ID is </p>
-    <p class="greeting-content">The content is </p>
-</div>
 </body>
-
-
-
-
-</body>
-
 </html>

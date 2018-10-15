@@ -16,8 +16,8 @@
 <div class="wrapper">
     <h1 id="name1">AnnotationPlus</h1>
     <h1>Create an account</h1>
-    <p>Please create an account in order to access site's data.
-        If you alreay have an account, you can login <a href="/login">here</a>.</p>
+    <!--<p>Please create an account in order to access site's data.
+        If you alreay have an account, you can login <a href="/login">here</a>.</p>-->
     <form class="form" action="#" method="post" th:action="@{/registration}"
           th:object="${user}" role="form">
         <label th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="validation-message"></label>
@@ -30,7 +30,10 @@
         <input type="password" th:field="*{password}" placeholder="Password" class="email">
         <input value="Register" type="Submit" class="submit">
     </form>
-    <h2><span class="text-success" th:utext="${successMessage}"></span></h2>
+    <p style="text-align: right">
+        <a href="/login" style="display: block" >Sign In</a>
+    </p>
+    <!--<h2><span class="text-success" th:utext="${successMessage}"></span></h2> -->
 </div>
 <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <!--<script  th:src="@{/js/index.js}"></script>-->

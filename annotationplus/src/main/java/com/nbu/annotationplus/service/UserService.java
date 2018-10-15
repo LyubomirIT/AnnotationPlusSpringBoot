@@ -60,6 +60,14 @@ public class UserService {
         return userRepository.findByEmail(userEmail);
     }
 
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+    public void updatePassword(String password, Long userId){
+        userRepository.updatePassword(password, userId);
+    }
+
     private Authentication validateUser() {
         Authentication authentication = AuthUtils.getAuthenticateduser();
         if (authentication == null) {
