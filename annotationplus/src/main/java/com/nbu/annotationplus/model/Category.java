@@ -19,7 +19,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Name is required")
+    //@NotNull(message = "Name is required")
     private String name;
 
     private Long userId;

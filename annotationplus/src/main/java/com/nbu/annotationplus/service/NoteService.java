@@ -41,8 +41,13 @@ public class NoteService {
         note.setUserId(userId);
         validateNote(note);
         categoryService.getCategoryById(note.getCategoryId());
-        noteRepository.save(note);
-        return new ResponseEntity<Note>(note, HttpStatus.CREATED);
+        Note existingNote = noteRepository.findByTitleAndUserId(note.getTitle(),userId);
+        if(existingNote == null){
+            noteRepository.save(note);
+            return new ResponseEntity<Note>(note, HttpStatus.CREATED);
+        }else{
+            throw new InvalidInputParamsException("Note with name: " + "'" + note.getTitle() + "'" + " already exists.");
+        }
     }
 
     @Transactional
@@ -102,14 +107,18 @@ public class NoteService {
         Long noteUserId = note.getUserId();
         if(userId.equals(noteUserId)){
             validateNote(noteDetails);
-            note.setUserId(note.getUserId());
-            note.setTitle(noteDetails.getTitle());
-            note.setContent(noteDetails.getContent());
-            note.setCategoryId(noteDetails.getCategoryId());
-            categoryService.getCategoryById(noteDetails.getCategoryId());
-            Note updatedNote = noteRepository.save(note);
-            return updatedNote;
-        }else{
+            Note existingNote = noteRepository.findByTitleAndUserId(noteDetails.getTitle(),userId);
+            if(existingNote == null || existingNote.getId().equals(id)){
+                note.setUserId(note.getUserId());
+                note.setTitle(noteDetails.getTitle());
+                note.setContent(noteDetails.getContent());
+                categoryService.getCategoryById(noteDetails.getCategoryId());
+                note.setCategoryId(noteDetails.getCategoryId());
+                return noteRepository.save(note);
+            }else {
+                throw new InvalidInputParamsException("Note with name: " + "'" + noteDetails.getTitle() + "'" + " already exists.");
+            }
+        }else {
             throw new ResourceNotFoundException("Note", "id", id);
         }
     }

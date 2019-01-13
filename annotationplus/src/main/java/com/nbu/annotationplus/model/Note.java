@@ -22,10 +22,10 @@ public class Note {
     @NotNull
     private Long categoryId;
 
-    @NotNull(message = "Title is a required")
+    //@NotNull(message = "Title is a required")
     private String title;
 
-    @NotNull(message = "Content is a required")
+    //@NotNull(message = "Content is a required")
     private String content;
 
     private Long userId;

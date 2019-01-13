@@ -7,14 +7,22 @@
     <title>Register</title>
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/test.css}"/>
+    <link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
+<div class="navbar">
+    <a id="name1"> AnnotationPlus</a>
+    <!--<div>
+    <p><a href="/forgot-password"><i class="fa fa-fw fa-user"></i> Forgot Password</a></p>
+    <p><a href="/registration"><i class="fa fa-fw fa-user"></i> Sign Up</a></p>
+    </div>-->
+</div>
 
-<link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
-<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
 <div class="wrapper">
-    <h1 id="name1">AnnotationPlus</h1>
     <h1>Create an account</h1>
     <!--<p>Please create an account in order to access site's data.
         If you alreay have an account, you can login <a href="/login">here</a>.</p>-->
@@ -24,12 +32,19 @@
         <input type="text" th:field="*{name}" placeholder="Name" class="name">
         <label th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="validation-message"></label>
         <input type="text" th:field="*{lastName}" placeholder="Last Name" class="name">
-        <label th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="validation-message"></label>
+        <!--<label th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="validation-message"></label> -->
         <input type="text" th:field="*{email}" placeholder="Email" class="name">
         <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="validation-message"></label>
         <input type="password" th:field="*{password}" placeholder="Password" class="email">
         <input value="Register" type="Submit" class="submit">
+
+        <div align="center" th:if="${#fields.hasErrors('email')}">
+            <p style="font-size: 30; color: #FF1C19;" th:errors="*{email}"></p>
+        </div>
+
     </form>
+
+
     <p style="text-align: right">
         <a href="/login" style="display: block" >Sign In</a>
     </p>

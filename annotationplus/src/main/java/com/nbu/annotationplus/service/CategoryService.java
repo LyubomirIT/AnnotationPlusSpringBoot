@@ -51,8 +51,13 @@ public class CategoryService {
         Long userId = user.getId();
         category.setUserId(userId);
         validateCategory(category);
-        categoryRepository.save(category);
-        return new ResponseEntity<Category>(category, HttpStatus.CREATED);
+        Category existingCategory = categoryRepository.findByNameAndUserId(category.getName(),userId);
+        if(existingCategory == null){
+            categoryRepository.save(category);
+            return new ResponseEntity<Category>(category, HttpStatus.CREATED);
+        }else {
+            throw new InvalidInputParamsException("Category with name: " + "'" + category.getName() + "'" + " already exists.");
+        }
     }
 
     @Transactional
@@ -86,10 +91,16 @@ public class CategoryService {
         Long categoryUserId = category.getUserId();
         if(userId.equals(categoryUserId)){
             validateCategory(category);
-            category.setUserId(category.getUserId());
-            category.setName(categoryDetails.getName());
-            Category updatedCategory = categoryRepository.save(category);
-            return updatedCategory;
+            //category.setUserId(category.getUserId());
+            //category.setName(categoryDetails.getName());
+            Category existingCategory = categoryRepository.findByNameAndUserId(categoryDetails.getName(),userId);
+            if (existingCategory == null || existingCategory.getId().equals(categoryId)){
+                category.setUserId(category.getUserId());
+                category.setName(categoryDetails.getName());
+                return categoryRepository.save(category);
+            }else {
+                throw new InvalidInputParamsException("Category with name: " + "'" + categoryDetails.getName() + "'" + " already exists.");
+            }
         }else{
             throw new ResourceNotFoundException("Category", "id", categoryId);
         }

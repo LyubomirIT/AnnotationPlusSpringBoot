@@ -36,10 +36,20 @@ public class LoginController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
         User userExists = userService.findUserByEmail(user.getEmail());
+        if(user.getEmail() == null){
+            bindingResult
+                    .rejectValue("email", "error.user",
+                            "Please provide a valid Email");
+        }
+        if(user.getEmail().trim().equals("")){
+            bindingResult
+                    .rejectValue("email", "error.user",
+                            "Please provide a valid Email");
+        }
         if (userExists != null) {
             bindingResult
                     .rejectValue("email", "error.user",
@@ -56,6 +66,22 @@ public class LoginController {
 
         }
         return modelAndView;
+    }*/
+
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
+        ModelAndView modelAndView = new ModelAndView();
+        try{
+            userService.saveUser(user);
+            modelAndView.addObject("successMessage", "User has been registered successfully");
+            modelAndView.addObject("user", new User());
+            modelAndView.setViewName("login");
+        }catch (RuntimeException e){
+            bindingResult//.reject("error.user",
+                    .rejectValue("email", "error.user",
+                            e.getMessage());
+        }
+        return modelAndView;
     }
 
     @RequestMapping(value="/admin/home", method = RequestMethod.GET)
@@ -63,11 +89,28 @@ public class LoginController {
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
-        modelAndView.addObject("userName", "Welcome " + user.getName() + " " + user.getLastName() + " (" + user.getEmail() + ")");
-        modelAndView.addObject("adminMessage","Content Available Only for Users with Admin Role");
+        modelAndView.addObject("userName",  user.getName() + " " + user.getLastName());
         modelAndView.setViewName("admin/home");
         return modelAndView;
     }
+
+    @RequestMapping(value="/admin/profile", method = RequestMethod.GET)
+    public ModelAndView profile(){
+        ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByEmail(auth.getName());
+        modelAndView.addObject("userName",  user.getName() + " " + user.getLastName());
+        modelAndView.setViewName("admin/profile");
+        return modelAndView;
+    }
+
+    @RequestMapping(value="/admin/feedback", method = RequestMethod.GET)
+    public ModelAndView feedback(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("admin/feedback");
+        return modelAndView;
+    }
+
 
 
 }

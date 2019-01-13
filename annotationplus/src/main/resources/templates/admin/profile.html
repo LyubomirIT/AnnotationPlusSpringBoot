@@ -1,88 +1,11 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <title>Admin Page</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</head>
-
-<body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/admin/home">AnnotationPlus</a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="/admin/home">Home <span class="sr-only">(current)</span></a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/admin/feedback">Questions/Feedback</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="#" th:utext="${userName}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="/admin/profile"><span class="oi oi-person"></span>Settings</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="/logout">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-</nav>
-<div class="container">
-
-    <form th:action="@{/logout}" method="get">
-        <button class="btn btn-md btn-danger btn-block" name="registration"
-                type="Submit">Logout
-        </button>
-    </form>
-
-    <div class="panel-group" style="margin-top:40px">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <span th:utext="${userName}"></span>
-                <span th:utext="${Id}"></span>
-            </div>
-            <div class="panel-body">
-                <img th:src="@{/images/beer.jpg}" class="img-responsive center-block" width="400" height="400"
-                     alt="Beer"/>
-            </div>
-            <p class="admin-message-text text-center" th:utext="${adminMessage}"></p>
-        </div>
-    </div>
-
-</div>
-</body>
-</html>
-
-
-<!--<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
-    <title>Bootdey.com</title>
+    <title>AnnotationPlus</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -91,12 +14,13 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript" charset="utf-8">
 
 
         $(document).ready(function () {
-                  $("#passwordError").css("display","none");
+            $("#passwordError").css("display","none");
             $("#close1").click(function() {
                 $("#passwordError").css("display","none");
             });
@@ -115,9 +39,9 @@
             var span = $("#close");
 
 
-           // span.onclick = function() {
-               // modal.style.display = "none";
-           // }
+            // span.onclick = function() {
+            // modal.style.display = "none";
+            // }
 
             span.click(function() {
                 modal.css("display", "none");
@@ -129,6 +53,11 @@
                 }
             }*/
 
+
+            var value1;
+            var value2;
+
+
 //$('#retrieve-resources').click(function () {
 //var displayResources = $('#display-resources');
 
@@ -139,14 +68,65 @@
                 url: "/api/user",
                 success: function(result)
                 {
-                   // $("#password").val(result.password);
+                    // $("#password").val(result.password);
                     $("#email").text(result.email);
                     $("#name").val(result.name);
                     $("#lastName").val(result.lastName);
+
+                    value1 = result.name;
+                    value2 = result.lastName;
+
                 }
             });
 
-           // var dataObject = { "name": $("#name").val(), "lastName": $("#lastName").val() };
+
+
+            $("#submit").prop('disabled', true);
+
+            $('#name').on('input', function(e) {
+                if($("#name").val() != value1){
+                    $("#submit").prop('disabled', false);
+                }
+                if($("#name").val() == value1 && $("#lastName").val() == value2){
+                    $("#submit").prop('disabled', true);
+                }
+            });
+
+            $('#lastName').on('input', function(e) {
+                if($("#lastName").val() != value2){
+                    $("#submit").prop('disabled', false);
+                }
+                if($("#lastName").val() == value2 && $("#name").val()== value1){
+                    $("#submit").prop('disabled', true);
+                }
+            });
+
+           /* $('#lastName').on('input', function(e) {
+                if ($(this).val().length > 50 || $(this).val().length < 1 ){
+                    $("#submit").prop('disabled', true);
+                    $("#lastNameError").css("display", "block");
+                    $("#lastNameError").text("Last Name must be between 1 and 50 characters");
+                    $("#lastNameError").css("display", "block");
+
+                }*/
+                /*if ($(this).val().length < 50 || $(this).val().length > 1 && $("#name").val().length < 50 || $(this).val().length > 1 ){
+                    $("#submit").prop('disabled', false);
+                    $("#lastNameError").css("display", "none");
+                }*/
+                /*if ($(this).val().length < 50 || $(this).val().length > 1){
+                    $("#submit").prop('disabled', false);
+                    $("#lastNameError").css("display", "none");
+                }
+            });*/
+
+
+
+
+
+
+
+
+            // var dataObject = { "name": $("#name").val(), "lastName": $("#lastName").val() };
 
             $( "#submit" ).click(function(e) {
                 e.preventDefault();
@@ -156,7 +136,7 @@
                 $.ajax({
                     type: "PUT",
                     url: "/api/user",
-                   // data:{ "name": $("#name").val(), "lastName": $("#lastName").val() },
+                    // data:{ "name": $("#name").val(), "lastName": $("#lastName").val() },
                     data: JSON.stringify(dataObject),
                     contentType: "application/json",
                     dataType: "application/json",
@@ -177,10 +157,12 @@
                     }*/
                     statusCode: {
                         200: function() {
-                            setTimeout(function(){
-                                btn.prop('disabled', false);
-                            }, 1000);
-                           //modal.css("display", "block");
+                          //  setTimeout(function(){
+                                btn.prop('disabled', true);
+                            //}, 1000);
+                            //modal.css("display", "block");
+                            value1 = $("#name").val();
+                            value2 = $("#lastName").val();
                             $('.trigger-btn').click();
 
                         },
@@ -270,16 +252,7 @@
         @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
         @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
-        .isa_info, .isa_success, .isa_warning, .isa_error {
-            margin: 10px 0px;
-            padding:12px;
 
-        }
-        .isa_error {
-            color: #D8000C;
-            background-color: #FFD2D2;
-            display: none;
-        }
         .isa_info i, .isa_success i, .isa_warning i, .isa_error i {
             margin:10px 22px;
             font-size:2em;
@@ -295,8 +268,9 @@
 
 
         body{
-            margin-top:20px;
+            /*margin-top:20px;*/
             background:#f5f5f5;
+
         }
         /**
          * Panels
@@ -329,8 +303,8 @@
         }
 
         form label {
-            color: #999999;
-            font-weight: 400;
+            /*color: #999999;*/
+            font-weight: bold;
         }
 
         .form-horizontal .form-group {
@@ -469,7 +443,43 @@
 </head>
 <body>
 
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/admin/home">AnnotationPlus</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li ><a href="/admin/home">Home <span class="sr-only">(current)</span></a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Questions/Feedback</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" th:utext="${userName}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><span class="oi oi-person"></span>Settings</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
 <div class="container bootstrap snippets">
     <div class="row">
         <div class="col-xs-12 col-sm-9">
@@ -481,21 +491,23 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">First name</label>
+                            <label for="name" class="col-sm-2 control-label">First name</label>
                             <div class="col-sm-10">
                                 <input type="text" id="name" class="form-control">
                             </div>
+                            <span id="firstNameError" class="errors" style="font-size: 30; color: #FF1C19;"></span>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Last Name</label>
+                            <label for="lastName" class="col-sm-2 control-label">Last Name</label>
                             <div class="col-sm-10">
                                 <input type="text" id="lastName" class="form-control">
                             </div>
+                            <span id="lastNameError" style="font-size: 30; color: #FF1C19;"></span>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-10 col-sm-offset-2">
                                 <button id="submit" th:type="button" class="btn btn-primary">Save</button>
-                                <button type="reset" class="btn btn-default">Cancel</button>
+                                <!--<button type="reset" class="btn btn-default">Cancel</button> -->
                             </div>
                         </div>
                         <div class="alert alert-danger alert-dismissible" role="alert" id="userError" style="text-align: center">
@@ -509,7 +521,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">E-mail address</label>
                             <div class="col-sm-10" id="email">
-                                <input type="email" class="form-control" id="email">
+                                <!--<input type="email" class="form-control" id="email">-->
                             </div>
                         </div>
                         <div id="myModal" class="modal fade">
@@ -532,175 +544,45 @@
                     </div>
                 </div>
             </form>
-                <form class="form-horizontal" id="form2">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">Current password</label>
-                                <div class="col-sm-10">
-                                    <input type="password" class="form-control" id="password" name="password">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">New password</label>
-                                <div class="col-sm-10">
-                                    <input type="password" class="form-control"  id="newPassword">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">Confirm new password</label>
-                                <div class="col-sm-10">
-                                    <input type="password" class="form-control" id="confirmNewPassword">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-10 col-sm-offset-2">
-                                    <button id="submit2" type="button" class="btn btn-primary">Update Password</button>
-                                    <button type="reset" class="btn btn-default">Cancel</button>
-                                </div>
-                            </div>
-                            <div class="alert alert-danger alert-dismissible" role="alert" id="passwordError" style="text-align: center">
-                                <button type="button" class="close" id="close1" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <strong></strong>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="#myModal" style="display:none;" class="trigger-btn" data-toggle="modal"></a>
-                </form>
-
-        </div>
-    </div>
-</div>
-
-</body>
-</html>-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--<body>
-
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<div class="container bootstrap snippets">
-    <div class="row">
-        <div class="col-xs-12 col-sm-9">
-            <form class="form-horizontal" id="form">
-                <div class="panel panel-default">
-                    <div class="panel-body text-center">
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                    </div>
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">First name</label>
-                            <div class="col-sm-10">
-                                <input type="text" id="name" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Last Name</label>
-                            <div class="col-sm-10">
-                                <input type="text" id="lastName" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <form class="form-horizontal" id="form2">
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">E-mail address</label>
+                            <label for="password" class="col-sm-2 control-label">Current password</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" id="email">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Current password</label>
-                            <div class="col-sm-10">
-                                <input type="password" class="form-control" id="password">
+                                <input type="password" class="form-control" id="password" name="password">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">New password</label>
+                            <label for="newPassword" class="col-sm-2 control-label">New password</label>
                             <div class="col-sm-10">
-                                <input type="password" class="form-control" id="newPassword">
+                                <input type="password" class="form-control"  id="newPassword">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Confirm New password</label>
+                            <label for="confirmNewPassword" class="col-sm-2 control-label">Confirm new password</label>
                             <div class="col-sm-10">
                                 <input type="password" class="form-control" id="confirmNewPassword">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-10 col-sm-offset-2">
-                                <button id="submit" th:type="button" class="btn btn-primary">Submit</button>
-                                <button type="reset" class="btn btn-default">Cancel</button>
+                                <button id="submit2" type="button" class="btn btn-primary">Update Password</button>
+                                <!--<button type="reset" class="btn btn-default">Cancel</button>-->
                             </div>
                         </div>
-                        <div class="isa_error" style="text-align: center">
-                            <i class="fa fa-times-circle"></i>
-                        </div>
-                        <div id="myModal" class="modal">
-                            <div class="modal-content">
-                                <span class="close">&times;</span>
-                                <p>Update Successfull !</p>
-                            </div>
+                        <div class="alert alert-danger alert-dismissible" role="alert" id="passwordError" style="text-align: center">
+                            <button type="button" class="close" id="close1" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong></strong>
                         </div>
                     </div>
                 </div>
+                <a href="#myModal" style="display:none;" class="trigger-btn" data-toggle="modal"></a>
             </form>
+
         </div>
     </div>
 </div>
 
-</body>-->
-
-
-
-
-
-
+</body>
+</html>
