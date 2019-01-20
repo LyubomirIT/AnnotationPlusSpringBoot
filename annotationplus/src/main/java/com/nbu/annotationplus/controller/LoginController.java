@@ -107,6 +107,10 @@ public class LoginController {
     @RequestMapping(value="/admin/feedback", method = RequestMethod.GET)
     public ModelAndView feedback(){
         ModelAndView modelAndView = new ModelAndView();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByEmail(auth.getName());
+        modelAndView.addObject("userName",  user.getName()+ " " + user.getLastName());
+        modelAndView.addObject("email",  auth.getName());
         modelAndView.setViewName("admin/feedback");
         return modelAndView;
     }

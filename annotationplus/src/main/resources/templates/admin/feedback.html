@@ -1,10 +1,364 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <title>Feedback</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+
+        $(document).ready(function () {
+            var modal = $("#myModal");
+            var span = $("#close");
+            span.click(function() {
+                modal.css("display", "none");
+            });
+
+            $('#message').on('input', function(e) {
+                if($(this).val().trim() == ""){
+                    $("#submit").prop('disabled', true);
+                }
+                if($(this).val().trim() != "" && $("#name").val().trim() != ""){
+                    $("#submit").prop('disabled', false);
+                }
+            });
+
+            $('#name').on('input', function(e) {
+                if($(this).val().trim() == ""){
+                    $("#submit").prop('disabled', true);
+                }
+                if($(this).val().trim() != "" && $("#message").val().trim() != ""){
+                    $("#submit").prop('disabled', false);
+                }
+            });
+
+            $( "#submit" ).click(function(e) {
+                e.preventDefault();
+                var btn = $(this);
+                var dataObject = {"message": $("#message").val(), "type": $("#type").val(), "name": $("#name").val(), "component": $("#component").val() };
+                //btn.prop('disabled', true);
+                $.ajax({
+                    type: "POST",
+                    url: "/api/feedback",
+                    // data:{ "name": $("#name").val(), "lastName": $("#lastName").val() },
+                    data: JSON.stringify(dataObject),
+                    contentType: "application/json",
+                    dataType: "application/json",
+                    statusCode: {
+                        201: function() {
+                            $('.trigger-btn').click();
+                            $('#name').val("");
+                            $('#message').val("");
+                            $("#submit").prop('disabled', true);
+                        },
+                        400: function(data) {
+                            var json = $.parseJSON(data.responseText);
+                            setTimeout(function(){
+                                btn.prop('disabled', false);
+                            }, 1000);
+                            $("#userError>strong").text(json.message);
+                            $('#userError').fadeIn('fast', function(){
+                                //$('.isa_error').delay(3000).fadeOut();
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <style type="text/css">
+        @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
+        @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+        .isa_info i, .isa_success i, .isa_warning i, .isa_error i {
+            margin:10px 22px;
+            font-size:2em;
+            vertical-align:middle;
+        }
+
+        body{
+            /*margin-top:20px;*/
+            background:#f5f5f5;
+
+        }
+        /**
+         * Panels
+         */
+        /*** General styles ***/
+        .panel {
+            box-shadow: none;
+        }
+        .panel-heading {
+            border-bottom: 0;
+        }
+        .panel-title {
+            font-size: 17px;
+        }
+        .panel-title > small {
+            font-size: .75em;
+            color: #999999;
+        }
+        .panel-body *:first-child {
+            margin-top: 0;
+        }
+        .panel-footer {
+            border-top: 0;
+        }
+
+        .panel-default > .panel-heading {
+            color: #333333;
+            background-color: transparent;
+            border-color: rgba(0, 0, 0, 0.07);
+        }
+
+        form label {
+            /*color: #999999;*/
+            font-weight: bold;
+        }
+
+        .form-horizontal .form-group {
+            margin-left: -15px;
+            margin-right: -15px;
+        }
+        @media (min-width: 768px) {
+            .form-horizontal .control-label {
+                text-align: right;
+                margin-bottom: 0;
+                padding-top: 7px;
+            }
+        }
+
+        .modal-confirm {
+            color: #434e65;
+            width: 525px;
+        }
+        .modal-confirm .modal-content {
+            padding: 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+        .modal-confirm .modal-header {
+            background: #47c9a2;
+            border-bottom: none;
+            position: relative;
+            text-align: center;
+            margin: -20px -20px 0;
+            border-radius: 5px 5px 0 0;
+            padding: 35px;
+        }
+        .modal-confirm h4 {
+            text-align: center;
+            font-size: 36px;
+            margin: 10px 0;
+        }
+        .modal-confirm .form-control, .modal-confirm .btn {
+            min-height: 40px;
+            border-radius: 3px;
+        }
+        .modal-confirm .close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #fff;
+            text-shadow: none;
+            opacity: 0.5;
+        }
+        .modal-confirm .close:hover {
+            opacity: 0.8;
+        }
+        .modal-confirm .icon-box {
+            color: #fff;
+            width: 95px;
+            height: 95px;
+            display: inline-block;
+            border-radius: 50%;
+            z-index: 9;
+            border: 5px solid #fff;
+            padding: 15px;
+            text-align: center;
+        }
+        .modal-confirm .icon-box i {
+            font-size: 64px;
+            margin: -4px 0 0 -4px;
+        }
+        .modal-confirm.modal-dialog {
+            margin-top: 80px;
+        }
+        .modal-confirm .btn {
+            color: #fff;
+            border-radius: 4px;
+            background: #eeb711;
+            text-decoration: none;
+            transition: all 0.4s;
+            line-height: normal;
+            border-radius: 30px;
+            margin-top: 10px;
+            padding: 6px 20px;
+            border: none;
+        }
+        .modal-confirm .btn:hover, .modal-confirm .btn:focus {
+            background: #eda645;
+            outline: none;
+        }
+        .modal-confirm .btn span {
+            margin: 1px 3px 0;
+            float: left;
+        }
+        .modal-confirm .btn i {
+            margin-left: 1px;
+            font-size: 20px;
+            float: right;
+        }
+        .trigger-btn {
+            display: inline-block;
+            margin: 100px auto;
+        }
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/admin/home">AnnotationPlus</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li ><a href="/admin/home">Home <span class="sr-only">(current)</span></a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" th:utext="${userName}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/admin/profile"><span class="oi oi-person"></span>Settings</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<div class="container bootstrap snippets">
+    <div class="row">
+        <div class="col-xs-12 col-sm-9">
+            <form class="form-horizontal" id="form">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center" style="font-size: 48px; font-weight: bold">Help & Feedback
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">E-mail address</label>
+                            <div class="col-sm-10">
+                                <input type="email" class="form-control" th:value="${email}" id="email" readonly style="cursor: not-allowed">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="name" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="type" class="col-sm-2 control-label">Type</label>
+                            <div class="col-sm-10">
+                                <select type="text" id="type" class="form-control">
+                                    <option value="Bug">Bug</option>
+                                    <option value="Feature Request">Feature Request</option>
+                                    <option value="Feedback">Feedback</option>
+                                    <option value="Question">Question</option>
+                                </select>
+                            </div>
+                            <span id="firstNameError" class="errors" style="font-size: 30; color: #FF1C19;"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="component" class="col-sm-2 control-label">Area</label>
+                            <div class="col-sm-10">
+                                <select type="text" id="component" class="form-control">
+                                    <option value="Website">Website</option>
+                                    <option value="Annotation">Annotation</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <span id="lastNameError" style="font-size: 30; color: #FF1C19;"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="message" class="col-sm-2 control-label">Message</label>
+                            <div class="col-sm-10">
+                                <textarea id="message" placeholder="To report a bug, please explain what you were doing when you found the error." class="form-control" style="resize: vertical; height: 250px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-10 col-sm-offset-2">
+                                <button id="submit" th:type="button" class="btn btn-primary" disabled>Send Feedback</button>
+                                <!--<button type="reset" class="btn btn-default">Cancel</button> -->
+                            </div>
+                        </div>
+                        <div class="alert alert-danger alert-dismissible" role="alert" id="userError" style="text-align: center; display: none;">
+                            <button type="button" class="close" id="close2" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <strong></strong>
+                        </div>
+                    </div>
+                    <div id="myModal" class="modal fade">
+                        <div class="modal-dialog modal-confirm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="icon-box">
+                                        <i class="material-icons">&#xE876;</i>
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <h4>Great!</h4>
+                                    <p>Feedback sent successfully !</p>
+                                    <button class="btn btn-success" data-dismiss="modal"><span>OK</span> <i class="material-icons">&#xE5C8;</i></button>
+                                </div>
+                                <a href="#myModal" style="display:none;" class="trigger-btn" data-toggle="modal"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
