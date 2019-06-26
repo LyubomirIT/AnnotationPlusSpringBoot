@@ -1,8 +1,8 @@
 package com.nbu.annotationplus.controller;
 
-import com.nbu.annotationplus.model.User;
-import com.nbu.annotationplus.model.userDto;
-import com.nbu.annotationplus.repository.UserRepository;
+import com.nbu.annotationplus.dto.DtoUser;
+import com.nbu.annotationplus.persistence.entity.User;
+import com.nbu.annotationplus.persistence.repository.UserRepository;
 import com.nbu.annotationplus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,7 +26,7 @@ public class UserController {
     public List<User> getAllUsers(){return userRepository.findAll();}
 
     @GetMapping("/user")
-    public User getCurrentUser(){
+    public DtoUser getCurrentUser(){
         return userService.getCurrentUser();
     }
 
@@ -36,14 +36,19 @@ public class UserController {
     //}
 
     @PutMapping("/user")
-    public User updateUser(@Valid @RequestBody User user) {
-        return userService.updateUser(user);
+    public ResponseEntity<DtoUser> updateUser(@Valid @RequestBody DtoUser dtoUser) {
+        return userService.updateUser(dtoUser);
     }
 
-    @PutMapping("/password")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody userDto userDto) {
-        return userService.updatePassword(userDto);
+    @PostMapping("/user")
+    public ResponseEntity<DtoUser> createUser(@Valid @RequestBody DtoUser dtoUser) {
+        return userService.saveUser(dtoUser);
     }
+
+    /*@PutMapping("/password")
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody DtoPassword dtoPassword) {
+        return userService.updatePassword(dtoPassword);
+    }*/
 
    /* @GetMapping("/users/{id}")
     public User getUserById(@PathVariable(value = "id") int userId) {

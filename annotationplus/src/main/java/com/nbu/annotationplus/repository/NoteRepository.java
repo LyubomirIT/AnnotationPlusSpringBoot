@@ -1,6 +1,6 @@
-package com.nbu.annotationplus.repository;
+/*package com.nbu.annotationplus.repository;
 
-import com.nbu.annotationplus.model.Note;
+import com.nbu.annotationplus.persistence.entity.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,3 +12,4 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     void deleteAllByCategoryId(Long categoryId);
     Note findByTitleAndUserId(String title,long userId);
 }
+*/

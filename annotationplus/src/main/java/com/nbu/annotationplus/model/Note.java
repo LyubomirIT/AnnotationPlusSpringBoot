@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
@@ -88,3 +88,4 @@ public class Note {
         return updatedAt;
     }
 }
+*/

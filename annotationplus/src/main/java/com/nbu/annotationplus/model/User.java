@@ -1,14 +1,11 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 @Data
@@ -36,8 +33,6 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    private String confirmPassword;
-
     @Column(name = "active")
     private int active;
 
@@ -49,7 +44,7 @@ public class User {
 
 
 
-  /*  @Column(name = "enabled")
+   @Column(name = "enabled")
     private boolean enabled;
 
     @Column(name = "confirmation_token")
@@ -70,10 +65,7 @@ public class User {
 
     public void setEnabled(boolean value) {
         this.enabled = value;
-    }*/
-
-
-
+    }
 
     public String getPassword() {
         return password;
@@ -118,10 +110,6 @@ public class User {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
 }
 
-
+*/

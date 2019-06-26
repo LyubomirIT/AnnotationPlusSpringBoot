@@ -1,15 +1,15 @@
 package com.nbu.annotationplus.service;
 
+import com.nbu.annotationplus.dto.DtoCategory;
 import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
-import com.nbu.annotationplus.exception.UnauthorizedException;
-import com.nbu.annotationplus.model.Category;
-import com.nbu.annotationplus.model.User;
-import com.nbu.annotationplus.repository.CategoryRepository;
-import com.nbu.annotationplus.repository.NoteRepository;
-import com.nbu.annotationplus.repository.UserRepository;
-import com.nbu.annotationplus.utils.AuthUtils;
+import com.nbu.annotationplus.persistence.entity.Category;
+import com.nbu.annotationplus.persistence.entity.User;
+import com.nbu.annotationplus.persistence.repository.CategoryRepository;
+import com.nbu.annotationplus.persistence.repository.NoteRepository;
+import com.nbu.annotationplus.persistence.repository.UserRepository;
 import com.nbu.annotationplus.utils.ParseUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,37 +35,51 @@ public class CategoryService {
     @Autowired
     private NoteRepository noteRepository;
 
-    @Transactional
-    public List<Category> getAllCategories() {
-        validateUser();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-        User user = userRepository.findByEmail(userName);
-        Long userId = user.getId();
-        return categoryRepository.findAllByUserId(userId);
+    private DtoCategory toDtoCategory(Category category) {
+        ModelMapper modelMapper = new ModelMapper();
+        DtoCategory dtoCategory = modelMapper.map(category, DtoCategory.class);
+        return dtoCategory;
     }
 
     @Transactional
-    public ResponseEntity<Category> createCategory(Category category) {
-        validateUser();
+    public List<DtoCategory> getAllCategories() {
+       // validateUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User user = userRepository.findByEmail(userName);
         Long userId = user.getId();
+        List<DtoCategory> list;
+        list = new ArrayList<>();
+        List<Category> categoryList = categoryRepository.findAllByUserId(userId);
+        for(Category category: categoryList){
+            list.add(toDtoCategory(category));
+        }
+        return list;
+    }
+
+    @Transactional
+    public ResponseEntity<DtoCategory> createCategory(DtoCategory dtoCategory) {
+        //validateUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        User user = userRepository.findByEmail(userName);
+        Long userId = user.getId();
+        Category category = new Category();
         category.setUserId(userId);
-        validateCategory(category);
-        Category existingCategory = categoryRepository.findByNameAndUserId(category.getName(),userId);
+        validateCategory(dtoCategory);
+        category.setName(dtoCategory.getName().trim());
+        Category existingCategory = categoryRepository.findByNameAndUserId(dtoCategory.getName().trim(),userId);
         if(existingCategory == null){
             categoryRepository.save(category);
-            return new ResponseEntity<Category>(category, HttpStatus.CREATED);
+            return new ResponseEntity<DtoCategory>(toDtoCategory(category), HttpStatus.CREATED);
         }else {
-            throw new InvalidInputParamsException("Category with name: " + "'" + category.getName() + "'" + " already exists.");
+            throw new InvalidInputParamsException("Category with name: " + "'" + dtoCategory.getName() + "'" + " already exists.");
         }
     }
 
     @Transactional
     public ResponseEntity<?> deleteCategory(Long categoryId) {
-        validateUser();
+       // validateUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User user = userRepository.findByEmail(userName);
@@ -80,8 +97,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category updateCategory(Long categoryId, Category categoryDetails) {
-        validateUser();
+    public DtoCategory updateCategory(Long categoryId, DtoCategory dtoCategory) {
+       // validateUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User user = userRepository.findByEmail(userName);
@@ -90,16 +107,16 @@ public class CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         Long categoryUserId = category.getUserId();
         if(userId.equals(categoryUserId)){
-            validateCategory(category);
-            //category.setUserId(category.getUserId());
-            //category.setName(categoryDetails.getName());
-            Category existingCategory = categoryRepository.findByNameAndUserId(categoryDetails.getName(),userId);
+            validateCategory(dtoCategory);
+            Category existingCategory = categoryRepository.findByNameAndUserId(dtoCategory.getName().trim(),userId);
             if (existingCategory == null || existingCategory.getId().equals(categoryId)){
                 category.setUserId(category.getUserId());
-                category.setName(categoryDetails.getName());
-                return categoryRepository.save(category);
+                category.setName(dtoCategory.getName().trim());
+                category.setUpdatedTs(LocalDateTime.now(Clock.systemUTC()));
+                categoryRepository.save(category);
+                return toDtoCategory(category);
             }else {
-                throw new InvalidInputParamsException("Category with name: " + "'" + categoryDetails.getName() + "'" + " already exists.");
+                throw new InvalidInputParamsException("Category with name: " + "'" + dtoCategory.getName() + "'" + " already exists.");
             }
         }else{
             throw new ResourceNotFoundException("Category", "id", categoryId);
@@ -107,8 +124,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public Category getCategoryById(Long categoryId) {
-        validateUser();
+    public DtoCategory getCategoryById(Long categoryId) {
+        //validateUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userName = authentication.getName();
         User user = userRepository.findByEmail(userName);
@@ -116,23 +133,23 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         Long categoryUserId = category.getUserId();
-        if(userId == categoryUserId){
-            return category;
+        if(userId .equals(categoryUserId)){
+            return toDtoCategory(category);
         }else{
             throw new ResourceNotFoundException("Category", "id", categoryId);
         }
     }
 
-    private void validateCategory(Category category){
-        if(ParseUtils.validateTitle(category.getName())){
+    private void validateCategory(DtoCategory dtoCategory){
+        if(ParseUtils.validateTitle(dtoCategory.getName())){
             throw new InvalidInputParamsException("Invalid Name");
         }
     }
 
-    private void validateUser(){
+  /*  private void validateUser(){
         Authentication authentication = AuthUtils.getAuthenticateduser();
         if(authentication == null){
             throw new UnauthorizedException("Unauthorized");
         }
-    }
+    }*/
 }

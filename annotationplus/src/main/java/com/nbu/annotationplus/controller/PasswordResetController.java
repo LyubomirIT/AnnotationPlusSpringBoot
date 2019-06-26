@@ -1,8 +1,9 @@
-package com.nbu.annotationplus.controller;
+/*package com.nbu.annotationplus.controller;
 
 import com.nbu.annotationplus.model.PasswordResetToken;
 import com.nbu.annotationplus.model.User;
 import com.nbu.annotationplus.repository.PasswordResetTokenRepository;
+import com.nbu.annotationplus.service.PasswordService;
 import com.nbu.annotationplus.service.UserService;
 import com.nbu.annotationplus.model.PasswordResetDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class PasswordResetController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private PasswordService passwordService;
     @Autowired
     private PasswordResetTokenRepository tokenRepository;
     @Autowired
@@ -46,9 +49,10 @@ public class PasswordResetController {
         }
 
         return "reset-password";
+        return passwordService.displayResetPasswordPage(model,token);
     }
 
-    @PostMapping
+    //@PostMapping
     @Transactional
     public String handlePasswordReset(@ModelAttribute("passwordResetForm") @Valid PasswordResetDto form,
                                       BindingResult result,
@@ -68,4 +72,4 @@ public class PasswordResetController {
 
         return "redirect:/login?resetSuccess";
     }
-}
+}*/

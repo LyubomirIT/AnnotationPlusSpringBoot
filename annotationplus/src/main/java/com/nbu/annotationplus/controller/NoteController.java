@@ -1,6 +1,6 @@
 package com.nbu.annotationplus.controller;
 
-import com.nbu.annotationplus.model.Note;
+import com.nbu.annotationplus.dto.DtoNote;
 import com.nbu.annotationplus.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +17,31 @@ public class NoteController {
     private NoteService noteService;
 
     @PostMapping("/notes")
-    public ResponseEntity<Note> createNote(@Valid @RequestBody Note note) {
-        return noteService.createNote(note);
+    public ResponseEntity<DtoNote> createNote(@Valid @RequestBody DtoNote dtoNote) {
+        return noteService.createNote(dtoNote);
     }
 
     @GetMapping("/notes/{id}")
-    public Note getNoteById(@PathVariable(value = "id") Long noteId) {
+    public DtoNote getNoteById(@PathVariable(value = "id") Long noteId) {
         return noteService.getNoteById(noteId);
     }
 
     @GetMapping("/notes")
-    public List <Note> getNotesByUserId() {
+    public List <DtoNote> getNotesByUserId() {
         return noteService.getNotesByUserId();
 
     }
 
+    @GetMapping("/notes/category={categoryId}")
+    public List <DtoNote> getNotesByUserId(@PathVariable(value = "categoryId") Long categoryId) {
+        return noteService.getNotesByCategoryIdAndUserId(categoryId);
+
+    }
+
     @PutMapping("/notes/{id}")
-    public Note updateNote(@PathVariable(value = "id") Long noteId,
-                           @Valid @RequestBody Note noteDetails) {
-        return noteService.updateNote(noteId,noteDetails);
+    public DtoNote updateNote(@PathVariable(value = "id") Long noteId,
+                           @Valid @RequestBody DtoNote dtoNote) {
+        return noteService.updateNote(noteId,dtoNote);
     }
 
     @DeleteMapping("/notes/{id}")

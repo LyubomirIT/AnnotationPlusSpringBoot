@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.controller;
+/*package com.nbu.annotationplus.controller;
 
 
 
@@ -93,3 +93,4 @@ public class PasswordForgotController {
 
     }
 }
+*/

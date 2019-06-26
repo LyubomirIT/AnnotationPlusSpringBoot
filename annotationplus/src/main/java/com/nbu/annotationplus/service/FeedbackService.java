@@ -1,10 +1,9 @@
 package com.nbu.annotationplus.service;
 
 import com.nbu.annotationplus.dto.DtoFeedback;
-import com.nbu.annotationplus.model.User;
 import com.nbu.annotationplus.persistence.entity.Feedback;
-import com.nbu.annotationplus.repository.FeedbackRepository;
-import com.nbu.annotationplus.repository.UserRepository;
+import com.nbu.annotationplus.persistence.repository.FeedbackRepository;
+import com.nbu.annotationplus.persistence.repository.UserRepository;
 import com.nbu.annotationplus.utils.Component;
 import com.nbu.annotationplus.utils.Type;
 import org.modelmapper.ModelMapper;

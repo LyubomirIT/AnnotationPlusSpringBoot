@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -17,3 +17,4 @@ public class PasswordForgotDto {
         this.email = email;
     }
 }
+*/

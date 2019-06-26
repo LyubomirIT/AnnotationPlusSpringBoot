@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import java.util.Set;
 
@@ -77,7 +77,7 @@ public class userDto {
 
 
 }
-
+*/
 
 
 

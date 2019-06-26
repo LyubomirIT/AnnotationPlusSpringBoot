@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import java.util.Map;
 
@@ -45,3 +45,4 @@ public class Mail {
         this.model = model;
     }
 }
+*/

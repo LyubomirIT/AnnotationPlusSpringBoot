@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -64,3 +64,4 @@ public class PasswordResetToken {
         return new Date().after(this.expiryDate);
     }
 }
+*/

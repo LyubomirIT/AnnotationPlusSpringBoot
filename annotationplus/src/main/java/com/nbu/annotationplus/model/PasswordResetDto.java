@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import com.nbu.annotationplus.constraint.FieldMatch;
 import javax.validation.constraints.NotEmpty;
@@ -39,3 +39,4 @@ public class PasswordResetDto {
         this.token = token;
     }
 }
+*/

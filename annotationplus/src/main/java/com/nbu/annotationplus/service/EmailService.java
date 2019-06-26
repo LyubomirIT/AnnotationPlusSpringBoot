@@ -1,6 +1,6 @@
 package com.nbu.annotationplus.service;
 
-import com.nbu.annotationplus.model.Mail;
+import com.nbu.annotationplus.dto.DtoMail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,7 +20,7 @@ public class EmailService {
     @Autowired
     private SpringTemplateEngine templateEngine;
 
-    public void sendEmail(Mail mail) {
+    public void sendEmail(DtoMail dtoMail) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,
@@ -28,13 +28,13 @@ public class EmailService {
                     StandardCharsets.UTF_8.name());
 
             Context context = new Context();
-            context.setVariables(mail.getModel());
+            context.setVariables(dtoMail.getModel());
             String html = templateEngine.process("email/email-template", context);
 
-            helper.setTo(mail.getTo());
+            helper.setTo(dtoMail.getTo());
             helper.setText(html, true);
-            helper.setSubject(mail.getSubject());
-            helper.setFrom(mail.getFrom());
+            helper.setSubject(dtoMail.getSubject());
+            helper.setFrom(dtoMail.getFrom());
 
             emailSender.send(message);
         } catch (Exception e){

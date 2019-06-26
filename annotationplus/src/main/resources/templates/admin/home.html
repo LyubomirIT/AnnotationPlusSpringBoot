@@ -1,16 +1,95 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <title>Admin Page</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
+    <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.9.1/docxtemplater.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.6.1/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.0.2/jszip-utils.js"></script>
+    <script  th:src="@{/js/common.js}"></script>
+    <script  th:src="@{/js/main.js}"></script>
 </head>
 
 <body>
+<div class="formContainer" id="deleteCategoryConfirmationContainer">
+    <div class="modal fade confirmationDialog" id="confirmCategoryDeleteModal"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="font-size: 15px;">Delete Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning" role="alert" style="font-size: 15px;">
+                        Warning! This will delete all existing sources located in that category. Proceed ?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    <button type="button" id="deleteCategory" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="formContainer" id="updateSourceContainer">
+    <form id="updateSourceForm">
+        <button type="button" class="close" aria-label="Close" style="margin-top: -22px;margin-right: -14px;font-weight: bold;color: black;opacity: 1;">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div class="form-group">
+            <label for="sourceName" style="font-size: 17px">Source Name</label>
+            <input type="text" class="form-control" id="sourceName" aria-describedby="emailHelp" placeholder="Source Name">
+        </div>
+        <button type="button" id="updateSourceName" class="btn btn-primary">Update</button>
+    </form>
+</div>
+<div class="formContainer" id="createCategoryContainer">
+    <form id="createCategoryForm">
+        <button type="button" class="close" aria-label="Close" style="margin-top: -22px;margin-right: -14px;font-weight: bold;color: black;opacity: 1;">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div class="form-group">
+            <label for="categoryNameCreateValue" style="font-size: 17px">New Category Name</label>
+            <input type="text" class="form-control" id="categoryNameCreateValue" aria-describedby="emailHelp" placeholder="Category Name">
+        </div>
+        <button type="button" id="createCategory" class="btn btn-primary">Create</button>
+    </form>
+</div>
+<div class="formContainer" id="updateCategoryContainer">
+    <form id="updateCategoryForm">
+        <button type="button" class="close" aria-label="Close" style="margin-top: -22px;margin-right: -14px;font-weight: bold;color: black;opacity: 1;">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div class="form-group">
+            <label for="categoryName" style="font-size: 17px">Category Name</label>
+            <input type="text" class="form-control" id="categoryName" aria-describedby="emailHelp" placeholder="Category Name">
+        </div>
+        <button type="button" id="updateCategoryName" class="btn btn-primary">Update</button>
+    </form>
+</div>
+<div id="fileUploadContainer" class="formContainer">
+    <form id="uploadFile">
+        <button type="button" class="close" aria-label="Close" style="margin-top: -22px;margin-right: -14px;font-weight: bold;color: black;opacity: 1;">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div class="form-group">
+            <label for="exampleFormControlFile1" style="font-size: 17px">Please upload a file(docx,doc,txt or pdf)</label>
+            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+        </div>
+        <button type="button" id="uploadFileButton" class="btn btn-primary">Go</button>
+    </form>
+</div>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -49,14 +128,154 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
+    <div id="buttons" style="margin-bottom: 90px">
+    <div id="noteButtons"style="float: right">
+    <input class="btn btn-primary" type="button" value="New "id="newSource">
+    <input class="btn btn-primary" type="button" value="Edit" id="editSource">
+        <input class="btn btn-primary" type="button" id="openSource" value="Open">
+    <input class="btn btn-primary" type="button" id="deleteSource" value="Delete">
+        <div style="font-size:20px; display: none; width:110px; text-align:center; cursor:pointer; border:1px solid black">
+            <div style="background-color:gray; width:110px; border-bottom:1px solid black">
+                Document
+            </div>
+            <div style="background-color:gray; width:110px;">
+                Website
+            </div>
+        </div>
+    </div>
+    <div id="categoryButtons">
+    <input class="btn btn-primary" type="button" id="newCategory" value="New">
+    <input class="btn btn-primary" type="button" id="editCategory" value="Edit">
+    <input class="btn btn-primary" type="button" id="deleteCategoryModal" value="Delete">
+    </div>
+    </div>
+    <div id="gridTitles">
+        <div style="float: right; width: 70%; text-align: center; font-size: 25px;" >Existing Sources</div>
+        <div style="width: 30%; text-align: center; font-size: 25px;" >Categories</div>
+    </div>
+    <div id="grids"style="margin-bottom: 8px" >
+    <div id="myGrid" class="ag-theme-balham"></div>
+    <div id="myGrid2" class="ag-theme-balham"></div>
+    </div>
 
-    <form th:action="@{/logout}" method="get">
+    <!-- <script type="text/javascript" charset="utf-8">
+        var noteId = '';
+        var categoryId = '';
+
+        // specify the columns
+        var columnDefs = [
+            {headerName: "Category Name", field: "name", checkboxSelection: true, sortable: true, sort: 'asc', width:1000 },
+            {headerName: "Id", field: "id", hide:true }
+        ];
+
+        // let the grid know which columns to use
+        var gridOptions = {
+            columnDefs: columnDefs,
+            rowSelection: 'single',
+            onSelectionChanged: onCategorySelection
+        };
+
+        function onCategorySelection() {
+            var selectedCategoryRows = gridOptions.api.getSelectedRows();
+            categoryId = '';
+            selectedCategoryRows.forEach( function(selectedRow) {
+                categoryId += selectedRow.id;
+            });
+            console.log(categoryId);
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open('GET', '/api/notes/category=' + categoryId);
+            httpRequest.send();
+            httpRequest.onreadystatechange = function() {
+                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                    var httpResult = JSON.parse(httpRequest.responseText);
+                    gridOptions2.api.setRowData(httpResult);
+                }
+            };
+        }
+
+        // lookup the container we want the Grid to use
+        var eGridDiv = document.querySelector('#myGrid');
+
+        // create the grid passing in the div to use together with the columns & data we want to use
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+        fetch('/api/category').then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            gridOptions.api.setRowData(data);
+        })
+
+
+
+
+
+
+
+
+        // specify the columns
+        var columnDefs2 = [
+            {headerName: "Note Name", field: "title", checkboxSelection: true, sortable: true, sort: 'asc', width:300 },
+            {headerName: "Date Created", field: "createdTs"},
+            {headerName: "Last Updated", field: "updatedTs" },
+            {headerName: "Id", field: "id", hide:true }
+        ];
+
+        // let the grid know which columns to use
+        var gridOptions2 = {
+            defaultColDef: {
+                resizable: true
+            },
+            columnDefs: columnDefs2,
+            rowSelection: 'single',
+            onSelectionChanged: onSelectionChanged,
+            sizeToFit:sizeToFit
+
+        };
+
+        function sizeToFit() {
+            gridOptions.api.sizeColumnsToFit();
+        }
+
+        function onSelectionChanged() {
+            var selectedRows = gridOptions2.api.getSelectedRows();
+            noteId = '';
+            selectedRows.forEach( function(selectedRow) {
+                noteId += selectedRow.id;
+            });
+            console.log(noteId);
+        }
+
+        // lookup the container we want the Grid to use
+        var eGridDiv2 = document.querySelector('#myGrid2');
+
+        // create the grid passing in the div to use together with the columns & data we want to use
+        new agGrid.Grid(eGridDiv2, gridOptions2);
+
+       /* fetch('/api/notes').then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            gridOptions2.api.setRowData(data);
+        })*/
+
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', '/api/notes');
+        httpRequest.send();
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                var httpResult = JSON.parse(httpRequest.responseText);
+                gridOptions2.api.setRowData(httpResult);
+            }
+        };
+
+    </script> -->
+
+    <!--<form th:action="@{/logout}" method="get">
         <button class="btn btn-md btn-danger btn-block" name="registration"
                 type="Submit">Logout
         </button>
-    </form>
+    </form> -->
 
-    <div class="panel-group" style="margin-top:40px">
+   <!-- <div class="panel-group" style="margin-top:40px">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <span th:utext="${userName}"></span>
@@ -68,9 +287,16 @@
             </div>
             <p class="admin-message-text text-center" th:utext="${adminMessage}"></p>
         </div>
-    </div>
+
+    </div>-->
 
 </div>
+<!--<article>
+    <div id="holder"></div>
+    <p id="status"></p>
+    <p></p>
+</article>
+<div class="loading">Loading&#8230;</div>-->
 </body>
 </html>
 

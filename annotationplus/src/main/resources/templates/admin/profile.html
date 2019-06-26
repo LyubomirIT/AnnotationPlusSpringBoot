@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <title>AnnotationPlus</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -16,238 +16,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-
-
-        $(document).ready(function () {
-            $("#passwordError").css("display","none");
-            $("#close1").click(function() {
-                $("#passwordError").css("display","none");
-            });
-            $("#userError").css("display","none");
-            $("#close2").click(function() {
-                $("#userError").css("display","none");
-            });
-
-
-            var modal = $("#myModal");
-
-
-
-
-
-            var span = $("#close");
-
-
-            // span.onclick = function() {
-            // modal.style.display = "none";
-            // }
-
-            span.click(function() {
-                modal.css("display", "none");
-            });
-
-            /*window.onclick = function(event) {
-                if (event.target != modal) {
-                    modal.css("display", "none");
-                }
-            }*/
-
-
-            var value1;
-            var value2;
-
-
-//$('#retrieve-resources').click(function () {
-//var displayResources = $('#display-resources');
-
-// displayResources.text('Loading data from JSON source...');
-
-            $.ajax({
-                type: "GET",
-                url: "/api/user",
-                success: function(result)
-                {
-                    // $("#password").val(result.password);
-                    $("#email").text(result.email);
-                    $("#name").val(result.name);
-                    $("#lastName").val(result.lastName);
-
-                    value1 = result.name;
-                    value2 = result.lastName;
-
-                }
-            });
-
-
-
-            $("#submit").prop('disabled', true);
-
-            $('#name').on('input', function(e) {
-                if($("#name").val() != value1){
-                    $("#submit").prop('disabled', false);
-                }
-                if($("#name").val() == value1 && $("#lastName").val() == value2){
-                    $("#submit").prop('disabled', true);
-                }
-            });
-
-            $('#lastName').on('input', function(e) {
-                if($("#lastName").val() != value2){
-                    $("#submit").prop('disabled', false);
-                }
-                if($("#lastName").val() == value2 && $("#name").val()== value1){
-                    $("#submit").prop('disabled', true);
-                }
-            });
-
-           /* $('#lastName').on('input', function(e) {
-                if ($(this).val().length > 50 || $(this).val().length < 1 ){
-                    $("#submit").prop('disabled', true);
-                    $("#lastNameError").css("display", "block");
-                    $("#lastNameError").text("Last Name must be between 1 and 50 characters");
-                    $("#lastNameError").css("display", "block");
-
-                }*/
-                /*if ($(this).val().length < 50 || $(this).val().length > 1 && $("#name").val().length < 50 || $(this).val().length > 1 ){
-                    $("#submit").prop('disabled', false);
-                    $("#lastNameError").css("display", "none");
-                }*/
-                /*if ($(this).val().length < 50 || $(this).val().length > 1){
-                    $("#submit").prop('disabled', false);
-                    $("#lastNameError").css("display", "none");
-                }
-            });*/
-
-
-
-
-
-
-
-
-            // var dataObject = { "name": $("#name").val(), "lastName": $("#lastName").val() };
-
-            $( "#submit" ).click(function(e) {
-                e.preventDefault();
-                var btn = $(this);
-                var dataObject = {"name": $("#name").val(), "lastName": $("#lastName").val() };
-                btn.prop('disabled', true);
-                $.ajax({
-                    type: "PUT",
-                    url: "/api/user",
-                    // data:{ "name": $("#name").val(), "lastName": $("#lastName").val() },
-                    data: JSON.stringify(dataObject),
-                    contentType: "application/json",
-                    dataType: "application/json",
-                    /*statusCode:{
-                      200:function () {
-                          btn.prop('disabled', false);
-                          alert("sucess");
-                      }
-                    },
-                    error:function (data) {
-                        var json = $.parseJSON(data.responseText);
-                        console.log(json);
-                        console.log(json.message);
-                        //alert(json);
-                        $(".isa_error>i").text(json.message);
-                        $(".isa_error").css("display", "block");
-                        btn.prop('disabled', false);
-                    }*/
-                    statusCode: {
-                        200: function() {
-                          //  setTimeout(function(){
-                                btn.prop('disabled', true);
-                            //}, 1000);
-                            //modal.css("display", "block");
-                            value1 = $("#name").val();
-                            value2 = $("#lastName").val();
-                            $('.trigger-btn').click();
-
-                        },
-                        400: function(data) {
-                            var json = $.parseJSON(data.responseText);
-                            setTimeout(function(){
-                                btn.prop('disabled', false);
-                            }, 1000);
-                            $("#userError>strong").text(json.message);
-                            $('#userError').fadeIn('fast', function(){
-                                //$('.isa_error').delay(3000).fadeOut();
-                            });
-
-                        }
-                    }
-
-
-
-
-                });
-
-            });
-
-            $( "#submit2" ).click(function(e) {
-                e.preventDefault();
-                var btn = $(this);
-                var dataObject = {"password": $("#password").val(), "newPassword": $("#newPassword").val(), "confirmNewPassword": $("#confirmNewPassword").val()};
-                btn.prop('disabled', true);
-                $.ajax({
-                    type: "PUT",
-                    url: "/api/password",
-                    // data:{ "name": $("#name").val(), "lastName": $("#lastName").val() },
-                    data: JSON.stringify(dataObject),
-                    contentType: "application/json",
-                    dataType: "application/json",
-                    /*statusCode:{
-                      200:function () {
-                          btn.prop('disabled', false);
-                          alert("sucess");
-                      }
-                    },
-                    error:function (data) {
-                        var json = $.parseJSON(data.responseText);
-                        console.log(json);
-                        console.log(json.message);
-                        //alert(json);
-                        $(".isa_error>i").text(json.message);
-                        $(".isa_error").css("display", "block");
-                        btn.prop('disabled', false);
-                    }*/
-                    statusCode: {
-                        200: function() {
-                            setTimeout(function(){
-                                btn.prop('disabled', false);
-                            }, 1000);
-                            //modal.css("display", "block");
-                            $('.trigger-btn').click();
-
-                        },
-                        400: function(data) {
-                            var json = $.parseJSON(data.responseText);
-                            setTimeout(function(){
-                                btn.prop('disabled', false);
-                            }, 1000);
-                            $("#passwordError>strong").text(json.message);
-                            $('#passwordError').fadeIn('fast', function(){
-                                //$('.isa_error').delay(3000).fadeOut();
-                            });
-
-                        }
-                    }
-
-
-
-
-                });
-
-            });
-
-            //$.put( "/api/user", { email: $("#email").val(), password: $("#password").val(), name: $("#name").val(), lastName: $("#lastName").val() } );
-//});
-        });
-
-
-    </script>
     <style type="text/css">
         @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
         @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
@@ -258,15 +26,6 @@
             font-size:2em;
             vertical-align:middle;
         }
-
-
-
-
-
-
-
-
-
         body{
             /*margin-top:20px;*/
             background:#f5f5f5;
@@ -318,12 +77,6 @@
                 padding-top: 7px;
             }
         }
-
-
-
-
-
-
         .modal-confirm {
             color: #434e65;
             width: 525px;
@@ -411,18 +164,6 @@
             margin: 100px auto;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
         /* The Close Button */
         .close {
             color: #aaaaaa;
@@ -439,6 +180,136 @@
         }
 
 
+
+
+
+
+
+
+
+
+
+        /* Absolute Center Spinner */
+        .loading {
+            position: fixed;
+            z-index: 999;
+            height: 2em;
+            width: 2em;
+            overflow: show;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+
+        /* Transparent Overlay */
+        .loading:before {
+            content: '';
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0, .8));
+
+            background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
+        }
+
+        /* :not(:required) hides these rules from IE9 and below */
+        .loading:not(:required) {
+            /* hide "loading..." text */
+            font: 0/0 a;
+            color: transparent;
+            text-shadow: none;
+            background-color: transparent;
+            border: 0;
+        }
+
+        .loading:not(:required):after {
+            content: '';
+            display: block;
+            font-size: 10px;
+            width: 1em;
+            height: 1em;
+            margin-top: -0.5em;
+            -webkit-animation: spinner 1500ms infinite linear;
+            -moz-animation: spinner 1500ms infinite linear;
+            -ms-animation: spinner 1500ms infinite linear;
+            -o-animation: spinner 1500ms infinite linear;
+            animation: spinner 1500ms infinite linear;
+            border-radius: 0.5em;
+            -webkit-box-shadow: rgba(255,255,255, 0.75) 1.5em 0 0 0, rgba(255,255,255, 0.75) 1.1em 1.1em 0 0, rgba(255,255,255, 0.75) 0 1.5em 0 0, rgba(255,255,255, 0.75) -1.1em 1.1em 0 0, rgba(255,255,255, 0.75) -1.5em 0 0 0, rgba(255,255,255, 0.75) -1.1em -1.1em 0 0, rgba(255,255,255, 0.75) 0 -1.5em 0 0, rgba(255,255,255, 0.75) 1.1em -1.1em 0 0;
+            box-shadow: rgba(255,255,255, 0.75) 1.5em 0 0 0, rgba(255,255,255, 0.75) 1.1em 1.1em 0 0, rgba(255,255,255, 0.75) 0 1.5em 0 0, rgba(255,255,255, 0.75) -1.1em 1.1em 0 0, rgba(255,255,255, 0.75) -1.5em 0 0 0, rgba(255,255,255, 0.75) -1.1em -1.1em 0 0, rgba(255,255,255, 0.75) 0 -1.5em 0 0, rgba(255,255,255, 0.75) 1.1em -1.1em 0 0;
+        }
+
+        /* Animation */
+
+        @-webkit-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+        @-moz-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+        @-o-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -511,7 +382,7 @@
                             </div>
                         </div>
                         <div class="alert alert-danger alert-dismissible" role="alert" id="userError" style="text-align: center">
-                            <button type="button" class="close" id="close2" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="close" id="close2" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <strong></strong>
                         </div>
                     </div>
@@ -572,7 +443,7 @@
                             </div>
                         </div>
                         <div class="alert alert-danger alert-dismissible" role="alert" id="passwordError" style="text-align: center">
-                            <button type="button" class="close" id="close1" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="close" id="close1" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <strong></strong>
                         </div>
                     </div>
@@ -582,7 +453,9 @@
 
         </div>
     </div>
+    <div class="loading">Loading&#8230;</div>
 </div>
-
+<script  th:src="@{/js/profile.js}"></script>
+<script  th:src="@{/js/common.js}"></script>
 </body>
 </html>

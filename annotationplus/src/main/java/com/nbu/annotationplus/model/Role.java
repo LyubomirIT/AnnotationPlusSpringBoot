@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.model;
+/*package com.nbu.annotationplus.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,3 +21,4 @@ public class Role {
     @Column(name = "role")
     private String role;
 }
+*/

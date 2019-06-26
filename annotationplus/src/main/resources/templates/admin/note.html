@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:utext="${noteName}"></title>
+    <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script  th:src="@{/js/test.js}"></script>
+    <script  th:src="@{/js/jscolor.js}"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style2.css}"/>
+    <!-- <script src="https://use.fontawesome.com/ae8d15b2f5.js"></script> -->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> -->
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>-->
+
+</head>
+<body>
+<span id="toggleComments"><i class="fas fa-comments fa-2x" style="color: #fff;"></i></span>
+<span id="toggleAnnotations"><i class="fas fa-archive fa-2x" style="color: black;"></i></span>
+
+    <div class="row">
+         <div class="col-xs-offset 1 col-xs-11 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
+             <div id="colors" style="background-color:gray; border:1px solid black; width:92px; height:60px; text-align:center">
+                 <span style="background-color:#FF0000" class="colors"></span>
+                 <span style="background-color:#1000FF" class="colors"></span>
+                 <span style="background-color:#04FF00" class="colors"></span>
+                 <span style="background-color:#FF8300" class="colors"></span>
+                 <span style="background-color:#FFE500" class="colors"></span>
+                 <span style="background-color:#00EDFF" class="colors"></span>
+             </div>
+             <div class="btn-toolbar" role="toolbar">
+                 <div class="btn-group btn-group-justified" role="group">
+                     <div class="btn-group" role="group">
+                         <button id="highlighter" data-toggle="tooltip" title="Annotate using highlighter" class="btn btn-primary buttonTooltip" data-original-title="Password Reset"><i class="fa fa-highlighter fa-2x" aria-hidden="true"></i></button>
+                     </div>
+                     <div class="btn-group" role="group">
+                         <button id="desact" data-toggle="tooltip" title="All changes saved" class="btn btn-primary buttonTooltip" data-original-title="Deactivate"><i class="fa fa-check-circle fa-2x" aria-hidden="true"></i></button>
+                     </div>
+                     <div class="btn-group" role="group">
+                         <button id="react" onclick="location.href='/feedback';" data-toggle="tooltip" title="Feedback and report problems" class="btn btn-primary buttonTooltip" data-original-title="Activate"><i class="fa fa-bullhorn fa-2x" aria-hidden="true"></i></button>
+                     </div>
+                     <div class="btn-group" role="group">
+                         <button id="delete66" onclick="location.href='/logout';" data-toggle="tooltip" title="Click to sign out" class="btn btn-warning buttonTooltip" data-original-title="Delete"><i class="fa fa-user fa-2x" aria-hidden="true"></i></button>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+ <div class="container" id="createCategoryContainer">
+     <form id="contact">
+         <span id="cancelCategory" style=""><i class="fa fa-times fa-2x" style="color: black; float: right; margin-top: -16px;"></i></span>
+         <h3>Create a new annotation category</h3>
+         <span id="createCategoryErrorMessage"></span>
+         <fieldset>
+             <input placeholder="Category Name" type="text" id="categoryNameField" tabindex="1" required autofocus>
+         </fieldset>
+         <fieldset>
+             <button name="Create" type="button" id="createCategory" disabled>Create</button>
+         </fieldset>
+     </form>
+ </div>
+
+
+ <div id="sidebar-wrapper">
+     <span class="pull-right" id="slide-submenu" style="margin-right:;"><i class="fa fa-times fa-2x" style="margin-right: 10px;margin-top: 5px;"></i></span>
+    <nav id="spy">
+        <ul class="sidebar-nav nav" id="commentContainer" style="display: none">
+            <li class="sidebar-brand">
+                <a><span class="fa fa-comment">Comments</span></a>
+            </li>
+            <li>
+                <div id="commentsMessage" class="messages" style="text-align: center;">Please click on a annotation !</div>
+            </li>
+        </ul>
+        <ul class="sidebar-nav nav" id="categoriesContainer">
+            <li class="sidebar-brand">
+                <a><span class="fa fa-list">Categories <button id="newCategory" class="btn btn-primary">New</button></span></a>
+            </li>
+            <li>
+                <div id="categoriesMessage" class="messages" style="text-align: center;"></div>
+            </li>
+        </ul>
+        <ul class="sidebar-nav nav" id="annotationsContainer">
+            <li class="sidebar-brand">
+                <a><span class="fa fa-archive">Annotations</span></a>
+            </li>
+            <li>
+                <div id="annotationsMessage" class="messages" style="text-align: center; ">Please select a category</div>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div id="content" th:utext="${noteContent}" >
+</div>
+<!--
+<div id="toolbar-options" class="hidden" >
+    <a href="#" id="red" ><i class="fa fa-square" id="red2" style="color:red;" ></i></a>
+    <a href="#" id="blue" ><i class="fa fa-square" id="blue2" style="color:blue;" ></i></a>
+    <a href="#" id="yellow" ><i class="fa fa-square" id="yellow2" style="color:yellow;" ></i></a>
+    <a href="#" id="green" ><i class="fa fa-square" id="green2" style="color:green;" ></i></a>
+    <a href="#" id="pink" ><i class="fa fa-square" id="pink2" style="color:pink;" ></i></a>
+    <a href="#" id="orange" ><i class="fa fa-square" id="orange2" style="color:orange;" ></i></a>
+    <a href="#" id="delete" ><i class="fa fa-trash" id="delete2"></i></a>
+</div>
+<div id="cal1">&nbsp;</div>
+<div id="cal2">&nbsp;</div>
+
+<div id= "tools">
+    <div class="btn-toolbar btn-toolbar-primary" id="expand">
+        <i class="fa fa-eye-dropper" ></i>
+    </div>
+    <div class="btn-toolbar btn-toolbar-primary" id="save" >
+        <i class="fa fa-save" ></i>
+    </div>
+    <div class="btn-toolbar btn-toolbar-primary" >
+        <i class="fa fa-comment" ></i>
+    </div>
+    <div class="btn-toolbar btn-toolbar-primary" id="deldsdte2" >
+        <i class="fa fa-trash" id="deldsdete" ></i>
+    </div>
+</div>-->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>No Text Is Selected...</p>
+    </div>
+
+</div>
+<form style="background-color:#E6E6FA" id="changeColorForm">
+    <div id="formBody">
+    <input id="jscolor" class="jscolor">
+    <br><br><br><br><br><br><br><br>
+    </div>
+    <a id = "update" style="float: left" class="myButton">Update</a>
+    <a id = "cancel" style="float: right" class="myButton">Cancel</a>
+</form>
+<div id="info"><span id = "username"></span><span id = "pencil"><i class="fa fa-pen-square fa-2x" aria-hidden="true"></i></span><span id ="comment"><i class="fa fa-comment fa-2x" aria-hidden="true"></i></span><span id ="deleteAnnotation"><i class="fa fa-trash fa-2x" aria-hidden="true"></i></span></div>
+<div id = "commentBlock">
+<textarea placeholder="Type your comment here..." id = "commentArea" rows="5" cols="30">
+</textarea>
+    <div>
+        <a id = "saveComment" style="float: left" class="myButton">Update</a>
+        <a id= "cancelComment" style="float: right" class="myButton">Cancel</a>
+    </div>
+</div>
+</textarea>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package com.nbu.annotationplus.controller;
 
-import com.nbu.annotationplus.model.Category;
+import com.nbu.annotationplus.dto.DtoCategory;
 import com.nbu.annotationplus.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/category")
-    public List<Category> getAllCategories() {
+    public List<DtoCategory> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
     @PostMapping("/category")
-    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
-        return categoryService.createCategory(category);
+    public ResponseEntity<DtoCategory> createCategory(@Valid @RequestBody DtoCategory dtoCategory) {
+        return categoryService.createCategory(dtoCategory);
     }
 
     @DeleteMapping("/category/{id}")
@@ -32,13 +32,13 @@ public class CategoryController {
     }
 
     @PutMapping("/category/{id}")
-    public Category updateCategory(@PathVariable(value = "id") Long categoryId,
-                           @Valid @RequestBody Category categoryDetails) {
-        return categoryService.updateCategory(categoryId,categoryDetails);
+    public DtoCategory updateCategory(@PathVariable(value = "id") Long categoryId,
+                           @Valid @RequestBody DtoCategory dtoCategory) {
+        return categoryService.updateCategory(categoryId,dtoCategory);
     }
 
     @GetMapping("/category/{id}")
-    public Category getCategoryById(@PathVariable(value = "id") Long categoryId) {
+    public DtoCategory getCategoryById(@PathVariable(value = "id") Long categoryId) {
         return categoryService.getCategoryById(categoryId);
     }
 }

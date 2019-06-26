@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
 
-import com.nbu.annotationplus.model.User;
-import com.nbu.annotationplus.repository.UserRepository;
+import com.nbu.annotationplus.persistence.entity.User;
+import com.nbu.annotationplus.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
