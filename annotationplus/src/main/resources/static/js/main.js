@@ -1,210 +1,296 @@
 $(document).ready(function() {
-    function convertUTCDateToLocalDate(date) {
-        var newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+    var BreakException = {};
 
-        var offset = date.getTimezoneOffset() / 60;
-        var hours = date.getHours();
-
-        newDate.setHours(hours - offset);
-
-        return newDate;
-    }
-
+    var editSourceButton = $('#editSource');
+    var deleteSourceButton = $('#deleteSourceModal');
+    var openSourceButton = $('#openSource');
+    var newSourceButton = $('#newSource');
+    var editCategoryButton = $("#editCategory");
+    var deleteCategoryButton = $("#deleteCategoryModal");
+    var delCategoryButton = $("#deleteCategory");
+    var delSourceButton = $("#deleteSource");
+    var uploadFileButton = $("#uploadFileButton");
+    var inputFileField = $("#exampleFormControlFile1");
+    var formContainer = $(".formContainer");
+    var file = '';
+    var extension= '';
+    var allowedExtensions = ["pdf", "docx", "doc", "txt"];
     var noteId = '';
     var categoryId = '';
+    var categoryName = '';
+    var noteName = '';
+    var responseJson = '';
 
-    // specify the columns
-    var columnDefs = [
-        {headerName: "Category Name", field: "name", checkboxSelection: true, sortable: true, sort: 'asc', width:1000 },
-        {headerName: "Id", field: "id", hide:true }
-    ];
 
-    // let the grid know which columns to use
-    var gridOptions = {
-        columnDefs: columnDefs,
-        rowSelection: 'single',
-        onSelectionChanged: onCategorySelection
-    };
+    function animateSuccess(message){
+        $('.notify')
+            .removeClass("do-show");
+        setTimeout(
+            function()
+            {
+                $('.notify').addClass("do-show").text(message)
+            }, 1);
+    }
 
-    function onCategorySelection() {
-        var selectedCategoryRows = gridOptions.api.getSelectedRows();
-        categoryId = '';
-        selectedCategoryRows.forEach( function(selectedRow) {
-            categoryId += selectedRow.id;
-        });
-        console.log(categoryId);
+
+    function selectRowByValue(value) {
         var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', '/api/notes/category=' + categoryId);
+        httpRequest.open('GET', '/api/category');
         httpRequest.send();
-        httpRequest.onreadystatechange = function() {
+        httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
-                gridOptions2.api.setRowData(httpResult);
+                categoryGridOptions.api.setRowData(httpResult);
+                try{
+                    categoryGridOptions.api.forEachNode(function (selectedNode) {
+                        if (selectedNode.data.name === value) {
+                            selectedNode.setSelected(true);
+                            throw BreakException;
+                        }
+                    });
+                } catch (e) {
+                    if (e !== BreakException){throw e;}
+                }
             }
         };
     }
 
-    // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector('#myGrid');
+    function handleEmptyCategoryGrid(){
+        categoryGridOptions.api.sizeColumnsToFit();
+        var selectedCategoryRows = categoryGridOptions.api.getSelectedRows();
+        var length = selectedCategoryRows.length;
+        if(length < 1){
+            newSourceButton.prop('disabled', true);
+            $('#editCategory').prop('disabled', true);
+            $('#deleteCategoryModal').prop('disabled', true);
+            editSourceButton.prop('disabled', true);
+            openSourceButton.prop('disabled', true);
+            deleteSourceButton.prop('disabled', true);
+            sourceGridOptions.api.setRowData([]);
+        }
+    }
 
-    // create the grid passing in the div to use together with the columns & data we want to use
-    new agGrid.Grid(eGridDiv, gridOptions);
+    function convertUTCDateToLocalDate(date) {
+        var newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+        var offset = date.getTimezoneOffset() / 60;
+        var hours = date.getHours();
+        newDate.setHours(hours - offset);
+        return newDate;
+    }
 
-    fetch('/api/category').then(function(response) {
-        return response.json();
-    }).then(function(data) {
-        gridOptions.api.setRowData(data);
-    })
+    var categoryColumnDefs = [
+        {headerName: "Category Name", field: "name", checkboxSelection: true, sortable: true, sort: 'asc'},
+        {headerName: "Id", field: "id", hide: true}
+    ];
+
+    var categoryGridOptions = {
+        defaultColDef: {
+            resizable: true,
+            filter: true
+        },
+        columnDefs: categoryColumnDefs,
+        rowSelection: 'single',
+        paginationAutoPageSize:true,
+        pagination: true,
+        onSelectionChanged: onCategorySelection,
+        onFirstDataRendered: onFirstDataRendered,
+        onGridReady:handleEmptyCategoryGrid
+
+    };
+
+    function onCategorySelection() {
+        var selectedCategoryRows = categoryGridOptions.api.getSelectedRows();
+        var length = selectedCategoryRows.length;
+        if (length > 0) {
+            newSourceButton.prop('disabled', false);
+            categoryId = '';
+            categoryName = '';
+            selectedCategoryRows.forEach(function (selectedRow) {
+            categoryId += selectedRow.id;
+            categoryName += selectedRow.name;
+        });
+            $('#editCategory').prop('disabled', false);
+            $('#deleteCategoryModal').prop('disabled', false);
+            populateSourceGridByCategoryId();
+    } else {
+            handleEmptyCategoryGrid();
+        }
+    }
+
+    var categoryGridDiv = document.querySelector('#categoryGrid');
+
+    new agGrid.Grid(categoryGridDiv, categoryGridOptions);
+
+    function populateCategoryGrid(){
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', '/api/category');
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                var httpResult = JSON.parse(httpRequest.responseText);
+                if(httpResult.length < 1){
+                    $("#noCategoryInfo").css("display","block");
+                } else {
+                    $("#noCategoryInfo").css("display","none");
+                }
+                categoryGridOptions.api.setRowData(httpResult);
+                //categoryGridOptions.api.selectIndex(0, false, false);
+                categoryGridOptions.api.forEachNode(function (selectedNode) {
+                    selectedNode.rowIndex ? 0 : selectedNode.setSelected(true);
+                });
+                handleEmptyCategoryGrid();
+            }
+        };
+    }
+    populateCategoryGrid();
 
     function dateParser(params) {
-        if(params.value != null) {
+        if (params.value != null) {
             var date = convertUTCDateToLocalDate(new Date(params.value));
             return date.toLocaleString();
-        }else {
+        } else {
             return '';
         }
     }
 
-    // specify the columns
-    var columnDefs2 = [
+    var sourceColumnDefs = [
         {headerName: "Source Name", field: "title", checkboxSelection: true, sortable: true,},
-        {headerName: "Date Created", field: "createdTs", sortable: true, cellRenderer:dateParser},
-        {headerName: "Last Updated", field: "updatedTs", sortable: true, sort: 'desc', cellRenderer:dateParser},
-        {headerName: "Id", field: "id", hide:true}
+        {headerName: "Date Created", field: "createdTs", sortable: true, cellRenderer: dateParser},
+        {headerName: "Last Updated", field: "updatedTs", sortable: true, sort: 'desc', cellRenderer: dateParser},
+        {headerName: "Id", field: "id", hide: true}
     ];
 
-    // let the grid know which columns to use
-    var gridOptions2 = {
+    var sourceGridOptions = {
         defaultColDef: {
-            resizable: true
+            resizable: true,
+            filter:true
         },
-        columnDefs: columnDefs2,
+        columnDefs: sourceColumnDefs,
         rowSelection: 'single',
+        paginationAutoPageSize:true,
+        pagination: true,
         onSelectionChanged: onSelectionChanged,
-        onFirstDataRendered(params) {
-            params.api.sizeColumnsToFit();
-        }
+        onFirstDataRendered: onFirstDataRendered,
+        onGridReady:onFirstDataRendered
     };
 
-   /* function sizeToFit() {
-        gridOptions.api.sizeColumnsToFit();
-    }*/
-
-    function onSelectionChanged() {
-        var selectedRows = gridOptions2.api.getSelectedRows();
-        noteId = '';
-        selectedRows.forEach( function(selectedRow) {
-            noteId += selectedRow.id;
-        });
-        console.log(noteId);
+    function onFirstDataRendered(params) {
+        params.api.sizeColumnsToFit();
     }
 
-    // lookup the container we want the Grid to use
-    var eGridDiv2 = document.querySelector('#myGrid2');
+    function onSelectionChanged() {
+        var selectedRows = sourceGridOptions.api.getSelectedRows();
+        var length = selectedRows.length;
+        if(length > 0) {
+            editSourceButton.prop('disabled', false);
+            openSourceButton.prop('disabled', false);
+            deleteSourceButton.prop('disabled', false);
+            noteId = '';
+            noteName = '';
+            selectedRows.forEach(function (selectedRow) {
+                noteId += selectedRow.id;
+                noteName += selectedRow.title;
+            });
+        } else {
+            editSourceButton.prop('disabled', true);
+            openSourceButton.prop('disabled', true);
+            deleteSourceButton.prop('disabled', true);
+        }
+    }
 
-    // create the grid passing in the div to use together with the columns & data we want to use
-    new agGrid.Grid(eGridDiv2, gridOptions2);
+    var sourceGridDiv = document.querySelector('#sourceGrid');
 
-    /* fetch('/api/notes').then(function(response) {
-         return response.json();
-     }).then(function(data) {
-         gridOptions2.api.setRowData(data);
-     })*/
+    new agGrid.Grid(sourceGridDiv, sourceGridOptions);
 
+function populateSourceGridByCategoryId(){
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '/api/notes');
+    httpRequest.open('GET', '/api/notes/category=' + categoryId);
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions2.api.setRowData(httpResult);
+            sourceGridOptions.api.setRowData(httpResult);
         }
     };
+}
 
-
-
-
-
-
-
-    $("#newSource").click(function() {
+    newSourceButton.click(function() {
+        showSourceFile();
+        $('#sourceType').prop('selectedIndex',0);
         $("#fileUploadContainer").css("display","block");
+
     });
 
     $("#newCategory").click(function() {
         $("#createCategoryContainer").css("display","block");
+        $("#createCategory").prop("disabled",true)
     });
 
-    $("#deleteCategoryModal").click(function() {
+    deleteCategoryButton.click(function() {
         $("#deleteCategoryConfirmationContainer").css("display","block");
     });
 
-    $("#editSource").click(function() {
-        $.ajax({
-                type: "GET",
-                url: "/api/notes/" + noteId,
-                success: function (result) {
-                    $("#updateSourceContainer").css("display","block");
-                    $("#sourceName").val(result.title);
-                }
-            });
+    deleteSourceButton.click(function() {
+        $("#deleteSourceConfirmationContainer").css("display","block");
     });
 
-    $("#editCategory").click(function() {
-        $.ajax({
-            type: "GET",
-            url: "/api/category/" + categoryId,
-            success: function (result) {
-                $("#updateCategoryContainer").css("display","block");
-                $("#categoryName").val(result.name);
-            }
-        });
+    $(".closeDialog").click(function() {
+        formContainer.css("display","none");
     });
 
-    $("#deleteCategory").click(function() {
+    editSourceButton.click(function() {
+        $("#updateSourceContainer").css("display","block");
+        $("#sourceName").val(noteName);
+        $("#updateSourceName").prop('disabled', true);
+    });
+
+    editCategoryButton.click(function() {
+        $("#updateCategoryContainer").css("display","block");
+        $("#categoryName").val(categoryName);
+        $("#updateCategoryName").prop('disabled', true);
+    });
+
+    delCategoryButton.click(function() {
+        $(this).prop("disabled",true);
         $.ajax({
             type: "DELETE",
             url: "/api/category/" + categoryId,
-            success: function (result) {
-                var httpRequest = new XMLHttpRequest();
-                httpRequest.open('GET', '/api/category');
-                httpRequest.send();
-                httpRequest.onreadystatechange = function() {
-                    if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                        var httpResult = JSON.parse(httpRequest.responseText);
-                        gridOptions.api.setRowData(httpResult);
-                    }
-                };
-                $("#deleteCategoryConfirmationContainer").css("display","none");
+            success: function () {
+                formContainer.css("display","none");
+                animateSuccess("Category: " + "'" + categoryName + "'" + " deleted successfully");
+                populateCategoryGrid();
+                delCategoryButton.prop("disabled",false);
             }
         });
     });
 
-    $("#deleteSource").click(function() {
+    delSourceButton.click(function() {
+        $(this).prop("disabled",true);
         $.ajax({
             type: "DELETE",
             url: "/api/notes/" + noteId,
             success: function () {
-                var httpRequest = new XMLHttpRequest();
-                httpRequest.open('GET', '/api/notes/category=' + categoryId);
-                httpRequest.send();
-                httpRequest.onreadystatechange = function() {
-                    if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                        var httpResult = JSON.parse(httpRequest.responseText);
-                        gridOptions2.api.setRowData(httpResult);
-                    }
-                };
+                formContainer.css("display","none");
+                animateSuccess("Source: " + "'" + noteName + "'" + " deleted successfully");
+                populateSourceGridByCategoryId();
+                editSourceButton.prop('disabled', true);
+                openSourceButton.prop('disabled', true);
+                deleteSourceButton.prop('disabled', true);
+                delSourceButton.prop("disabled",false);
             }
         });
     });
 
-    $("#openSource").click(function() {
+    openSourceButton.click(function() {
+        $(this).prop('disabled', true);
         window.open("/admin/note?id=" + noteId, "_self")
     });
 
     $("#createCategory").click(function() {
+        $(this).prop("disabled",true);
+        $(".categoryErrorMessage").text("");
         var dataObject = {
-            "name":$("#categoryNameCreateValue").val()
+            "name":$("#categoryNameCreateValue").val().trim()
         };
         $.ajax({
             type: "POST",
@@ -213,26 +299,29 @@ $(document).ready(function() {
             contentType: "application/json",
             dataType: "application/json",
             statusCode: {
-                201: function () {
-                    var httpRequest = new XMLHttpRequest();
-                    httpRequest.open('GET', '/api/category');
-                    httpRequest.send();
-                    httpRequest.onreadystatechange = function() {
-                        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                            var httpResult = JSON.parse(httpRequest.responseText);
-                            gridOptions.api.setRowData(httpResult);
-                        }
-                    };
-                    $("#createCategoryContainer").css("display","none");
+                201: function (e) {
+                    $("#noCategoryInfo").css("display","none");
+                    responseJson = $.parseJSON(e.responseText);
+                    formContainer.css("display","none");
+                    animateSuccess("Category: " + "'" + responseJson.name + "'" + " created successfully");
+                    $("#createCategory").prop("disabled",false);
+                    $("#categoryNameCreateValue").val("");
+                    selectRowByValue(responseJson.name);
+                },
+                400: function (e) {
+                    responseJson = $.parseJSON(e.responseText);
+                    $(".categoryErrorMessage").text(responseJson.message);
+                    $("#createCategory").prop("disabled",false);
                 }
             }
         });
     });
 
-
     $("#updateCategoryName").click(function() {
+        $(this).prop("disabled",true);
+        $(".categoryErrorMessage").text("");
         var dataObject = {
-            "name":$("#categoryName").val()
+            "name":$("#categoryName").val().trim()
         };
         $.ajax({
             type: "PUT",
@@ -241,26 +330,24 @@ $(document).ready(function() {
             contentType: "application/json",
             dataType: "application/json",
             statusCode: {
-                200: function () {
-                    var httpRequest = new XMLHttpRequest();
-                    httpRequest.open('GET', '/api/category');
-                    httpRequest.send();
-                    httpRequest.onreadystatechange = function() {
-                        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                            var httpResult = JSON.parse(httpRequest.responseText);
-                            gridOptions.api.setRowData(httpResult);
-                        }
-                    };
-                    $("#updateCategoryContainer").css("display","none");
+                200: function (e) {
+                    responseJson = $.parseJSON(e.responseText);
+                    formContainer.css("display","none");
+                    animateSuccess("Category: " + "'" + responseJson.name + "'" + " updated successfully");
+                    $("#updateCategoryName").prop("disabled",false);
+                    selectRowByValue(responseJson.name);
+                },
+                400: function (e) {
+                    responseJson = $.parseJSON(e.responseText);
+                    $(".categoryErrorMessage").text(responseJson.message);
+                    $("#updateCategoryName").prop("disabled",false);
                 }
             }
         });
     });
 
-
-
-
     $("#updateSourceName").click(function() {
+        $(this).prop("disabled",true);
         var dataObject = {
             "title":$("#sourceName").val()
         };
@@ -272,35 +359,45 @@ $(document).ready(function() {
             dataType: "application/json",
             statusCode: {
                 200: function () {
-                    var httpRequest = new XMLHttpRequest();
-                    httpRequest.open('GET', '/api/notes/category=' + categoryId);
-                    httpRequest.send();
-                    httpRequest.onreadystatechange = function() {
-                        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                            var httpResult = JSON.parse(httpRequest.responseText);
-                            gridOptions2.api.setRowData(httpResult);
-                        }
-                    };
-                    $("#updateSourceContainer").css("display","none");
+                    formContainer.css("display","none");
+                    $("#updateSourceName").prop("disabled",false);
+                    animateSuccess("Source: " + "'" + noteName + "'" + " updated successfully");
+                    populateSourceGridByCategoryId();
                 }
             }
         });
     });
 
-
-
-
     $(".close").click(function() {
-        $(".formContainer").css("display","none");
+        formContainer.css("display","none");
+        $("#categoryNameCreateValue").val("");
+        inputFileField.val("");
+        uploadFileButton.prop("disabled", true);
+        $(".errorMessages").text("");
     });
 
-    $("#uploadFileButton").click(function() {
-        var file  = $("#exampleFormControlFile1")[0].files[0];
+
+    inputFileField.on("input" ,function () {
+        file = $(this)[0].files[0];
+        extension = file.name.split('.').pop().toLowerCase();
+        var isFileValid = (allowedExtensions.indexOf(extension) > -1);
+        if($(this)[0].files.length < 1){
+            uploadFileButton.prop("disabled", true);
+        } else {
+            if(isFileValid){
+                uploadFileButton.prop("disabled", false);
+            } else {
+                uploadFileButton.prop("disabled", true);
+            }
+        }
+    });
+
+    uploadFileButton.click(function() {
+        file  = (inputFileField)[0].files[0];
         var fileName = file.name;
 
-        var extension = file.name.split('.').pop().toLowerCase();
+        extension = file.name.split('.').pop().toLowerCase();
         console.log(extension);
-        var allowedExtensions = ["pdf", "docx", "doc", "txt"];
         var isFileValid = (allowedExtensions.indexOf(extension) > -1);
 
         if((isFileValid)){
@@ -345,6 +442,107 @@ $(document).ready(function() {
             }, 100);
         } else {
             console.log("Invalid File Format")
+        }
+    });
+
+    $('#categoryNameCreateValue').on('input', function() {
+        if($(this).val().trim() == "" ){
+            $(".categoryErrorMessage").text("Name cannot be empty");
+            $("#createCategory").prop('disabled', true);
+        }else if(/[^a-zA-Z ]/.test($(this).val())){
+            $(".categoryErrorMessage").text("Name cannot contain numbers and special characters");
+            $("#createCategory").prop('disabled', true);
+        } else if($(this).val().trim().length > 50){
+            $(".categoryErrorMessage").text("Name cannot be longer than 50 characters");
+            $("#createCategory").prop('disabled', true);
+        } else if($(this).val().trim() != "" && !/[^a-zA-Z ]/.test($(this).val()) && $(this).val().trim().length < 51) {
+            $(".categoryErrorMessage").text("");
+            $("#createCategory").prop('disabled', false);
+        }
+    });
+
+    $('#categoryName').on('input', function() {
+        if($(this).val().trim() == "" ){
+            $(".categoryErrorMessage").text("Name cannot be empty");
+            $("#updateCategoryName").prop('disabled', true);
+        } else if($(this).val().trim() === categoryName){
+            $(".categoryErrorMessage").text("");
+            $("#updateCategoryName").prop('disabled', true);
+        } else if(/[^a-zA-Z ]/.test($(this).val())){
+            $(".categoryErrorMessage").text("Name cannot contain numbers and special characters");
+            $("#updateCategoryName").prop('disabled', true);
+        } else if($(this).val().trim().length > 50){
+            $(".categoryErrorMessage").text("Name cannot be longer than 50 characters");
+            $("#updateCategoryName").prop('disabled', true);
+        } else if($(this).val().trim() != "" && !/[^a-zA-Z ]/.test($(this).val()) && $(this).val().trim().length < 51 && $(this).val() !== categoryName) {
+            $(".categoryErrorMessage").text("");
+            $("#updateCategoryName").prop('disabled', false);
+        }
+    });
+
+    $('#sourceName').on('input', function() {
+        if($(this).val().trim() == "" ){
+            $("#sourceErrorMessage").text("Name cannot be empty");
+            $("#updateSourceName").prop('disabled', true);
+        } else if($(this).val().trim() === noteName) {
+            $(".categoryErrorMessage").text("");
+            $("#updateSourceName").prop('disabled', true);
+        } else if($(this).val().trim().length > 50){
+            $("#sourceErrorMessage").text("Name cannot be longer than 50 characters");
+            $("#updateSourceName").prop('disabled', true);
+        } else if($(this).val().trim() != "" && $(this).val().trim().length < 51 && $(this).val() !== noteName) {
+            $("#sourceErrorMessage").text("");
+            $("#updateSourceName").prop('disabled', false);
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*  $('.button').on('click', function(event){
+        var type = "top-left"
+        var status = "success"
+
+        $('.button').removeClass('is-active');
+        $(this).addClass('is-active');
+
+        $('.notify')
+            .removeClass()
+            .attr('data-notification-status', status)
+            .addClass(type + ' notify')
+            .addClass('do-show');
+
+        event.preventDefault();
+    })*/
+
+  function showSourceUrl(){
+      $("#sourceFileContainer").css("display","none");
+      $("#sourceUrlContainer").css("display","block");
+  }
+
+  function showSourceFile(){
+        $("#sourceUrlContainer").css("display","none");
+        $("#sourceFileContainer").css("display","block");
+  }
+
+
+    $( "#sourceType" ).change(function() {
+        if($(this).val() === "document"){
+            showSourceFile();
+        }if($(this).val() === "website"){
+            showSourceUrl();
         }
     });
 });
