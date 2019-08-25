@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByAnnotationUidAndUserIdOrderByCreatedTsDesc(String annotationUid, Long userId);
-    void deleteByAnnotationUid(String annotationUid);
+    void deleteByAnnotationUidAndUserId(String annotationUid, Long userId);
     void deleteByIdAndUserId(Long id, Long userId);
     Comment findByIdAndUserId(Long id, Long userId);
 }

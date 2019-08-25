@@ -91,6 +91,7 @@ public class LoginController {
             modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("dtoUser", new DtoUser());
             modelAndView.setViewName("login");
+            //modelAndView.l
         }catch (RuntimeException e){
            // modelAndView.addObject("error", e.getMessage());
             bindingResult//.reject("error.user",

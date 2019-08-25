@@ -1,7 +1,6 @@
 package com.nbu.annotationplus.controller;
 
 import com.nbu.annotationplus.dto.DtoComment;
-import com.nbu.annotationplus.dto.DtoNote;
 import com.nbu.annotationplus.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class CommentController {
     }
 
     @GetMapping("/comment/{id}")
-    public List<DtoComment> getAllComments(@PathVariable(value = "id") String annotationId) {
-        return commentService.getAllComments(annotationId);
+    public List<DtoComment> getAllComments(@PathVariable(value = "id") String annotationUid) {
+        return commentService.getAllComments(annotationUid);
     }
 }

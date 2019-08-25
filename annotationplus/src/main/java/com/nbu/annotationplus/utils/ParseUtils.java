@@ -15,10 +15,12 @@ public class ParseUtils {
     private static final Pattern VALID_NAME_REGEX =
             Pattern.compile("[^a-zA-Z ]", Pattern.CASE_INSENSITIVE);
    // private static final Pattern VALID_PASSWORD_REGEX = Pattern.compile("^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$",Pattern.);
+    private static final Pattern UUID4_REGEX =
+           Pattern.compile("/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/");
 
     public static boolean validateTitle(String title){
         if (title == null){
-            return false;
+            return true;
         }
         Matcher matcher = VALID_NAME_REGEX.matcher(title);
         return (matcher.find() || title.length() < NAME_MIN_LENGTH || title.length() > NAME_MAX_LENGTH || title.trim().equals(""));
@@ -38,5 +40,10 @@ public class ParseUtils {
 
     public static boolean validatePassword(String password){
         return (password == null || password.length() < NAME_MIN_LENGTH || password.length() > NAME_MAX_LENGTH || password.trim().equals(""));
+    }
+
+    public static boolean validateUuid4(String uuid4){
+        Matcher matcher = UUID4_REGEX.matcher(uuid4);
+        return matcher.find();
     }
 }

@@ -22,8 +22,8 @@ public class NoteController {
     }
 
     @GetMapping("/notes/{id}")
-    public DtoNote getNoteById(@PathVariable(value = "id") Long noteId) {
-        return noteService.getNoteById(noteId);
+    public DtoNote getNoteById(@PathVariable(value = "id") Long id) {
+        return noteService.getNoteById(id);
     }
 
     @GetMapping("/notes")
@@ -39,14 +39,14 @@ public class NoteController {
     }
 
     @PutMapping("/notes/{id}")
-    public DtoNote updateNote(@PathVariable(value = "id") Long noteId,
+    public DtoNote updateNote(@PathVariable(value = "id") Long id,
                            @Valid @RequestBody DtoNote dtoNote) {
-        return noteService.updateNote(noteId,dtoNote);
+        return noteService.updateNote(id,dtoNote);
     }
 
     @DeleteMapping("/notes/{id}")
-    public ResponseEntity<?> deleteNote(@PathVariable(value = "id") Long noteId) {
-        return noteService.deleteNote(noteId);
+    public ResponseEntity<?> deleteNote(@PathVariable(value = "id") Long id) {
+        return noteService.deleteNote(id);
     }
 
 }

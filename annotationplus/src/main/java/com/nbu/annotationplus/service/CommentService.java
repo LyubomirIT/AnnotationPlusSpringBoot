@@ -1,5 +1,6 @@
 package com.nbu.annotationplus.service;
 
+import com.nbu.annotationplus.dto.DtoAnnotation;
 import com.nbu.annotationplus.dto.DtoComment;
 import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
@@ -51,18 +52,14 @@ public class CommentService {
     public ResponseEntity<DtoComment> createComment(DtoComment dtoComment){
         String userName = userService.getCurrentUser().getEmail();
         Long currentUserId = userService.getUserId();
-        if(dtoComment.getNoteId() == null){
-            throw new InvalidInputParamsException("Note Id is required");
-        }
-        noteService.getNoteById(dtoComment.getNoteId());
-        if(dtoComment.getAnnotationUid() == null){
+        if(dtoComment.getAnnotationUid() == null ||dtoComment.getAnnotationUid().trim().equals("")){
             throw new InvalidInputParamsException("Annotation UID is required");
         }
-        annotationService.getAnnotationByAnnotationId(dtoComment.getAnnotationUid());
+        DtoAnnotation dtoAnnotation = annotationService.getAnnotationByUid(dtoComment.getAnnotationUid());
         Comment comment = new Comment();
         comment.setUserId(currentUserId);
         comment.setUserName(userName);
-        comment.setNoteId(dtoComment.getNoteId());
+        comment.setNoteId(dtoAnnotation.getNoteId());
         if(dtoComment.getComment() == null || dtoComment.getComment().trim().equals("")){
             throw new InvalidInputParamsException("Comment cannot be empty");
         }

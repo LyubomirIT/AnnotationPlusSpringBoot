@@ -82,12 +82,13 @@ public class AnnotationCategoryService {
     @Transactional
     public ResponseEntity<DtoAnnotationCategory> createAnnotationCategory(DtoAnnotationCategory dtoAnnotationCategory){
         Long currentUserId = userService.getUserId();
+        if(dtoAnnotationCategory.getNoteId() == null){
+            throw new InvalidInputParamsException("Note Id is required");
+        }
         if(noteRepository.findByIdAndUserId(dtoAnnotationCategory.getNoteId(),currentUserId) == null){
             throw new ResourceNotFoundException("Note", "id", dtoAnnotationCategory.getNoteId());
         }
-        if (!ParseUtils.validateTitle(dtoAnnotationCategory.getName())){
-            throw new InvalidInputParamsException("Invalid Name");
-        }
+        validateAnnotationCategoryName(dtoAnnotationCategory.getName());
         if (!annotationCategoryRepository.findByNameAndNoteIdAndUserId(dtoAnnotationCategory.getName(),dtoAnnotationCategory.getNoteId(),currentUserId).isPresent()) {
             AnnotationCategory annotationCategory = new AnnotationCategory();
             annotationCategory.setUserId(currentUserId);
@@ -97,6 +98,13 @@ public class AnnotationCategoryService {
             return new ResponseEntity<DtoAnnotationCategory>(toDtoAnnotationCategory(annotationCategory), HttpStatus.CREATED);
         } else {
             throw new InvalidInputParamsException("Annotation Category with name: " + "'" + dtoAnnotationCategory.getName() + "'" + " already exists.");
+        }
+
+    }
+
+    private void validateAnnotationCategoryName(String annotationCategoryName){
+        if(ParseUtils.validateTitle(annotationCategoryName)){
+            throw new InvalidInputParamsException("Invalid Name");
         }
     }
 }

@@ -21,6 +21,11 @@ $(document).ready(function() {
     var noteName = '';
     var responseJson = '';
 
+    $(document).ajaxSuccess(function() {
+        $( ".log" ).text( "Triggered ajaxSuccess handler." );
+        console.log("pesho");
+    });
+
 
     function animateSuccess(message){
         $('.notify')

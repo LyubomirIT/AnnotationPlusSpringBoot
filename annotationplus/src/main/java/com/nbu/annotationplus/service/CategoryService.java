@@ -47,10 +47,10 @@ public class CategoryService {
     @Transactional
     public ResponseEntity<DtoCategory> createCategory(DtoCategory dtoCategory) {
         Long currentUserId = userService.getUserId();
+        validateCategoryName(dtoCategory.getName());
         if(!categoryRepository.findByNameAndUserId(dtoCategory.getName().trim(),currentUserId).isPresent()){
             Category category = new Category();
             category.setUserId(currentUserId);
-            validateCategory(dtoCategory);
             category.setName(dtoCategory.getName().trim());
             categoryRepository.save(category);
             return new ResponseEntity<DtoCategory>(toDtoCategory(category), HttpStatus.CREATED);
@@ -60,11 +60,11 @@ public class CategoryService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteCategory(Long categoryId) {
+    public ResponseEntity<?> deleteCategory(Long id) {
         Long currentUserId = userService.getUserId();
-        Category category = categoryRepository.findByIdAndUserId(categoryId, currentUserId);
+        Category category = categoryRepository.findByIdAndUserId(id, currentUserId);
         if(category == null){
-            throw new ResourceNotFoundException("Category", "id", categoryId);
+            throw new ResourceNotFoundException("Category", "id",id);
         }
         else{
             categoryRepository.delete(category);
@@ -73,15 +73,15 @@ public class CategoryService {
     }
 
     @Transactional
-    public DtoCategory updateCategory(Long categoryId, DtoCategory dtoCategory) {
+    public DtoCategory updateCategory(Long id, DtoCategory dtoCategory) {
         Long currentUserId = userService.getUserId();
-        Category category = categoryRepository.findByIdAndUserId(categoryId,currentUserId);
+        Category category = categoryRepository.findByIdAndUserId(id,currentUserId);
         if(category == null){
-            throw new ResourceNotFoundException("Category", "id", categoryId);
+            throw new ResourceNotFoundException("Category", "id", id);
         }
         if(dtoCategory.getName() != null && !dtoCategory.getName().trim().equals("")){
             if(!category.getName().equals(dtoCategory.getName().trim())){
-                ParseUtils.validateTitle(dtoCategory.getName().trim());
+                validateCategoryName(dtoCategory.getName());
                 if(categoryRepository.findByNameAndUserId(dtoCategory.getName().trim(),currentUserId).isPresent()){
                     throw new InvalidInputParamsException("Category with name: " + "'" + dtoCategory.getName() + "'" + " already exists.");
                 }
@@ -94,19 +94,19 @@ public class CategoryService {
     }
 
     @Transactional
-    public DtoCategory getCategoryById(Long categoryId) {
+    public DtoCategory getCategory(Long id) {
         Long currentUserId = userService.getUserId();
-        Category category = categoryRepository.findByIdAndUserId(categoryId, currentUserId);
+        Category category = categoryRepository.findByIdAndUserId(id, currentUserId);
         if(category == null){
-            throw new ResourceNotFoundException("Category", "id", categoryId);
+            throw new ResourceNotFoundException("Category", "id", id);
         }
         else{
             return toDtoCategory(category);
         }
     }
 
-    private void validateCategory(DtoCategory dtoCategory){
-        if(ParseUtils.validateTitle(dtoCategory.getName())){
+    private void validateCategoryName(String categoryName){
+        if(ParseUtils.validateTitle(categoryName)){
             throw new InvalidInputParamsException("Invalid Name");
         }
     }

@@ -39,7 +39,8 @@ public class NoteService {
     @Transactional
     public ResponseEntity<DtoNote> createNote(DtoNote dtoNote){
         Long currentUserId = userService.getUserId();
-        validateNote(dtoNote);
+        validateNoteName(dtoNote.getTitle());
+        validateNoteContent(dtoNote.getContent());
         if(dtoNote.getCategory() == null){
             throw new InvalidInputParamsException("Category is required!");
         }
@@ -121,7 +122,7 @@ public class NoteService {
         }
         if(dtoNote.getTitle() != null && !dtoNote.getTitle().trim().equals("")){
             if(!note.getTitle().equals(dtoNote.getTitle().trim())){
-                ParseUtils.validateTitle(dtoNote.getTitle().trim());
+                validateNoteName(dtoNote.getTitle());
                 if(noteRepository.findByTitleAndUserId(dtoNote.getTitle().trim(),currentUserId).isPresent()){
                     throw new InvalidInputParamsException("Note with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
                 }
@@ -148,11 +149,14 @@ public class NoteService {
         return toDtoNote(note);
     }
 
-    private void validateNote(DtoNote dtoNote){
-        if(ParseUtils.validateTitle(dtoNote.getTitle())){
+    private void validateNoteName(String noteName){
+        if(ParseUtils.validateTitle(noteName)){
             throw new InvalidInputParamsException("Invalid Title");
         }
-        if(ParseUtils.validateContent(dtoNote.getContent())){
+    }
+
+    private void validateNoteContent(String noteContent){
+        if(ParseUtils.validateContent(noteContent)){
             throw new InvalidInputParamsException("Invalid Content");
         }
     }
