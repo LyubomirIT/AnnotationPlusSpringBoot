@@ -3,20 +3,14 @@ package com.nbu.annotationplus.service;
 import com.nbu.annotationplus.dto.DtoNote;
 import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
-import com.nbu.annotationplus.exception.UnauthorizedException;
+import com.nbu.annotationplus.persistence.entity.Category;
 import com.nbu.annotationplus.persistence.entity.Note;
-import com.nbu.annotationplus.persistence.entity.User;
-import com.nbu.annotationplus.persistence.repository.CommentRepository;
-import com.nbu.annotationplus.persistence.repository.NoteRepository;
-import com.nbu.annotationplus.persistence.repository.UserRepository;
-import com.nbu.annotationplus.utils.AuthUtils;
+import com.nbu.annotationplus.persistence.repository.*;
 import com.nbu.annotationplus.utils.ParseUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,36 +26,36 @@ public class NoteService {
     private NoteRepository noteRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private CommentRepository commentRepository;
+    private UserService userService;
 
     private DtoNote toDtoNote(Note note) {
         ModelMapper modelMapper = new ModelMapper();
-        DtoNote dtoNote = modelMapper.map(note, DtoNote.class);
-        return dtoNote;
+        return modelMapper.map(note, DtoNote.class);
     }
 
     @Transactional
     public ResponseEntity<DtoNote> createNote(DtoNote dtoNote){
-        //validateUser();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        User currentUser = userRepository.findByEmail(userEmail);
-        Long userId = currentUser.getId();
-        Note note = new Note();
-        note.setUserId(userId);
+        Long currentUserId = userService.getUserId();
         validateNote(dtoNote);
-        categoryService.getCategoryById(dtoNote.getCategoryId());
-        note.setTitle(dtoNote.getTitle().trim());
-        note.setContent(dtoNote.getContent());
-        note.setCategoryId(dtoNote.getCategoryId());
-        Note existingNote = noteRepository.findByTitleAndUserId(note.getTitle().trim(),userId);
-        if(existingNote == null){
+        if(dtoNote.getCategory() == null){
+            throw new InvalidInputParamsException("Category is required!");
+        }
+        if(dtoNote.getCategory().getId() == null){
+            throw new InvalidInputParamsException("Category id is required!");
+        }
+        Category category = categoryRepository.findByIdAndUserId(dtoNote.getCategory().getId(),currentUserId);
+        if(category == null){
+            throw new ResourceNotFoundException("Category", "id", dtoNote.getCategory().getId());
+        }
+        if(!noteRepository.findByTitleAndUserId(dtoNote.getTitle().trim(),currentUserId).isPresent()){
+            Note note = new Note();
+            note.setUserId(currentUserId);
+            note.setTitle(dtoNote.getTitle().trim());
+            note.setContent(dtoNote.getContent());
+            note.setCategory(category);
             noteRepository.save(note);
             return new ResponseEntity<DtoNote>(toDtoNote(note), HttpStatus.CREATED);
         }else{
@@ -71,29 +65,22 @@ public class NoteService {
 
     @Transactional
     public DtoNote getNoteById(Long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        User currentUser = userRepository.findByEmail(userEmail);
-        Long userId = currentUser.getId();
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Note", "id", id));
-        Long noteUserId = note.getUserId();
-        if(userId.equals(noteUserId)){
-            return toDtoNote(note);
-        }else{
+        Long currentUserId = userService.getUserId();
+        Note note = noteRepository.findByIdAndUserId(id,currentUserId);
+        if(note == null){
             throw new ResourceNotFoundException("Note", "id", id);
+        }
+        else{
+            return toDtoNote(note);
         }
     }
 
     @Transactional
     public List<DtoNote> getNotesByCategoryIdAndUserId(Long categoryId){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        User currentUser = userRepository.findByEmail(userEmail);
-        Long userId = currentUser.getId();
+        Long currentUserId = userService.getUserId();
         List<DtoNote> list;
         list = new ArrayList<>();
-        List<Note> noteList = noteRepository.findByCategoryIdAndUserId(categoryId, userId);
+        List<Note> noteList = noteRepository.findByCategoryIdAndUserId(categoryId, currentUserId);
         for(Note note: noteList){
             list.add(toDtoNote(note));
         }
@@ -102,14 +89,10 @@ public class NoteService {
 
     @Transactional
     public List<DtoNote> getNotesByUserId(){
-        //validateUser();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        User currentUser = userRepository.findByEmail(userEmail);
-        Long userId = currentUser.getId();
+        Long currentUserId = userService.getUserId();
         List<DtoNote> list;
         list = new ArrayList<>();
-        List<Note> noteList = noteRepository.findByUserId(userId);
+        List<Note> noteList = noteRepository.findByUserId(currentUserId);
         for(Note note: noteList){
             list.add(toDtoNote(note));
         }
@@ -118,78 +101,59 @@ public class NoteService {
 
     @Transactional
     public ResponseEntity<?> deleteNote(Long id){
-        //validateUser();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        User currentUser = userRepository.findByEmail(userEmail);
-        Long userId = currentUser.getId();
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Note", "id", id));
-        Long noteUserId = note.getUserId();
-        if(userId.equals(noteUserId)){
-            noteRepository.delete(note);
-            commentRepository.deleteAllByNoteId(id);
-            return ResponseEntity.ok().build();
-        }else{
+        Long currentUserId = userService.getUserId();
+        Note note = noteRepository.findByIdAndUserId(id, currentUserId);
+        if(note == null){
             throw new ResourceNotFoundException("Note", "id", id);
+        }
+        else{
+            noteRepository.delete(note);
+            return ResponseEntity.ok().build();
         }
     }
 
     @Transactional
     public DtoNote updateNote(Long id, DtoNote dtoNote){
-        //validateUser();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        User currentUser = userRepository.findByEmail(userEmail);
-        Long userId = currentUser.getId();
-        Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Note", "id", id));
-        Long noteUserId = note.getUserId();
-        if(userId.equals(noteUserId)){
-            //validateNote(dtoNote);
-            if(dtoNote.getTitle() == null){
-                dtoNote.setTitle(note.getTitle());
-            }
-            Note existingNote = noteRepository.findByTitleAndUserId(dtoNote.getTitle().trim(),userId);
-            if(existingNote == null || existingNote.getId().equals(id)){
-                //note.setUserId(note.getUserId());
-                if(dtoNote.getCategoryId() == null){
-                    dtoNote.setCategoryId(note.getCategoryId());
-                }
-               /* if(dtoNote.getTitle() == null){
-                    dtoNote.setTitle(note.getTitle());
-                }*/
-                if(dtoNote.getContent() == null){
-                    dtoNote.setContent(note.getContent());
-                }
-                note.setTitle(dtoNote.getTitle().trim());
-                note.setContent(dtoNote.getContent());
-                categoryService.getCategoryById(dtoNote.getCategoryId());
-                note.setCategoryId(dtoNote.getCategoryId());
-                note.setUpdatedTs(LocalDateTime.now(Clock.systemUTC()));
-                noteRepository.save(note);
-                return toDtoNote(note);
-            }else {
-                throw new InvalidInputParamsException("Note with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
-            }
-        }else {
+        Long currentUserId = userService.getUserId();
+        Note note = noteRepository.findByIdAndUserId(id,currentUserId);
+        if(note == null){
             throw new ResourceNotFoundException("Note", "id", id);
         }
+        if(dtoNote.getTitle() != null && !dtoNote.getTitle().trim().equals("")){
+            if(!note.getTitle().equals(dtoNote.getTitle().trim())){
+                ParseUtils.validateTitle(dtoNote.getTitle().trim());
+                if(noteRepository.findByTitleAndUserId(dtoNote.getTitle().trim(),currentUserId).isPresent()){
+                    throw new InvalidInputParamsException("Note with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
+                }
+                note.setTitle(dtoNote.getTitle().trim());
+            }
+        }
+        if(dtoNote.getCategory() != null){
+            if(!note.getCategory().getId().equals(dtoNote.getCategory().getId())){
+                Category category = categoryRepository.findByIdAndUserId(dtoNote.getCategory().getId(),currentUserId);
+                if(category == null){
+                    throw new ResourceNotFoundException("Category", "id", dtoNote.getCategory().getId());
+                }
+                note.setCategory(dtoNote.getCategory());
+            }
+        }
+        if(dtoNote.getContent() != null && !dtoNote.getContent().trim().equals("")){
+            if(!note.getContent().equals(dtoNote.getContent())){
+                note.setContent(dtoNote.getContent());
+            }
+        }
+
+        note.setUpdatedTs(LocalDateTime.now(Clock.systemUTC()));
+        noteRepository.save(note);
+        return toDtoNote(note);
     }
 
     private void validateNote(DtoNote dtoNote){
-        /*if(ParseUtils.validateTitle(dtoNote.getTitle())){
+        if(ParseUtils.validateTitle(dtoNote.getTitle())){
             throw new InvalidInputParamsException("Invalid Title");
-        }*/
+        }
         if(ParseUtils.validateContent(dtoNote.getContent())){
             throw new InvalidInputParamsException("Invalid Content");
-        }
-    }
-
-    private void validateUser(){
-        Authentication authentication = AuthUtils.getAuthenticateduser();
-        if(authentication == null){
-            throw new UnauthorizedException("Unauthorized");
         }
     }
 }

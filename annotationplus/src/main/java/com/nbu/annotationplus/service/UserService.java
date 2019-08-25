@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.HashSet;
 
-@Service("userService")
+@Service
 public class UserService {
 
     private UserRepository userRepository;
@@ -96,6 +96,11 @@ public class UserService {
         Authentication authentication = validateUser();
         String userEmail = authentication.getName();
         return toDtoUser(userRepository.findByEmail(userEmail));
+    }
+
+    public Long getUserId(){
+       DtoUser dtoUser =  getCurrentUser();
+       return dtoUser.getId();
     }
 
     private String getCurrentUserPassword(){

@@ -2,17 +2,11 @@ $(document).ready(function() {
     $("body").removeClass("b1 b2");
     $("#content > div ").css("margin-top", "0px");
 
-
     $('[data-toggle="tooltip"]').tooltip();
-
-   /* $(".buttonTooltip").click(function(){
-        $('[role="tooltip"]').css("display","none");
-    });*/
 
     $(".buttonTooltip").click(function(){
         $('.tooltip').css("display","none");
     });
-
 
     $(document)
         .ajaxStart(function () {
@@ -108,18 +102,6 @@ $(document).ready(function() {
         $("#" + divid).css("display", "block");
         return false;
     }
-
-    /* $("body").click(function( event ) {
-         var target = $(event.target)[0];
-         console.log(target);
-         if (target != $("#formBody")[0] && target != $("#changeColorForm").children() && target != $("#pencil")[0] && target != $("#pencil > i")[0] && $("#changeColorForm").css("display") != "none" && target != $("#changeColorForm")[0]) {
-             $("#changeColorForm").css("display","none");
-         }
-         if (target != $("#comment")[0] && target != $("#commentArea")[0] && target != $("#comment > i")[0] && $("#commentBlock").css("display") != "none" && target != $("#commentBlock")[0]) {
-             console.log(target);
-             $("#commentBlock").css("display","none");
-         }
-     });*/
 
     $("#createCategory").click(function () {
         var dataObject = {
@@ -374,23 +356,6 @@ listAnnotationCategories();
                 }
             }
         });
-
-        /*var dataObject = {"title": title, "content": $("#content").html(), "categoryId": 7};
-
-        $.ajax({
-            type: "PUT",
-            url: "/api/notes/" + noteId ,
-            data: JSON.stringify(dataObject),
-            contentType: "application/json",
-            dataType: "application/json",
-            statusCode: {
-                200: function (e) {
-                    console.log("Note Updated Successfully");
-                    $("#changeColorForm").css("display","none");
-                }
-            }
-        });*/
-
     });
 
     $("#pencil").click(function(e) {
@@ -428,7 +393,6 @@ listAnnotationCategories();
         }
     });
 
-
     $("#toggleComments").click(function() {
         annotationsContainer.css("display","none");
         categoriesContainer.css("display","none");
@@ -459,7 +423,6 @@ listAnnotationCategories();
         $("#toggleComments").css("background-color","#6C6C6C");
         $("#toggleComments > i").css("color","#fff");
     });
-
 
     $("#colors span").click(function(e) {
          annotationColor = $(this).css("background-color");
@@ -574,94 +537,13 @@ listAnnotationCategories();
         });
     });
 
-
-
-        /*document.addEventListener('mouseup', () => {
-
-
-
-            const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-
-        const range = selection.getRangeAt(0);
-
-        //console.log('Selected elements:');
-        range.cloneContents().querySelectorAll('span').forEach(e => console.log(e));
-
-        //console.log('Selected text/elements parent:');
-        // console.log(range.commonAncestorContainer.parentNode);
-        var all = range.commonAncestorContainer.parentNode; console.log(all);
-        for (var i=0; i < all.length; i++) {
-            all[i].setAttribute("class", "publish_1");
-        }
-    }*/
-
-
         $(function () {
             $("#content").bind('mouseup', function (e) {
                 if(editMode){
                     color(annotationColor);
                 }
-
-                /*   var selection = window.getSelection();
-                   if (!selection.rangeCount) return;
-
-                   var range = selection.getRangeAt(0);
-                   var allSelected = [];
-
-                   var test = range.commonAncestorContainer.querySelectorAll('span').forEach(function (e) {
-                       if (selection.containsNode(e, true)) {
-                           //allSelected.push(e);
-                           if(e.style.backgroundColor == "yellow"){
-                            e.setAttribute("class","pesho");
-                           allSelected.push(e);
-                           }
-                       }
-                   });
-
-                   console.log('All selected =', allSelected);
-
-               });*/
-                // var test =  range.extractContents().querySelectorAll()
-                //selection.commonAncestorContainer.g
-
-
-                // console.log('Selected text/elements parent:');
-                //console.log(range.commonAncestorContainer.parentNode);
-
-
-                /*var myAnchorNodeValue = window.getSelection().anchorNode.nodeValue;
-                var myAnchorOffset = window.getSelection().anchorOffset
-                var myFocusOffset =  window.getSelection().focusOffset
-
-                var myFocusNodeLength = window.getSelection().focusNode.nodeValue.length;
-
-                window.getSelection().anchorNode.nodeValue = myAnchorNodeValue.slice(0, myAnchorOffset) + "[IDENTIFY]" + myAnchorNodeValue.slice(myAnchorOffset);
-
-                var myFocusNodeValue = window.getSelection().focusNode.nodeValue;
-
-                if(window.getSelection().focusNode.nodeValue.length - myFocusNodeLength > 0) {
-                    myFocusOffset += window.getSelection().focusNode.nodeValue.length - myFocusNodeLength;
-                }
-
-                window.getSelection().focusNode.nodeValue = myFocusNodeValue.slice(0, myFocusOffset) + "[/IDENTIFY]" + myFocusNodeValue.slice(myFocusOffset);
-
-                LAST_SELECTION = window.getSelection().getRangeAt(0);
-                myDocument = document.documentElement.innerHTML;*/
-
-                //selection.toString() !== '' && alert('"' + selection.toString() + '" was selected at ' + e.pageX + '/' + e.pageY);
             });
         });
-
-        function highlightText(color) {
-            var selection = window.getSelection().getRangeAt(0);
-            var selectedText = selection.extractContents();
-            var span = document.createElement("div");
-            span.setAttribute("annotation-id", uuidv4());
-            span.style.backgroundColor = color;
-            span.appendChild(selectedText);
-            selection.insertNode(span); // The function returns the product of p1 and p2
-        }
 
         function color(color) {
             var select = getSelected();
@@ -670,34 +552,15 @@ listAnnotationCategories();
                 sel = window.getSelection();
                 if (sel.rangeCount && sel.getRangeAt) {
                     range = sel.getRangeAt(0);
-                    // var set = sel.anchorNode;
-                    //var p = sel.anchorNode.parentNode;
-                    // var span = document.createElement('span');
-                    //var set = sel.anchorNode.parentNode.insertBefore(span,p.firstChild);
-                    //var set2 = sel.anchorNode.parentNode;
-                    // span.setAttribute("annotation-id", uuidv4());
-                    // var set2;
-                    //var set = sel.anchorNode.t;
-                    //console.log(set2);
-                    //console.log(document.selection.getRangeAt(0).parentElement());
-                    //set.setAttribute("annotation-id", uuidv4());
-
                 }
-                // Set design mode to on
                 document.designMode = "on";
                 if (range) {
                     sel.removeAllRanges();
                     sel.addRange(range);
                 }
-                //console.log(sel.backgroundColor);
-                // Colorize text
                 document.execCommand("BackColor", false, color);
-                // Set design mode to off
                 document.designMode = "off";
 
-                //var range = sel.getRangeAt(0);
-                // var allWithinRangeParent = range.commonAncestorContainer.getElementsByTagName("*");
-                //console.log(allWithinRangeParent);
                 setTimeout(function () {
                     if (range.commonAncestorContainer.nodeType == '3') {
                         annotationId = uuidv4();
@@ -710,25 +573,11 @@ listAnnotationCategories();
                         annotationId = uuidv4();
                         var test = range.commonAncestorContainer.querySelectorAll('span').forEach(function (e) {
                             if (sel.containsNode(e, true)) {
-                                //console.log("no rgbToHex: " + e.style.backgroundColor);
-                                //console.log("rgbToHex: " + rgbToHex(e.style.backgroundColor));
-                                //console.log("color: " + color);
-                                //console.log(e);
-                               // console.log("nodeType 1 annotationId: " + annotationId);
-                                //e.setAttribute("annotation-id", annotationId);
-                                //allSelected.push(e);
                                 if (e.style.backgroundColor == color) {
                                     console.log(e.style.backgroundColor);
                                     console.log(e);
                                     console.log("nodeType 1 annotationId: " + annotationId);
                                     e.setAttribute("annotation-id", annotationId);
-                                  /*  if (!e.getAttribute('annotation-id')){
-                                        e.setAttribute("annotation-id", annotationId);
-                                        console.log("does not have attribute")
-                                    } else {
-                                        console.log("Has attribute");
-                                    }*/
-                                    // allSelected.push(e);
                                 }
                             } else {
 
@@ -753,8 +602,7 @@ listAnnotationCategories();
                         statusCode: {
                             201: function (e) {
                                 console.log("Annotation Created Successfully");
-                                title = makeid(10);
-                                dataObject = {"title": title, "content": $("#content").html(), "categoryId": 7};
+                                dataObject = {"content": $("#content").html()};
 
                                 $.ajax({
                                     type: "PUT",
@@ -773,51 +621,7 @@ listAnnotationCategories();
                         }
                     });
                 }, 200);
-
-
-
-
-
-
-
-                //selection = window.getSelection();
-                // range2 = selection.getRangeAt(0);
-                /*setTimeout(function () {
-                    var selection = window.getSelection();
-                    var range = selection.getRangeAt(0);
-                    var allWithinRangeParent = range.commonAncestorContainer.getElementsByTagName("span");
-
-                var allSelected = [];
-                for (var i=0, el; el = allWithinRangeParent[i]; i++) {
-                    // The second parameter says to include the element
-                    // even if it's not fully selected
-                    if (selection.containsNode(el, true) ) {
-                        allSelected.push(el);
-                    }
-                }
-                    console.log('All selected =', allSelected);
-            }, 200);*/
-                //console.log('All selected =', allSelected);
-                //var p = sel.anchorNode.parentNode;
-                // sel.anchorNode.
-                // var span = document.createElement('span');
-                //var set = sel.anchorNode.parentNode.insertBefore(span,p.firstChild);
-                //var set = sel.anchorNode.parentNode;
-                //console.log(set2);
-                // set.setAttribute("id",uuidv4());
-                //console.log(sel.selectAllChildren(p));
-                //var set2 = sel.anchorNode.parentNode;
-                //console.log(set2)
-                // span.setAttribute("annotation-id", uuidv4());
-                //var select = getSelected();
-                /*if (select == "") {
-                    alert('Nothing is selected');
-                }*/
             } else {
-
-               // modal.style.display = "block";
-
-
             }
         }
 
@@ -850,11 +654,8 @@ listAnnotationCategories();
                     url: "/api/comment/" + attribute,
                     success: function (result) {
                         if (result.length > 0) {
-                            //$(".rectangle").remove();
-                            //$('li').slice(1).remove();
                             $('#commentContainer li').slice(2).remove();
                             $('#commentsMessage').text("");
-                           // $('li').not(':first').remove();
                             $("#message").text("");
                             var date;
                             for (var i = 0; i < result.length; i++) {
@@ -874,8 +675,6 @@ listAnnotationCategories();
                                 div.css("background-color",$("[annotation-id =" +  annotationId + "]").css("background-color"));
                                 li.append(div);
                                 commentContainer.append(li);
-                                //commentContainer.css("display","block");
-                                //$("#commentContainer li:first-child").after(li);
                             }
                         } else {
                             $('#commentContainer li').slice(2).remove();
@@ -888,15 +687,6 @@ listAnnotationCategories();
                 //$("#message").text("Please click on an annotation to view the comments for it.");
            // }
         });
-
-        /* document.body.addEventListener('onmouseover', function(e){
-             //console.log(e.target);
-             if(e.target.getAttribute('annotation-id')){
-                 //console.log('popout button');
-
-             }
-         });*/
-
 
         function getSelected() {
             if (window.getSelection) {
@@ -913,40 +703,10 @@ listAnnotationCategories();
             return false;
         }
 
-        $('body').click(function (event) {
-
-            if ($(event.target).is('#red') || $(event.target).is('#red2')) {
-                annotationColor = 'red';
-                editMode = true;
-                //color2(annotationColor);
-            } else if ($(event.target).is('#blue') || $(event.target).is('#blue2')) {
-                annotationColor = 'blue';
-                editMode = true;
-               //color2(annotationColor);
-            } else if ($(event.target).is('#yellow') || $(event.target).is('#yellow2')) {
-                annotationColor = 'yellow';
-                editMode = true;
-               // color(annotationColor);
-            } else if ($(event.target).is('#green') || $(event.target).is('#green2')) {
-                annotationColor = 'green';
-                editMode = true;
-                //color(annotationColor);
-            } else if ($(event.target).is('#delete') || $(event.target).is('#delete2')) {
-               //color("white");
-                editMode = false;
-            } else {
-                //do nothing
-            }
-        });
-
-        //var url = window.location.href;
-       // var url = new URL(window.location.href);
-        //var id = url.searchParams.get("id");
-
-        $("#save").click(function (e) {
+        $("#save").click(function () {
             var btn = $(this);
             title = makeid(10);
-            var dataObject = {"title": title, "content": $("#content").html(), "categoryId": 7};
+            var dataObject = {"content": $("#content").html()};
             //btn.prop('disabled', true);
             $.ajax({
                 type: "PUT",
@@ -1022,218 +782,4 @@ listAnnotationCategories();
                 modal.style.display = "none";
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    function color2(color) {
-        var select = getSelected();
-        if (/\S/.test(select)) {
-
-            sel = window.getSelection();
-            if (sel.rangeCount && sel.getRangeAt) {
-                range = sel.getRangeAt(0);
-                // var set = sel.anchorNode;
-                //var p = sel.anchorNode.parentNode;
-                // var span = document.createElement('span');
-                //var set = sel.anchorNode.parentNode.insertBefore(span,p.firstChild);
-                //var set2 = sel.anchorNode.parentNode;
-                // span.setAttribute("annotation-id", uuidv4());
-                // var set2;
-                //var set = sel.anchorNode.t;
-                //console.log(set2);
-                //console.log(document.selection.getRangeAt(0).parentElement());
-                //set.setAttribute("annotation-id", uuidv4());
-
-            }
-            // Set design mode to on
-            document.designMode = "on";
-            if (range) {
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-
-
-                if (range.commonAncestorContainer.nodeType == '3') {
-                    console.log("noteType " + range.commonAncestorContainer.nodeType)
-                    document.execCommand("BackColor", false, "white");
-                    //document.execCommand("class",false,"pesho");
-                    //var span = sel.anchorNode.parentNode;
-                    var span = sel.anchorNode;
-                    var span2 = sel.anchorNode.parentNode;
-                    console.log(sel.anchorNode);
-                    console.log(sel.anchorNode.parentNode);
-                    span2.setAttribute("annotation-id", uuidv4())
-                } else if (range.commonAncestorContainer.nodeType == '1') {
-                    var hasAttribute = true;
-                    console.log("noteType " + range.commonAncestorContainer.nodeType)
-                    annotationId = uuidv4();
-                    //document.execCommand("BackColor", false, "white");
-                    setTimeout(function () {
-                    var test = range.commonAncestorContainer.querySelectorAll('span').forEach(function (e) {
-                        if (sel.containsNode(e, true)) {
-                            //allSelected.push(e);
-                           // if (e.style.backgroundColor == color) {
-                                console.log(e);
-                                //e.setAttribute("annotation-id", annotationId);
-                                 /* if (!e.getAttribute('annotation-id')){
-                                      hasAttribute = false;
-                                      e.setAttribute("annotation-id", annotationId);
-                                      console.log("does not have attribute")
-                                  } */
-                            if (e.style.backgroundColor != color){
-                                console.log(e.style.backgroundColor);
-                                hasAttribute = false;
-                                e.setAttribute("annotation-id", annotationId);
-                                console.log("does not have attribute")
-                                //document.execCommand("BackColor", false, color);
-                                e.style.backgroundColor = color;
-                            }else {
-                                      console.log("Has attribute");
-                                //document.execCommand("BackColor", false, color);
-                                  }
-                                // allSelected.push(e);
-                           // }
-                        }
-                    });
-                }, 300);
-                }
-
-                /*var dataObject = {
-                    "annotationId": annotationId,
-                    "noteId": noteId
-                };*/
-               /* $.ajax({
-                    type: "POST",
-                    url: "/api/annotation",
-                    data: JSON.stringify(dataObject),
-                    contentType: "application/json",
-                    dataType: "application/json",
-                    statusCode: {
-                        201: function (e) {
-                            console.log("Annotation Created Successfully")
-                            dataObject = {"title": "title", "content": $("#content").html(), "categoryId": 1};
-
-                            $.ajax({
-                                type: "PUT",
-                                url: "/api/notes/" + noteId ,
-                                data: JSON.stringify(dataObject),
-                                contentType: "application/json",
-                                dataType: "application/json",
-                                statusCode: {
-                                    200: function (e) {
-                                        console.log("Note Updated Successfully")
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });*/
-
-
-            //console.log(sel.backgroundColor);
-            // Colorize text
-
-            setTimeout(function () {
-           // document.execCommand("BackColor", false, color);
-            // Set design mode to off
-            document.designMode = "off";
-            }, 500);
-
-            //var range = sel.getRangeAt(0);
-            // var allWithinRangeParent = range.commonAncestorContainer.getElementsByTagName("*");
-            //console.log(allWithinRangeParent);
-
-
-
-
-
-
-
-
-            //selection = window.getSelection();
-            // range2 = selection.getRangeAt(0);
-            /*setTimeout(function () {
-                var selection = window.getSelection();
-                var range = selection.getRangeAt(0);
-                var allWithinRangeParent = range.commonAncestorContainer.getElementsByTagName("span");
-
-            var allSelected = [];
-            for (var i=0, el; el = allWithinRangeParent[i]; i++) {
-                // The second parameter says to include the element
-                // even if it's not fully selected
-                if (selection.containsNode(el, true) ) {
-                    allSelected.push(el);
-                }
-            }
-                console.log('All selected =', allSelected);
-        }, 200);*/
-            //console.log('All selected =', allSelected);
-            //var p = sel.anchorNode.parentNode;
-            // sel.anchorNode.
-            // var span = document.createElement('span');
-            //var set = sel.anchorNode.parentNode.insertBefore(span,p.firstChild);
-            //var set = sel.anchorNode.parentNode;
-            //console.log(set2);
-            // set.setAttribute("id",uuidv4());
-            //console.log(sel.selectAllChildren(p));
-            //var set2 = sel.anchorNode.parentNode;
-            //console.log(set2)
-            // span.setAttribute("annotation-id", uuidv4());
-            //var select = getSelected();
-            /*if (select == "") {
-                alert('Nothing is selected');
-            }*/
-        } else {
-
-            // modal.style.display = "block";
-
-
-        }
-    }
-
 });

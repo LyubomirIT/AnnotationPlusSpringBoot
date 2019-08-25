@@ -8,7 +8,7 @@ public class DtoComment {
     private Long noteId;
     private String comment;
     private Long userId;
-    private String annotationId;
+    private String annotationUid;
     private LocalDateTime createdTs;
     private LocalDateTime updatedTs;
     private String userName;
@@ -29,8 +29,8 @@ public class DtoComment {
         return userId;
     }
 
-    public String getAnnotationId() {
-        return annotationId;
+    public String getAnnotationUid() {
+        return annotationUid;
     }
 
     public void setId(Long id) {
@@ -49,8 +49,8 @@ public class DtoComment {
         this.userId = userId;
     }
 
-    public void setAnnotationId(String annotationId) {
-        this.annotationId = annotationId;
+    public void setAnnotationUid(String annotationUid) {
+        this.annotationUid = annotationUid;
     }
 
     public void setCreatedTs(LocalDateTime createdTs) {

@@ -31,8 +31,81 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
-@Service
+@Service("fileService")
 public class FileService {
+    private static String textToHTML(String text) {
+        if(text == null) {
+            return null;
+        }
+        int length = text.length();
+        boolean prevSlashR = false;
+        StringBuffer out = new StringBuffer();
+        for(int i = 0; i < length; i++) {
+            char ch = text.charAt(i);
+            switch(ch) {
+                case '\r':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                    }
+                    prevSlashR = true;
+                    break;
+                case '\n':
+                    prevSlashR = false;
+                    out.append("<br>");
+                    break;
+                case '"':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&quot;");
+                    break;
+                case ' ':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&nbsp;");
+                    break;
+                case '<':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&lt;");
+                    break;
+                case '>':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&gt;");
+                    break;
+                case '&':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&amp;");
+                    break;
+                default:
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append(ch);
+                    break;
+            }
+        }
+        //System.out.println(out.toString());
+        return out.toString();
+    }
+
+
+
+
+
+
 
     @Transactional
     public ResponseEntity<DtoHtml> readFile(MultipartFile file) {
@@ -166,6 +239,10 @@ public class FileService {
             try {
                 ByteArrayInputStream stream = new ByteArrayInputStream(file.getBytes());
                 String myString = IOUtils.toString(stream, "UTF-8");
+                System.out.println(myString);
+                String novo = "";
+                novo = textToHTML(myString);
+                System.out.println(novo);
                 /*BufferedReader br = new BufferedReader(new FileReader(file.getOriginalFilename()));
                 StringBuilder sb = new StringBuilder();
                 String line = br.readLine();
@@ -179,7 +256,7 @@ public class FileService {
                 */if(myString.trim().equals("")){
                     throw new InvalidInputParamsException("File Content is Empty");
                 }
-                dtoHtml.setHtml(myString);
+                dtoHtml.setHtml(novo);
             } catch (Exception e){
                 System.out.println(e.getMessage());
             }

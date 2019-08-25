@@ -11,7 +11,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 
-@Service("emailService")
+@Service
 public class EmailService {
 
     @Autowired

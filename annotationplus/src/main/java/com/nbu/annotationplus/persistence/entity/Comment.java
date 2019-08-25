@@ -23,7 +23,7 @@ public class Comment extends BaseEntity {
     private String userName;
 
     @Column
-    private String annotationId;
+    private String annotationUid;
 
     public Long getId() {
         return id;
@@ -41,8 +41,8 @@ public class Comment extends BaseEntity {
         return userId;
     }
 
-    public String getAnnotationId() {
-        return annotationId;
+    public String getAnnotationUid() {
+        return annotationUid;
     }
 
     public void setId(Long id) {
@@ -61,8 +61,8 @@ public class Comment extends BaseEntity {
         this.userId = userId;
     }
 
-    public void setAnnotationId(String annotationId) {
-        this.annotationId = annotationId;
+    public void setAnnotationUid(String annotationUid) {
+        this.annotationUid = annotationUid;
     }
 
     public String getUserName() {

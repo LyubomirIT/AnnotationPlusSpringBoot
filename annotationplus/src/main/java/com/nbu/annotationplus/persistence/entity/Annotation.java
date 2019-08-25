@@ -1,6 +1,8 @@
 package com.nbu.annotationplus.persistence.entity;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "annotation")
@@ -17,7 +19,7 @@ public class Annotation extends BaseEntity {
     private Long userId;
 
     @Column
-    private String annotationId;
+    private String uid;
 
     @Column
     private Long noteId;
@@ -31,6 +33,16 @@ public class Annotation extends BaseEntity {
     @Column
     private String color;
 
+   // @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    /*@OneToMany
+    @JoinTable(name="comment",
+            joinColumns=@JoinColumn(name="annotationUid"),
+            inverseJoinColumns=@JoinColumn(name="uid"))
+    //@JoinColumn(name="annotationUid", referencedColumnName = "uid")
+    private List<Comment> comments;*/
+
+
+
     public Long getId() {
         return id;
     }
@@ -43,8 +55,8 @@ public class Annotation extends BaseEntity {
         return userId;
     }
 
-    public String getAnnotationId() {
-        return annotationId;
+    public String getUid() {
+        return uid;
     }
 
     public void setId(Long id) {
@@ -59,8 +71,8 @@ public class Annotation extends BaseEntity {
         this.userId = userId;
     }
 
-    public void setAnnotationId(String annotationId) {
-        this.annotationId = annotationId;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public Long getNoteId() {

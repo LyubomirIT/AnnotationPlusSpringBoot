@@ -11,7 +11,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "email")
@@ -28,6 +28,21 @@ public class User {
 
     @Column(name = "active")
     private int active;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Annotation> annotations;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Comment> comments;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<AnnotationCategory> annotationCategories;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Note> notes;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Category> categories;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -87,6 +102,38 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<Annotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Set<Annotation> annotations) {
+        this.annotations = annotations;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<AnnotationCategory> getAnnotationCategories() {
+        return annotationCategories;
+    }
+
+    public void setAnnotationCategories(Set<AnnotationCategory> annotationCategories) {
+        this.annotationCategories = annotationCategories;
+    }
+
+    public Set<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(Set<Note> notes) {
+        this.notes = notes;
     }
 }
 

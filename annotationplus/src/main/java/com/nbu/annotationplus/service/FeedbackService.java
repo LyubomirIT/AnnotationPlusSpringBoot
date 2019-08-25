@@ -3,15 +3,12 @@ package com.nbu.annotationplus.service;
 import com.nbu.annotationplus.dto.DtoFeedback;
 import com.nbu.annotationplus.persistence.entity.Feedback;
 import com.nbu.annotationplus.persistence.repository.FeedbackRepository;
-import com.nbu.annotationplus.persistence.repository.UserRepository;
 import com.nbu.annotationplus.utils.Component;
 import com.nbu.annotationplus.utils.Type;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,20 +22,16 @@ public class FeedbackService {
     private FeedbackRepository feedbackRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     private DtoFeedback toDtoFeedback(Feedback feedback) {
         ModelMapper modelMapper = new ModelMapper();
-        DtoFeedback dtoFeedback = modelMapper.map(feedback, DtoFeedback.class);
-        return dtoFeedback;
+        return modelMapper.map(feedback, DtoFeedback.class);
     }
 
     @Transactional
     public ResponseEntity<DtoFeedback> createFeedback(DtoFeedback dtoFeedback){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-        //User user = userRepository.findByEmail(userEmail);
-        //String userName = user.getName() + " " + user.getLastName();
+        String userEmail = userService.getCurrentUser().getEmail();
         Feedback feedback = new Feedback();
 
         feedback.setEmail(userEmail);
@@ -49,7 +42,7 @@ public class FeedbackService {
         feedback.setType(dtoFeedback.getType());
         feedback.setComponent(dtoFeedback.getComponent());
 
-        feedback = feedbackRepository.save(feedback);
+        feedbackRepository.save(feedback);
         return new ResponseEntity<DtoFeedback>(HttpStatus.CREATED);
     }
 

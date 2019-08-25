@@ -1,11 +1,13 @@
 package com.nbu.annotationplus.dto;
 
+import com.nbu.annotationplus.persistence.entity.Category;
+
 import java.time.LocalDateTime;
 
 public class DtoNote {
 
     private Long id;
-    private Long categoryId;
+    private Category category;
     private String title;
     private String content;
     private Long userId;
@@ -40,16 +42,16 @@ public class DtoNote {
         return userId;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
     }
 
     public LocalDateTime getCreatedTs() {

@@ -2,16 +2,15 @@ package com.nbu.annotationplus.service;
 
 import com.nbu.annotationplus.dto.DtoAnnotationCategory;
 import com.nbu.annotationplus.exception.InvalidInputParamsException;
+import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.persistence.entity.AnnotationCategory;
-import com.nbu.annotationplus.persistence.entity.User;
 import com.nbu.annotationplus.persistence.repository.AnnotationCategoryRepository;
-import com.nbu.annotationplus.persistence.repository.UserRepository;
+import com.nbu.annotationplus.persistence.repository.NoteRepository;
+import com.nbu.annotationplus.utils.ParseUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,30 +21,53 @@ import java.util.List;
 public class AnnotationCategoryService {
 
     @Autowired
-    private UserRepository userRepository;
+    private AnnotationCategoryRepository annotationCategoryRepository;
 
     @Autowired
-    private AnnotationCategoryRepository annotationCategoryRepository;
+    private NoteRepository noteRepository;
+
+    @Autowired
+    private UserService userService;
 
     private DtoAnnotationCategory toDtoAnnotationCategory(AnnotationCategory annotationCategory){
         ModelMapper modelMapper = new ModelMapper();
-        DtoAnnotationCategory dtoAnnotationCategory = modelMapper.map(annotationCategory, DtoAnnotationCategory.class);
-        return dtoAnnotationCategory;
+        return modelMapper.map(annotationCategory, DtoAnnotationCategory.class);
     }
 
     @Transactional
     public List<DtoAnnotationCategory> getAllAnnotationCategories(Long noteId){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-        User user = userRepository.findByEmail(userName);
-        Long userId = user.getId();
+        Long currentUserId = userService.getUserId();
         List<DtoAnnotationCategory> list;
         list = new ArrayList<>();
-        List<AnnotationCategory> annotationCategoryList = annotationCategoryRepository.findAllByUserIdAndNoteIdOrderByCreatedTsDesc(userId,noteId);
+        List<AnnotationCategory> annotationCategoryList = annotationCategoryRepository.findByUserIdAndNoteIdOrderByCreatedTsDesc(currentUserId,noteId);
         for(AnnotationCategory annotationCategory: annotationCategoryList){
             list.add(toDtoAnnotationCategory(annotationCategory));
         }
         return list;
+    }
+
+    @Transactional
+    public DtoAnnotationCategory getAnnotationCategory(Long id){
+        Long currentUserId = userService.getUserId();
+        AnnotationCategory annotationCategory = annotationCategoryRepository.findByIdAndUserId(id,currentUserId);
+        if(annotationCategory == null){
+            throw new ResourceNotFoundException("Annotation Category", "id", id);
+
+        }
+        return toDtoAnnotationCategory(annotationCategory);
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteAnnotationCategory(Long id){
+        Long currentUserId = userService.getUserId();
+        AnnotationCategory annotationCategory = annotationCategoryRepository.findByIdAndUserId(id,currentUserId);
+        if(annotationCategory== null){
+            throw new ResourceNotFoundException("Annotation Category", "id", id);
+        }
+        else{
+           annotationCategoryRepository.deleteByIdAndUserId(id,currentUserId);
+           return ResponseEntity.ok().build();
+        }
     }
 
   /*  @Transactional
@@ -59,14 +81,16 @@ public class AnnotationCategoryService {
 
     @Transactional
     public ResponseEntity<DtoAnnotationCategory> createAnnotationCategory(DtoAnnotationCategory dtoAnnotationCategory){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-        User user = userRepository.findByEmail(userName);
-        Long userId = user.getId();
-        AnnotationCategory existingAnnotationCategory = annotationCategoryRepository.findByNameAndNoteIdAndUserId(dtoAnnotationCategory.getName(),dtoAnnotationCategory.getNoteId(),userId);
-        if (existingAnnotationCategory == null) {
+        Long currentUserId = userService.getUserId();
+        if(noteRepository.findByIdAndUserId(dtoAnnotationCategory.getNoteId(),currentUserId) == null){
+            throw new ResourceNotFoundException("Note", "id", dtoAnnotationCategory.getNoteId());
+        }
+        if (!ParseUtils.validateTitle(dtoAnnotationCategory.getName())){
+            throw new InvalidInputParamsException("Invalid Name");
+        }
+        if (!annotationCategoryRepository.findByNameAndNoteIdAndUserId(dtoAnnotationCategory.getName(),dtoAnnotationCategory.getNoteId(),currentUserId).isPresent()) {
             AnnotationCategory annotationCategory = new AnnotationCategory();
-            annotationCategory.setUserId(userId);
+            annotationCategory.setUserId(currentUserId);
             annotationCategory.setName(dtoAnnotationCategory.getName());
             annotationCategory.setNoteId(dtoAnnotationCategory.getNoteId());
             annotationCategoryRepository.save(annotationCategory);

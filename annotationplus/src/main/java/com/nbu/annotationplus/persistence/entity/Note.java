@@ -1,17 +1,22 @@
 package com.nbu.annotationplus.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "notes")
+@Table(name = "note")
 public class Note extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long categoryId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column
     private String title;
@@ -21,6 +26,15 @@ public class Note extends BaseEntity {
 
     @Column
     private Long userId;
+
+    @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<AnnotationCategory> annotationCategories;
+
+    @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Comment> comments;
+
+    @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Annotation> annotations;
 
     public Long getId() {
         return id;
@@ -50,15 +64,39 @@ public class Note extends BaseEntity {
         return userId;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
     public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Set<AnnotationCategory> getAnnotationCategories() {
+        return annotationCategories;
+    }
+
+    public void setAnnotationCategories(Set<AnnotationCategory> annotationCategories) {
+        this.annotationCategories = annotationCategories;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<Annotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Set<Annotation> annotations) {
+        this.annotations = annotations;
     }
 }

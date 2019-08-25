@@ -25,4 +25,9 @@ public class AnnotationCategoryController {
     public List<DtoAnnotationCategory> getAllAnnotationCategories(@PathVariable(value = "noteId")Long noteId) {
         return annotationCategoryService.getAllAnnotationCategories(noteId);
     }
+
+    @DeleteMapping("/annotationCategory/{id}")
+    ResponseEntity<?> deleteAnnotationCategory(@PathVariable(value = "id") Long id) {
+        return annotationCategoryService.deleteAnnotationCategory(id);
+    }
 }

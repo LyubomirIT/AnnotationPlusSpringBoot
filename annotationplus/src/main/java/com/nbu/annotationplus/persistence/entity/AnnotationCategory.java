@@ -1,6 +1,7 @@
 package com.nbu.annotationplus.persistence.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "annotation_category")
@@ -18,6 +19,9 @@ public class AnnotationCategory extends BaseEntity {
 
     @Column
     private Long noteId;
+
+    @OneToMany(mappedBy = "annotationCategoryId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Annotation> annotations;
 
     public Long getId() {
         return id;
@@ -49,5 +53,13 @@ public class AnnotationCategory extends BaseEntity {
 
     public void setNoteId(Long noteId) {
         this.noteId = noteId;
+    }
+
+    public Set<Annotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Set<Annotation> annotations) {
+        this.annotations = annotations;
     }
 }

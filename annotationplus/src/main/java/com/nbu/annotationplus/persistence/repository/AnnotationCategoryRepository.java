@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository("annotationCategoryRepository")
+@Repository
 public interface AnnotationCategoryRepository extends JpaRepository<AnnotationCategory, Long> {
-    List<AnnotationCategory> findAllByUserIdAndNoteIdOrderByCreatedTsDesc(Long UserId, Long NoteId);
-    AnnotationCategory findByNameAndNoteIdAndUserId(String Name,Long NoteId,Long UserId);
-    AnnotationCategory findByName(String name);
+    List<AnnotationCategory> findByUserIdAndNoteIdOrderByCreatedTsDesc(Long UserId, Long NoteId);
+    Optional<AnnotationCategory> findByNameAndNoteIdAndUserId(String Name, Long NoteId, Long UserId);
+    void deleteByIdAndUserId(Long id,Long userId);
+    AnnotationCategory findByIdAndUserId(Long id,Long userId);
 }
