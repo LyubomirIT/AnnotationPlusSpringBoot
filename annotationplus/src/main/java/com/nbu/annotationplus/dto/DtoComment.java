@@ -5,20 +5,15 @@ import java.time.LocalDateTime;
 public class DtoComment {
 
     private Long id;
-    private Long noteId;
     private String comment;
     private Long userId;
-    private String annotationUid;
+    private Long annotationId;
     private LocalDateTime createdTs;
     private LocalDateTime updatedTs;
     private String userName;
 
     public Long getId() {
         return id;
-    }
-
-    public Long getNoteId() {
-        return noteId;
     }
 
     public String getComment() {
@@ -29,16 +24,8 @@ public class DtoComment {
         return userId;
     }
 
-    public String getAnnotationUid() {
-        return annotationUid;
-    }
-
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
     }
 
     public void setComment(String comment) {
@@ -47,10 +34,6 @@ public class DtoComment {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public void setAnnotationUid(String annotationUid) {
-        this.annotationUid = annotationUid;
     }
 
     public void setCreatedTs(LocalDateTime createdTs) {
@@ -75,5 +58,13 @@ public class DtoComment {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Long getAnnotationId() {
+        return annotationId;
+    }
+
+    public void setAnnotationId(Long annotationId) {
+        this.annotationId = annotationId;
     }
 }

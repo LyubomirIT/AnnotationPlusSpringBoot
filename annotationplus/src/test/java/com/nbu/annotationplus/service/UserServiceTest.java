@@ -2,9 +2,12 @@ package com.nbu.annotationplus.service;
 
 import com.aspose.pdf.HtmlSaveOptions;
 import com.aspose.pdf.LettersPositioningMethods;
+import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.persistence.entity.User;
 import com.nbu.annotationplus.persistence.repository.RoleRepository;
 import com.nbu.annotationplus.persistence.repository.UserRepository;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.WordToHtmlConverter;
@@ -27,7 +30,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,8 +40,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,9 +55,183 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class UserServiceTest {
 
+    public static String textToHTML(String text) {
+        if(text == null) {
+            return null;
+        }
+        int length = text.length();
+        boolean prevSlashR = false;
+        StringBuffer out = new StringBuffer();
+        for(int i = 0; i < length; i++) {
+            char ch = text.charAt(i);
+            switch(ch) {
+                case '\r':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                    }
+                    prevSlashR = true;
+                    break;
+                case '\n':
+                    prevSlashR = false;
+                    out.append("<br>");
+                    break;
+                case '"':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&quot;");
+                    break;
+                case '<':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&lt;");
+                    break;
+                case '>':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&gt;");
+                    break;
+                case '&':
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append("&amp;");
+                    break;
+                default:
+                    if(prevSlashR) {
+                        out.append("<br>");
+                        prevSlashR = false;
+                    }
+                    out.append(ch);
+                    break;
+            }
+        }
+        System.out.println(out.toString());
+        return out.toString();
+    }
+
+
+
+
+
 
     @Test
     public void test1() {
+        //MultipartFile file = "C:\\Users\\Lyudmila\\Desktop\\texttest.txt";
+        //String ext = FilenameUtils.getExtension(file.getOriginalFilename());
+        //File file = new File("C:\\Users\\Lyudmila\\Desktop\\texttest.txt");
+
+       /* try {
+            //ByteArrayInputStream stream = new ByteArrayInputStream(file.getAbsolutePath());
+            String myString = IOUtils.toString(stream, "UTF-8");
+                /*BufferedReader br = new BufferedReader(new FileReader(file.getOriginalFilename()));
+                StringBuilder sb = new StringBuilder();
+                String line = br.readLine();
+
+                while (line != null) {
+                    sb.append(line);
+                    sb.append(System.lineSeparator());
+                    line = br.readLine();
+                }
+                String everything = sb.toString();
+
+            if (myString.trim().equals("")) {
+                throw new InvalidInputParamsException("File Content is Empty");
+            }
+        } catch (Exception e){
+
+        }*/
+
+
+
+
+
+    /*    String gosho = "";
+
+       try {
+            // System.out.println("dsdsds");
+            File file = new File("C:\\Users\\Lyudmila\\Desktop\\texttest.txt");
+           String s;
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+           // String s;
+            while ((s = br.readLine()) != null){
+                //System.out.println(s);
+                StringBuffer builder = new StringBuffer();
+                boolean previousWasASpace = false;
+                for (char c : s.toCharArray()) {
+                    if (c == ' ') {
+                        if (previousWasASpace) {
+                            builder.append("&nbsp;");
+                            previousWasASpace = false;
+                            continue;
+                        }
+                        previousWasASpace = true;
+                    } else {
+                        previousWasASpace = false;
+                    }
+                    switch (c) {
+                        case '<':
+                            System.out.println("pesho");
+                            builder.append("&lt;");
+                            break;
+                        case '>':
+                            System.out.println("pesho");
+                            builder.append("&gt;");
+                            break;
+                        case '&':
+                            System.out.println("pesho");
+                            builder.append("&amp;");
+                            break;
+                        case '"':
+                            System.out.println("pesho");
+                            builder.append("&quot;");
+                            break;
+                        case '\n':
+                            System.out.println("pesho");
+                            builder.append("<br/>");
+                            //builder += ("<br/>");
+                            break;
+                        case '\r' :
+                            System.out.println("pesho");
+                            builder.append("<br/>");
+                            //builder += ("<br/>");
+                            break;
+                        // We need Tab support here, because we print StackTraces as HTML
+                        case '\t':
+                            System.out.println("pesho");
+                            builder.append("&nbsp; &nbsp; &nbsp;");
+                            break;
+                        default:
+                            if (c < 128) {
+                                builder.append(c);
+                            } else {
+                                builder.append("&#").append((int) c).append(";");
+                            }
+                    }
+                }
+                System.out.println(builder.toString());
+                // gosho += builder.toString();
+                //textToHTML(builder.toString());
+            }
+            //System.out.println(gosho);
+            //textToHTML(gosho);
+            //return builder.toString();
+            //System.out.println(builder.toString());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+*/
+
+
 /*
 
         com.aspose.pdf.Document pdfDocument = new com.aspose.pdf.Document("C:\\Users\\Lyudmila\\Desktop\\Test Files\\Sample-multi-pdf3.pdf");
@@ -76,20 +258,113 @@ public class UserServiceTest {
 */
 
 
-try {
-    Document doc = Jsoup.connect("https://www.lipsum.com/").get();
+/*try {
+    Document doc = Jsoup.connect("http://www.1001recepti.com/s/208927-teleshka-kaima").get();
+    System.out.println("dsdsd");
     Elements links = doc.select("link");
     Elements scripts = doc.select("style");
     for (Element element : links) {
-        System.out.println(element.absUrl("href"));
+        System.out.println(element.absUrl("src"));
     }
     for (Element element : scripts) {
         System.out.println(element.absUrl("src"));
 
+
     }
 }catch (Exception e){
     System.out.println(e.getMessage());
-}
+}*/
+
+
+/*try {
+    System.out.println("blabla");
+    URL oracle = new URL("http://www.oracle.com/");
+    BufferedReader in = new BufferedReader(
+            new InputStreamReader(oracle.openStream()));
+
+    String inputLine;
+    while ((inputLine = in.readLine()) != null)
+        System.out.println(inputLine);
+    in.close();
+} catch (Exception e){
+    System.out.println(e.getMessage());
+
+}*/
+
+     /*   try {
+           // System.out.println("dsdsds");
+            File file = new File("C:\\Users\\Lyudmila\\Desktop\\texttest.txt");
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            String s;
+            while ((s = br.readLine()) != null){
+                //System.out.println(s);
+                StringBuilder builder = new StringBuilder();
+                boolean previousWasASpace = false;
+                for (char c : s.toCharArray()) {
+                    if (c == ' ') {
+                        if (previousWasASpace) {
+                            builder.append("&nbsp;");
+                            previousWasASpace = false;
+                            continue;
+                        }
+                        previousWasASpace = true;
+                    } else {
+                        previousWasASpace = false;
+                    }
+                    switch (c) {
+                        case '<':
+                             System.out.println("pesho");
+                            builder.append("&lt;");
+                            break;
+                        case '>':
+                             System.out.println("pesho");
+                            builder.append("&gt;");
+                            break;
+                        case '&':
+                             System.out.println("pesho");
+                            builder.append("&amp;");
+                            break;
+                        case '"':
+                            System.out.println("pesho");
+                            builder.append("&quot;");
+                            break;
+                        case '\n':
+                            System.out.println("pesho");
+                            builder.append("<br/>");
+                            //builder += ("<br/>");
+                            break;
+                        case '\r' :
+                            System.out.println("pesho");
+                            builder.append("<br/>");
+                            //builder += ("<br/>");
+                            break;
+                        // We need Tab support here, because we print StackTraces as HTML
+                        case '\t':
+                            System.out.println("pesho");
+                            builder.append("&nbsp; &nbsp; &nbsp;");
+                            break;
+                        default:
+                            if (c < 128) {
+                                builder.append(c);
+                            } else {
+                                builder.append("&#").append((int) c).append(";");
+                            }
+                    }
+                }
+                System.out.println(builder.toString());
+            }
+            //return builder.toString();
+            //System.out.println(builder.toString());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+*/
+
+
+
     /*
 
 
@@ -295,8 +570,24 @@ try {
 
     }*/
 
+       // String html = "<p>An <a href='http://example.com/'><b>example</b></a> link.</p>";
+       // Document doc = Jsoup.parse(html);
+       // String text = doc.body().text();
+
+        try {
+            Document document = Jsoup.connect("https://stackoverflow.com/questions/9825798/how-to-read-a-text-from-a-web-page-with-java").get();
+            String html = document.body().html();
+            Document doc2 = Jsoup.parse(html);
+            //System.out.println(html);
+            System.out.println(document.toString());
+            //String text = doc2.body().html();
+            //System.out.println(text);
+        } catch (Exception e){
+
+        }
     }
 }
+
 
 
 

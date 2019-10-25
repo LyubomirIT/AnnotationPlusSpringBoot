@@ -39,7 +39,7 @@ public class NoteService {
     @Transactional
     public ResponseEntity<DtoNote> createNote(DtoNote dtoNote){
         Long currentUserId = userService.getUserId();
-        validateNoteName(dtoNote.getTitle());
+        //validateNoteName(dtoNote.getTitle());
         validateNoteContent(dtoNote.getContent());
         if(dtoNote.getCategory() == null){
             throw new InvalidInputParamsException("Category is required!");
@@ -60,7 +60,7 @@ public class NoteService {
             noteRepository.save(note);
             return new ResponseEntity<DtoNote>(toDtoNote(note), HttpStatus.CREATED);
         }else{
-            throw new InvalidInputParamsException("Note with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
+            throw new InvalidInputParamsException("Source with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
         }
     }
 
@@ -69,7 +69,7 @@ public class NoteService {
         Long currentUserId = userService.getUserId();
         Note note = noteRepository.findByIdAndUserId(id,currentUserId);
         if(note == null){
-            throw new ResourceNotFoundException("Note", "id", id);
+            throw new ResourceNotFoundException("Source", "id", id);
         }
         else{
             return toDtoNote(note);
@@ -105,7 +105,7 @@ public class NoteService {
         Long currentUserId = userService.getUserId();
         Note note = noteRepository.findByIdAndUserId(id, currentUserId);
         if(note == null){
-            throw new ResourceNotFoundException("Note", "id", id);
+            throw new ResourceNotFoundException("Source", "id", id);
         }
         else{
             noteRepository.delete(note);
@@ -118,13 +118,13 @@ public class NoteService {
         Long currentUserId = userService.getUserId();
         Note note = noteRepository.findByIdAndUserId(id,currentUserId);
         if(note == null){
-            throw new ResourceNotFoundException("Note", "id", id);
+            throw new ResourceNotFoundException("Source", "id", id);
         }
         if(dtoNote.getTitle() != null && !dtoNote.getTitle().trim().equals("")){
             if(!note.getTitle().equals(dtoNote.getTitle().trim())){
                 validateNoteName(dtoNote.getTitle());
                 if(noteRepository.findByTitleAndUserId(dtoNote.getTitle().trim(),currentUserId).isPresent()){
-                    throw new InvalidInputParamsException("Note with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
+                    throw new InvalidInputParamsException("Source with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
                 }
                 note.setTitle(dtoNote.getTitle().trim());
             }

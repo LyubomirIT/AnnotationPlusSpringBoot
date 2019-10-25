@@ -1,7 +1,37 @@
 $(document).ready(function() {
-    var BreakException = {};
 
+   /* $(document).ajaxComplete(function (e, xhr, settings) {
+        console.log("completed");
+        console.log(xhr.status);
+        console.log(xhr);
+        var redirect = null;
+        try {
+            redirect = $.parseJSON(xhr.responseText).redirect;
+            if (redirect) {
+                console.log("302 222");
+                window.location.href = redirect;
+            }
+        } catch (e) {
+            return;
+        }
+        if (xhr.status == 200) {
+            console.log("302");
+            var redirect = null;
+            try {
+                redirect = $.parseJSON(xhr.responseText).redirect;
+                if (redirect) {
+                    console.log("302 222");
+                    window.location.href = redirect;
+                }
+            } catch (e) {
+                return;
+            }
+        }
+    });*/
+
+    var BreakException = {};
     var editSourceButton = $('#editSource');
+    var viewAnnotationButton = $('#viewAnnotation');
     var deleteSourceButton = $('#deleteSourceModal');
     var openSourceButton = $('#openSource');
     var newSourceButton = $('#newSource');
@@ -10,6 +40,7 @@ $(document).ready(function() {
     var delCategoryButton = $("#deleteCategory");
     var delSourceButton = $("#deleteSource");
     var uploadFileButton = $("#uploadFileButton");
+    var loadUrlButton = $("#loadUrlButton");
     var inputFileField = $("#exampleFormControlFile1");
     var formContainer = $(".formContainer");
     var file = '';
@@ -20,12 +51,21 @@ $(document).ready(function() {
     var categoryName = '';
     var noteName = '';
     var responseJson = '';
+    var annotationId;
+
+    function validateUrl(str) {
+        var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+        if(!regex .test(str)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     $(document).ajaxSuccess(function() {
         $( ".log" ).text( "Triggered ajaxSuccess handler." );
         console.log("pesho");
     });
-
 
     function animateSuccess(message){
         $('.notify')
@@ -36,7 +76,6 @@ $(document).ready(function() {
                 $('.notify').addClass("do-show").text(message)
             }, 1);
     }
-
 
     function selectRowByValue(value) {
         var httpRequest = new XMLHttpRequest();
@@ -264,6 +303,7 @@ function populateSourceGridByCategoryId(){
                 formContainer.css("display","none");
                 animateSuccess("Category: " + "'" + categoryName + "'" + " deleted successfully");
                 populateCategoryGrid();
+                populateAnnotationGrid();
                 delCategoryButton.prop("disabled",false);
             }
         });
@@ -278,6 +318,7 @@ function populateSourceGridByCategoryId(){
                 formContainer.css("display","none");
                 animateSuccess("Source: " + "'" + noteName + "'" + " deleted successfully");
                 populateSourceGridByCategoryId();
+                populateAnnotationGrid();
                 editSourceButton.prop('disabled', true);
                 openSourceButton.prop('disabled', true);
                 deleteSourceButton.prop('disabled', true);
@@ -288,7 +329,7 @@ function populateSourceGridByCategoryId(){
 
     openSourceButton.click(function() {
         $(this).prop('disabled', true);
-        window.open("/admin/note?id=" + noteId, "_self")
+        window.open("/admin/source?id=" + noteId, "_self")
     });
 
     $("#createCategory").click(function() {
@@ -305,6 +346,10 @@ function populateSourceGridByCategoryId(){
             dataType: "application/json",
             statusCode: {
                 201: function (e) {
+                    if (e.redirect) {
+                        // data.redirect contains the string URL to redirect to
+                        window.location.href = e.redirect;
+                    }
                     $("#noCategoryInfo").css("display","none");
                     responseJson = $.parseJSON(e.responseText);
                     formContainer.css("display","none");
@@ -336,6 +381,10 @@ function populateSourceGridByCategoryId(){
             dataType: "application/json",
             statusCode: {
                 200: function (e) {
+                    if (e.redirect) {
+                        // data.redirect contains the string URL to redirect to
+                        window.location.href = e.redirect;
+                    }
                     responseJson = $.parseJSON(e.responseText);
                     formContainer.css("display","none");
                     animateSuccess("Category: " + "'" + responseJson.name + "'" + " updated successfully");
@@ -346,7 +395,14 @@ function populateSourceGridByCategoryId(){
                     responseJson = $.parseJSON(e.responseText);
                     $(".categoryErrorMessage").text(responseJson.message);
                     $("#updateCategoryName").prop("disabled",false);
-                }
+                }/*,
+                302: function () {
+                    console.log("302");
+                    window.open("/login","_self");
+                    //responseJson = $.parseJSON(e.responseText);
+                    //$(".categoryErrorMessage").text(responseJson.message);
+                    //$("#updateCategoryName").prop("disabled",false);
+                }*/
             }
         });
     });
@@ -368,6 +424,11 @@ function populateSourceGridByCategoryId(){
                     $("#updateSourceName").prop("disabled",false);
                     animateSuccess("Source: " + "'" + noteName + "'" + " updated successfully");
                     populateSourceGridByCategoryId();
+                },
+                400:function (e) {
+                    responseJson = $.parseJSON(e.responseText);
+                    $("#sourceErrorMessage").text(responseJson.message);
+                    $("#updateSourceName").prop("disabled",false);
                 }
             }
         });
@@ -377,7 +438,9 @@ function populateSourceGridByCategoryId(){
         formContainer.css("display","none");
         $("#categoryNameCreateValue").val("");
         inputFileField.val("");
+        $("#sourceURL").val("");
         uploadFileButton.prop("disabled", true);
+        loadUrlButton.prop("disabled", true);
         $(".errorMessages").text("");
     });
 
@@ -398,15 +461,15 @@ function populateSourceGridByCategoryId(){
     });
 
     uploadFileButton.click(function() {
+        uploadFileButton.prop('disabled', true);
         file  = (inputFileField)[0].files[0];
         var fileName = file.name;
 
         extension = file.name.split('.').pop().toLowerCase();
-        console.log(extension);
         var isFileValid = (allowedExtensions.indexOf(extension) > -1);
 
         if((isFileValid)){
-            setTimeout(function () {
+            //setTimeout(function () {
                 var formData = new FormData();
                 formData.append('file', file);
                 $.ajax({
@@ -418,10 +481,9 @@ function populateSourceGridByCategoryId(){
                     mimeType: "multipart/form-data",
                     statusCode: {
                         200: function (e) {
-                           // console.log(e);
-                            var json2 = $.parseJSON(e);
-                            var html = json2.html;
-                            var dataObject = {"title": fileName, "content": html, "categoryId": categoryId};
+                            responseJson = $.parseJSON(e);
+                            var html = responseJson.html;
+                            var dataObject = {"title": fileName, "content": html, "category": {"id":categoryId}};
                             $.ajax({
                                 type: "POST",
                                 url: "/api/notes/",
@@ -430,23 +492,28 @@ function populateSourceGridByCategoryId(){
                                 dataType: "application/json",
                                 statusCode: {
                                     201: function (e) {
-                                        var json = $.parseJSON(e.responseText);
-                                       // console.log(json.id);
-                                        window.open("/admin/note?id=" + json.id, "_self")
+                                        responseJson = $.parseJSON(e.responseText);
+                                        window.open("/admin/source?id=" + responseJson.id, "_self");
                                     },
-                                    400: function (data) {
+                                    400: function (e) {
+                                        responseJson = $.parseJSON(e.responseText);
+                                        $("#uploadFileErrorMessage").text(responseJson.message);
+                                        uploadFileButton.prop('disabled', false);
                                     }
                                 }
                             });
                         },
-                        400: function () {
-                            console.log("error");
+                        400: function (e) {
+                            responseJson = $.parseJSON(e.responseText);
+                            $("#uploadFileErrorMessage").text(responseJson.message);
+                            uploadFileButton.prop('disabled', false);
                         }
                     }
                 });
-            }, 100);
+           // }, 100);
         } else {
-            console.log("Invalid File Format")
+            $("#uploadFileErrorMessage").text("Invalid File Format");
+            uploadFileButton.prop('disabled', false);
         }
     });
 
@@ -501,36 +568,18 @@ function populateSourceGridByCategoryId(){
         }
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /*  $('.button').on('click', function(event){
-        var type = "top-left"
-        var status = "success"
-
-        $('.button').removeClass('is-active');
-        $(this).addClass('is-active');
-
-        $('.notify')
-            .removeClass()
-            .attr('data-notification-status', status)
-            .addClass(type + ' notify')
-            .addClass('do-show');
-
-        event.preventDefault();
-    })*/
+    $('#sourceURL').on('input', function() {
+        if($(this).val().trim() == "" ){
+            $("#sourceUrlErrorMessage").text("Source URL cannot be empty");
+            loadUrlButton.prop('disabled', true);
+        }else if(!validateUrl($(this).val())) {
+            $("#sourceUrlErrorMessage").text("Invalid URL");
+            loadUrlButton.prop('disabled', true);
+        }else if(validateUrl($(this).val())) {
+            $("#sourceUrlErrorMessage").text("");
+            loadUrlButton.prop('disabled', false);
+        }
+    });
 
   function showSourceUrl(){
       $("#sourceFileContainer").css("display","none");
@@ -542,7 +591,6 @@ function populateSourceGridByCategoryId(){
         $("#sourceFileContainer").css("display","block");
   }
 
-
     $( "#sourceType" ).change(function() {
         if($(this).val() === "document"){
             showSourceFile();
@@ -550,86 +598,24 @@ function populateSourceGridByCategoryId(){
             showSourceUrl();
         }
     });
-});
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   /* function makeid(length) {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-        for (var i = 0; i < length; i++)
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-    }*/
-/*
-    var holder = document.getElementById('holder'),
-        state = document.getElementById('status');
-
-    if (typeof window.FileReader === 'undefined') {
-        state.className = 'fail';
-    } else {
-        state.className = 'success';
-        state.innerHTML = 'File API & FileReader available';
-    }
-
-    holder.ondragover = function() {
-        this.className = 'hover';
-        return false;
-    };
-    holder.ondragend = function() {
-        this.className = '';
-        return false;
-    };
-    holder.ondrop = function(e) {
-        this.className = '';
-        e.preventDefault();
-
-        var file = e.dataTransfer.files[0];
-        var extension = file.name.split('.').pop().toLowerCase();
-        console.log(extension);
-        var allowedExtensions = ["pdf", "docx", "doc", "txt"];
-        var isFileValid = (allowedExtensions.indexOf(extension) > -1);
-
-    if((isFileValid)){
-        setTimeout(function () {
-            var formData = new FormData();
-            formData.append('file', file);
-            $.ajax({
-                type: "POST",
-                url: "/api/readFile",
-                data: formData,
-                contentType: false,
-                processData: false,
-                mimeType: "multipart/form-data",
-                statusCode: {
-                    200: function (e) {
-                            console.log(e);
-                            var json2 = $.parseJSON(e);
-                            var html = json2.html;
-                            var title = makeid(10);
-                            var dataObject = {"title": title, "content": html, "categoryId": 7};
+    loadUrlButton.click(function() {
+        loadUrlButton.prop('disabled', true);
+        var sourceUrl = $('#sourceURL').val();
+        var dataObject = {
+            "url": sourceUrl
+        };
+        $.ajax({
+            type: "POST",
+            url: "/api/loadUrl",
+            data: JSON.stringify(dataObject),
+            contentType: "application/json",
+            dataType: "application/json",
+                    statusCode: {
+                        200: function (e) {
+                            responseJson = $.parseJSON(e.responseText);
+                            var html = responseJson.html;
+                            dataObject = {"title": sourceUrl, "content": html, "category": {"id":categoryId}};
                             $.ajax({
                                 type: "POST",
                                 url: "/api/notes/",
@@ -638,79 +624,84 @@ function populateSourceGridByCategoryId(){
                                 dataType: "application/json",
                                 statusCode: {
                                     201: function (e) {
-                                        var json = $.parseJSON(e.responseText);
-                                        console.log(json.id);
-                                        window.open("/admin/note?id=" + json.id, "_self")
+                                        responseJson = $.parseJSON(e.responseText);
+                                        window.open("/admin/source?id=" + responseJson.id, "_self");
+                                        $('#sourceURL').val("");
                                     },
-                                    400: function (data) {
+                                    400: function (e) {
+                                        responseJson = $.parseJSON(e.responseText);
+                                        $("#sourceUrlErrorMessage").text(responseJson.message);
+                                        loadUrlButton.prop('disabled', false);
                                     }
                                 }
                             });
-                    },
-                    400: function () {
-                        console.log("error");
-                    }
-                }
-            });
-        }, 100);
-    } else {
-        console.log("Invalid File Format")
-    }*/
-
-  /*  else {
-            var x = URL.createObjectURL(file);
-            function loadFile(url,callback){
-                JSZipUtils.getBinaryContent(url,callback);
-            }
-            function generate() {
-                loadFile(x,function(error,content){
-                    if (error) { throw error };
-                    var zip = new JSZip(content);
-                    var doc=new window.docxtemplater().loadZip(zip)
-                    var text=doc.getFullText();
-                    //console.log(text);
-                    var dataObject = {"title": "fffffgfgfgfff", "content": text, "categoryId": 1};
-                    $.ajax({
-                        type: "POST",
-                        url: "/api/notes/",
-                        data: JSON.stringify(dataObject),
-                        contentType: "application/json",
-                        dataType: "application/json",
-                        statusCode: {
-                            201: function (e) {
-                                var json = $.parseJSON(e.responseText);
-                                console.log(json.id);
-                                window.open("/admin/note?id=" + json.id, "_self")
-                            },
-                            400: function (data) {
-                            }
+                        },
+                        400: function (e) {
+                            responseJson = $.parseJSON(e.responseText);
+                            $("#sourceUrlErrorMessage").text(responseJson.message);
+                            loadUrlButton.prop('disabled', false);
                         }
-                    });
-                })
-            }
-            generate();
+                    }
+                });
+    });
+
+    viewAnnotationButton.click(function() {
+        $(this).prop('disabled', true);
+        window.open("/admin/source?id=" + noteId + '&annotation-id=' + annotationId, "_self")
+    });
+
+    function onAnnotationSelection() {
+        var selectedAnnotationRows = annotationGridOptions.api.getSelectedRows();
+        var length = selectedAnnotationRows.length;
+        if (length > 0) {
+            viewAnnotationButton.prop('disabled', false);
+            annotationId = '';
+            noteId = '';
+            selectedAnnotationRows.forEach(function (selectedRow) {
+                annotationId += selectedRow.id;
+                noteId = selectedRow.noteId;
+            });
+        } else {
+            viewAnnotationButton.prop('disabled', true);
         }
     }
+
+    var annotationColumnDefs = [
+        {headerName: "Content", field: "content", checkboxSelection: true, sortable: true,},
+        {headerName: "Date Created", field: "createdTs", sortable: true, sort: 'desc', cellRenderer: dateParser},
+        {headerName: "Id", field: "id", hide: true},
+        {headerName: "Note Id", field: "noteId", hide: true}
+    ];
+
+    var annotationGridOptions = {
+        defaultColDef: {
+            resizable: true,
+            filter: true
+        },
+        columnDefs: annotationColumnDefs,
+        rowSelection: 'single',
+        paginationAutoPageSize:true,
+        pagination: true,
+        onFirstDataRendered: onFirstDataRendered,
+        onSelectionChanged: onAnnotationSelection,
+        onGridReady:onFirstDataRendered
+
+    };
+
+    var annotationGridDiv = document.querySelector('#annotationGrid');
+
+    new agGrid.Grid(annotationGridDiv, annotationGridOptions);
+
+    function populateAnnotationGrid(){
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', '/api/annotation');
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                var httpResult = JSON.parse(httpRequest.responseText);
+                annotationGridOptions.api.setRowData(httpResult);
+            }
+        };
+    }
+    populateAnnotationGrid();
 });
-*/
-
-
-
-/*function readURL(input) {
-    if (input.files && input.files[0]) {
-        var extension = input.files[0].name.split('.').pop().toLowerCase(),  //file extension from input file
-            isSuccess = fileTypes.indexOf(extension) > -1;  //is extension in acceptable types
-
-        if (isSuccess) { //yes
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                alert('image has read completely!');
-            }
-
-            reader.readAsDataURL(input.files[0]);
-        }
-        else { //no
-            //warning
-        }
-    }
-}*/

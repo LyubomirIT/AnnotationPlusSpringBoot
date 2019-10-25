@@ -27,7 +27,7 @@ public class CommentController {
     }
 
     @GetMapping("/comment/{id}")
-    public List<DtoComment> getAllComments(@PathVariable(value = "id") String annotationUid) {
-        return commentService.getAllComments(annotationUid);
+    public List<DtoComment> getAllComments(@PathVariable(value = "id") Long annotationId) {
+        return commentService.getAllComments(annotationId);
     }
 }

@@ -1,7 +1,6 @@
 package com.nbu.annotationplus.persistence.entity;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,9 +18,6 @@ public class Annotation extends BaseEntity {
     private Long userId;
 
     @Column
-    private String uid;
-
-    @Column
     private Long noteId;
 
     @Column
@@ -33,6 +29,9 @@ public class Annotation extends BaseEntity {
     @Column
     private String color;
 
+    @OneToMany(mappedBy = "annotationId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    private Set<Comment> comments;
+
    // @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     /*@OneToMany
     @JoinTable(name="comment",
@@ -40,8 +39,6 @@ public class Annotation extends BaseEntity {
             inverseJoinColumns=@JoinColumn(name="uid"))
     //@JoinColumn(name="annotationUid", referencedColumnName = "uid")
     private List<Comment> comments;*/
-
-
 
     public Long getId() {
         return id;
@@ -55,10 +52,6 @@ public class Annotation extends BaseEntity {
         return userId;
     }
 
-    public String getUid() {
-        return uid;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -69,10 +62,6 @@ public class Annotation extends BaseEntity {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
     public Long getNoteId() {
@@ -105,5 +94,13 @@ public class Annotation extends BaseEntity {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
     }
 }

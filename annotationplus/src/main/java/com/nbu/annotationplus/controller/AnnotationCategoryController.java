@@ -30,4 +30,9 @@ public class AnnotationCategoryController {
     ResponseEntity<?> deleteAnnotationCategory(@PathVariable(value = "id") Long id) {
         return annotationCategoryService.deleteAnnotationCategory(id);
     }
+
+    @PutMapping("/annotationCategory/{id}")
+    public DtoAnnotationCategory updateAnnotationCategory(@PathVariable(value = "id") Long id, @Valid @RequestBody DtoAnnotationCategory dtoAnnotationCategory) {
+        return annotationCategoryService.updateAnnotationCategory(id,dtoAnnotationCategory);
+    }
 }

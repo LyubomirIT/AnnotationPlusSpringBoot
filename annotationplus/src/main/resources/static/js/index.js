@@ -80,7 +80,7 @@ $(document).ready(function () {
         });
     });
 
-    $("#loginButton").prop("disabled", true);
+    //$("#loginButton").prop("disabled", true);
 
     /*
     $('#loginButton').on('click', function(e) {

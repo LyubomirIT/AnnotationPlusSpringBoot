@@ -30,8 +30,8 @@ public class Note extends BaseEntity {
     @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     private Set<AnnotationCategory> annotationCategories;
 
-    @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
-    private Set<Comment> comments;
+    //@OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    //private Set<Comment> comments;
 
     @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     private Set<Annotation> annotations;
@@ -84,13 +84,13 @@ public class Note extends BaseEntity {
         this.annotationCategories = annotationCategories;
     }
 
-    public Set<Comment> getComments() {
+   /* public Set<Comment> getComments() {
         return comments;
     }
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
-    }
+    }*/
 
     public Set<Annotation> getAnnotations() {
         return annotations;

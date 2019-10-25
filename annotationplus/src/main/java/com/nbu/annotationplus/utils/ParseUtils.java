@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class ParseUtils {
 
-    private static final int NAME_MAX_LENGTH = 50;
+    private static final int NAME_MAX_LENGTH = 200;
     private static final int NAME_MIN_LENGTH = 1;
     public static final int MAX_FILE_SIZE_IN_BYTES = 5242880; // 5MB
     public static final String INVALID_PASSWORD_ERROR = "Password must be between " + NAME_MIN_LENGTH +  " and " + NAME_MAX_LENGTH + " symbols!";
@@ -22,8 +22,8 @@ public class ParseUtils {
         if (title == null){
             return true;
         }
-        Matcher matcher = VALID_NAME_REGEX.matcher(title);
-        return (matcher.find() || title.length() < NAME_MIN_LENGTH || title.length() > NAME_MAX_LENGTH || title.trim().equals(""));
+        //Matcher matcher = VALID_NAME_REGEX.matcher(title);
+        return (/*matcher.find() ||*/ title.length() < NAME_MIN_LENGTH || title.length() > NAME_MAX_LENGTH || title.trim().equals(""));
     }
 
     public static boolean validateContent(String content){
@@ -40,10 +40,5 @@ public class ParseUtils {
 
     public static boolean validatePassword(String password){
         return (password == null || password.length() < NAME_MIN_LENGTH || password.length() > NAME_MAX_LENGTH || password.trim().equals(""));
-    }
-
-    public static boolean validateUuid4(String uuid4){
-        Matcher matcher = UUID4_REGEX.matcher(uuid4);
-        return matcher.find();
     }
 }

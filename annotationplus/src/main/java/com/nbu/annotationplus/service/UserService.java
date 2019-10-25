@@ -46,7 +46,6 @@ public class UserService {
     public ResponseEntity<DtoUser> saveUser(DtoUser dtoUser) {
         validateFirstAndLastName(dtoUser);
         validateEmail(dtoUser);
-        //System.out.println("Password: " + dtoUser.getPassword());
         validatePassword(dtoUser.getPassword());
         User existingUser = userRepository.findByEmail(dtoUser.getEmail());
         if (existingUser != null){
@@ -60,7 +59,6 @@ public class UserService {
         user.setActive(1);
         Role userRole = roleRepository.findByRole("ADMIN");
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
-        //System.out.println(userRepository.save(user).notify("ds"));
         userRepository.save(user);
         return new ResponseEntity<DtoUser>(HttpStatus.OK);
     }
@@ -84,8 +82,6 @@ public class UserService {
         Authentication authentication = validateUser();
         String userEmail = authentication.getName();
         User currentUser = userRepository.findByEmail(userEmail);
-       // System.out.println("Current Password:" + bCryptPasswordEncoder.encode(currentUser.getPassword()));
-       // System.out.println("User Dto Password:" + bCryptPasswordEncoder.encode(dtoPassword.getPassword()));
         validateUpdatePassword(dtoPassword);
         currentUser.setPassword(bCryptPasswordEncoder.encode(dtoPassword.getConfirmNewPassword()));
         userRepository.save(currentUser);
@@ -119,7 +115,7 @@ public class UserService {
     }*/
 
     private Authentication validateUser() {
-        Authentication authentication = AuthUtils.getAuthenticateduser();
+        Authentication authentication = AuthUtils.getAuthenticatedUser();
         if (authentication == null) {
             throw new UnauthorizedException("Unauthorized");
         }

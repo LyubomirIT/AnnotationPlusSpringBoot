@@ -1,7 +1,17 @@
 /*#holder { border: 10px dashed #ccc; width: 300px; height: 300px; margin: 20px auto;}
 #holder.hover { border: 10px dashed #333; }*/
 
-#grids{
+/*#grids{
+    text-align: center;
+    overflow: hidden;
+}*/
+
+.grids{
+    text-align: center;
+    overflow: hidden;
+}
+
+#gridsSecondRow{
     text-align: center;
     overflow: hidden;
 }
@@ -16,6 +26,11 @@
     height: 400px;
     width: 70%;
     float: left;
+}
+
+#annotationGrid{
+    height: 400px;
+    width: 100%;
 }
 
 

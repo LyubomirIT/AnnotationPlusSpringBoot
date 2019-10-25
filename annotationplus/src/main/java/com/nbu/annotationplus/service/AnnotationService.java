@@ -5,10 +5,7 @@ import com.nbu.annotationplus.dto.DtoAnnotationCategory;
 import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.persistence.entity.Annotation;
-import com.nbu.annotationplus.persistence.entity.AnnotationCategory;
 import com.nbu.annotationplus.persistence.repository.AnnotationRepository;
-import com.nbu.annotationplus.persistence.repository.CommentRepository;
-import com.nbu.annotationplus.utils.ParseUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,16 +23,10 @@ import java.util.List;
 public class AnnotationService {
 
     @Autowired
-    private NoteService noteService;
-
-    @Autowired
     private AnnotationCategoryService annotationCategoryService;
 
     @Autowired
     private AnnotationRepository annotationRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
 
     @Autowired
     private UserService userService;
@@ -53,17 +44,16 @@ public class AnnotationService {
             throw new InvalidInputParamsException("Annotation Category Id is required");
         }
         DtoAnnotationCategory dtoAnnotationCategory = annotationCategoryService.getAnnotationCategory(dtoAnnotation.getAnnotationCategoryId());
-        if(dtoAnnotation.getUid() == null || dtoAnnotation.getUid().trim().equals("")){
+        /*if(dtoAnnotation.getUid() == null || dtoAnnotation.getUid().trim().equals("")){
             throw new InvalidInputParamsException("Invalid UID");
-        }
-        validateUid(dtoAnnotation.getUid());
-        if(!annotationRepository.findAnnotationByUidAndUserId(dtoAnnotation.getUid().trim(),currentUserId).isPresent()){
+        }*/
+       // if(!annotationRepository.findAnnotationByUidAndUserId(dtoAnnotation.getUid().trim(),currentUserId).isPresent()){
             Annotation annotation = new Annotation();
             annotation.setAnnotationCategoryId(dtoAnnotation.getAnnotationCategoryId());
             annotation.setUserId(currentUserId);
             annotation.setNoteId(dtoAnnotationCategory.getNoteId());
             annotation.setUsername(userName);
-            annotation.setUid(dtoAnnotation.getUid().trim());
+            //annotation.setUid(dtoAnnotation.getUid().trim());
             if(dtoAnnotation.getContent() == null || dtoAnnotation.getContent().trim().equals("")){
                 throw new InvalidInputParamsException("Invalid Content");
             }
@@ -72,19 +62,21 @@ public class AnnotationService {
                 throw new InvalidInputParamsException("Invalid Color");
             }
             annotation.setColor(dtoAnnotation.getColor());
+            //String uuid = UUID.randomUUID().toString();
+            //annotation.setUid(uuid);
             annotationRepository.save(annotation);
             return new ResponseEntity<DtoAnnotation>(toDtoAnnotation(annotation), HttpStatus.CREATED);
-        }else{
-            throw new InvalidInputParamsException("Annotation with UID: " + "'" + dtoAnnotation.getUid().trim() + "'" + " already exists.");
-        }
+        //}else{
+            //throw new InvalidInputParamsException("Annotation with UID: " + "'" + dtoAnnotation.getUid().trim() + "'" + " already exists.");
+        //}
     }
 
     @Transactional
-    public DtoAnnotation getAnnotationByUid(String uid) {
+    public DtoAnnotation getAnnotationById(Long id) {
         Long currentUserId = userService.getUserId();
-        Annotation annotation = annotationRepository.findByUidAndUserId(uid, currentUserId);
+        Annotation annotation = annotationRepository.findByIdAndUserId(id, currentUserId);
         if(annotation == null){
-            throw new ResourceNotFoundException("Annotation", "UID",uid);
+            throw new ResourceNotFoundException("Annotation", "Id",id);
         }
         return toDtoAnnotation(annotation);
     }
@@ -94,7 +86,29 @@ public class AnnotationService {
         Long currentUserId = userService.getUserId();
         List<DtoAnnotation> list;
         list = new ArrayList<>();
-        List<Annotation> annotationList = annotationRepository.findByAnnotationCategoryIdAndUserIdOrderByCreatedTsDesc(annotationCategoryId, currentUserId);
+        List<Annotation> annotationList;
+        System.out.println(annotationCategoryId);
+        if(annotationCategoryId == null){
+            annotationList = annotationRepository.findFirst10ByUserIdOrderByIdDesc(currentUserId);
+            for(Annotation annotation: annotationList){
+                list.add(toDtoAnnotation(annotation));
+            }
+            return list;
+        }else {
+            annotationList = annotationRepository.findByAnnotationCategoryIdAndUserIdOrderByCreatedTsDesc(annotationCategoryId, currentUserId);
+            for (Annotation annotation : annotationList) {
+                list.add(toDtoAnnotation(annotation));
+            }
+            return list;
+        }
+    }
+
+    @Transactional
+    public List<DtoAnnotation> getLast10AnnotationsByUserId() {
+        Long currentUserId = userService.getUserId();
+        List<DtoAnnotation> list;
+        list = new ArrayList<>();
+        List<Annotation> annotationList = annotationRepository.findFirst10ByUserIdOrderByIdDesc(currentUserId);
         for(Annotation annotation: annotationList){
             list.add(toDtoAnnotation(annotation));
         }
@@ -102,23 +116,23 @@ public class AnnotationService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteAnnotation(String uid) {
+    public ResponseEntity<?> deleteAnnotation(Long id) {
         Long currentUserId = userService.getUserId();
-        Annotation annotation = annotationRepository.findByUidAndUserId(uid, currentUserId);
+        Annotation annotation = annotationRepository.findByIdAndUserId(id, currentUserId);
         if(annotation == null){
-            throw new ResourceNotFoundException("Annotation", "UID",uid);
+            throw new ResourceNotFoundException("Annotation", "Id",id);
         }
-        annotationRepository.deleteByUidAndUserId(uid, currentUserId);
-        commentRepository.deleteByAnnotationUidAndUserId(uid,currentUserId);
+        annotationRepository.deleteByIdAndUserId(id, currentUserId);
+        //commentRepository.deleteByAnnotationUidAndUserId(id,currentUserId);
         return ResponseEntity.ok().build();
     }
 
     @Transactional
-    public DtoAnnotation updateAnnotation(String uid, DtoAnnotation dtoAnnotation) {
+    public DtoAnnotation updateAnnotation(Long id, DtoAnnotation dtoAnnotation) {
         Long currentUserId = userService.getUserId();
-        Annotation annotation = annotationRepository.findByUidAndUserId(uid, currentUserId);
+        Annotation annotation = annotationRepository.findByIdAndUserId(id, currentUserId);
         if(annotation == null){
-            throw new ResourceNotFoundException("Annotation", "UID",uid);
+            throw new ResourceNotFoundException("Annotation", "Id",id);
         }
         if(dtoAnnotation.getColor() != null && !dtoAnnotation.getColor().trim().equals("")){
             if(!annotation.getColor().equals(dtoAnnotation.getColor().trim())){
@@ -128,11 +142,5 @@ public class AnnotationService {
         }
         annotationRepository.save(annotation);
         return toDtoAnnotation(annotation);
-    }
-
-    private void validateUid(String uid){
-        if(!ParseUtils.validateUuid4(uid)){
-            throw new InvalidInputParamsException("UID must be in valid uuid4 format");
-        }
     }
 }

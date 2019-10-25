@@ -1,24 +1,23 @@
 package com.nbu.annotationplus.controller;
 
 import com.nbu.annotationplus.dto.DtoHtml;
-import com.nbu.annotationplus.service.FileService;
+import com.nbu.annotationplus.dto.DtoWebsite;
+import com.nbu.annotationplus.service.WebsiteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
-public class FileController {
+public class WebsiteController {
 
     @Autowired
-    private FileService fileService;
+    private WebsiteService websiteService;
 
-
-    @PostMapping("/readFile")
-    public ResponseEntity<DtoHtml> readFile(@Valid @RequestParam("file") MultipartFile file) {
-        return fileService.readFile(file);
+    @PostMapping("/loadUrl")
+    public ResponseEntity<DtoHtml> loadUrl(@Valid @RequestBody DtoWebsite dtoWebsite) {
+        return websiteService.loadUrl(dtoWebsite);
     }
 }

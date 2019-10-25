@@ -7,7 +7,6 @@ public class DtoAnnotation {
     private Long id;
     private String username;
     private Long userId;
-    private String uid;
     private Long noteId;
     private Long annotationCategoryId;
     private String content;
@@ -27,10 +26,6 @@ public class DtoAnnotation {
         return userId;
     }
 
-    public String getUid() {
-        return uid;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -41,10 +36,6 @@ public class DtoAnnotation {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
     public Long getNoteId() {

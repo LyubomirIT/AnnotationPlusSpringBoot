@@ -11,9 +11,6 @@ public class Comment extends BaseEntity {
     private Long id;
 
     @Column
-    private Long noteId;
-
-    @Column
     private String comment;
 
     @Column
@@ -23,14 +20,10 @@ public class Comment extends BaseEntity {
     private String userName;
 
     @Column
-    private String annotationUid;
+    private Long annotationId;
 
     public Long getId() {
         return id;
-    }
-
-    public Long getNoteId() {
-        return noteId;
     }
 
     public String getComment() {
@@ -41,16 +34,8 @@ public class Comment extends BaseEntity {
         return userId;
     }
 
-    public String getAnnotationUid() {
-        return annotationUid;
-    }
-
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
     }
 
     public void setComment(String comment) {
@@ -61,15 +46,19 @@ public class Comment extends BaseEntity {
         this.userId = userId;
     }
 
-    public void setAnnotationUid(String annotationUid) {
-        this.annotationUid = annotationUid;
-    }
-
     public String getUserName() {
         return userName;
     }
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Long getAnnotationId() {
+        return annotationId;
+    }
+
+    public void setAnnotationId(Long annotationId) {
+        this.annotationId = annotationId;
     }
 }

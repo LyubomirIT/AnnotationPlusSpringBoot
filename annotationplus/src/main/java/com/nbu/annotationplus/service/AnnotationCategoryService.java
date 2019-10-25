@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,14 +72,26 @@ public class AnnotationCategoryService {
         }
     }
 
-  /*  @Transactional
-    public DtoAnnotationCategory getAnnotationCategoryById(Long noteId, String name){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-        User user = userRepository.findByEmail(userName);
-        Long userId = user.getId();
-        AnnotationCategory annotationCategory = annotationCategoryRepository.fi
-    }*/
+    @Transactional
+    public DtoAnnotationCategory updateAnnotationCategory(Long id, DtoAnnotationCategory dtoAnnotationCategory){
+        Long currentUserId = userService.getUserId();
+        AnnotationCategory annotationCategory = annotationCategoryRepository.findByIdAndUserId(id,currentUserId);
+        if(annotationCategory== null){
+            throw new ResourceNotFoundException("Annotation Category", "id", id);
+        }
+        if(dtoAnnotationCategory.getName() != null && !dtoAnnotationCategory.getName().trim().equals("")){
+            if(!annotationCategory.getName().equals(dtoAnnotationCategory.getName().trim())){
+                validateAnnotationCategoryName(dtoAnnotationCategory.getName());
+                if(annotationCategoryRepository.findByNameAndNoteIdAndUserId(dtoAnnotationCategory.getName(),annotationCategory.getNoteId(),currentUserId).isPresent()){
+                    throw new InvalidInputParamsException("Annotation Category with name: " + "'" + dtoAnnotationCategory.getName() + "'" + " already exists.");
+                }
+                annotationCategory.setName(dtoAnnotationCategory.getName().trim());
+                annotationCategory.setUpdatedTs(LocalDateTime.now(Clock.systemUTC()));
+            }
+        }
+        annotationCategoryRepository.save(annotationCategory);
+        return toDtoAnnotationCategory(annotationCategory);
+    }
 
     @Transactional
     public ResponseEntity<DtoAnnotationCategory> createAnnotationCategory(DtoAnnotationCategory dtoAnnotationCategory){

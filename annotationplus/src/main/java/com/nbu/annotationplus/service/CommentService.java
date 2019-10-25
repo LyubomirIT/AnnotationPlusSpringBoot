@@ -37,11 +37,11 @@ public class CommentService {
     }
 
     @Transactional
-    public List<DtoComment> getAllComments(String annotationUid) {
+    public List<DtoComment> getAllComments(Long annotationId) {
         Long currentUserId = userService.getUserId();
         List<DtoComment> list;
         list = new ArrayList<>();
-        List<Comment> commentList = commentRepository.findByAnnotationUidAndUserIdOrderByCreatedTsDesc(annotationUid, currentUserId);
+        List<Comment> commentList = commentRepository.findByAnnotationIdAndUserIdOrderByCreatedTsDesc(annotationId, currentUserId);
         for(Comment comment: commentList){
             list.add(toDtoComment(comment));
         }
@@ -52,19 +52,18 @@ public class CommentService {
     public ResponseEntity<DtoComment> createComment(DtoComment dtoComment){
         String userName = userService.getCurrentUser().getEmail();
         Long currentUserId = userService.getUserId();
-        if(dtoComment.getAnnotationUid() == null ||dtoComment.getAnnotationUid().trim().equals("")){
-            throw new InvalidInputParamsException("Annotation UID is required");
+        if(dtoComment.getAnnotationId() == null ){
+            throw new InvalidInputParamsException("Annotation Id is required");
         }
-        DtoAnnotation dtoAnnotation = annotationService.getAnnotationByUid(dtoComment.getAnnotationUid());
+        DtoAnnotation dtoAnnotation = annotationService.getAnnotationById(dtoComment.getAnnotationId());
         Comment comment = new Comment();
         comment.setUserId(currentUserId);
         comment.setUserName(userName);
-        comment.setNoteId(dtoAnnotation.getNoteId());
         if(dtoComment.getComment() == null || dtoComment.getComment().trim().equals("")){
             throw new InvalidInputParamsException("Comment cannot be empty");
         }
         comment.setComment(dtoComment.getComment());
-        comment.setAnnotationUid(dtoComment.getAnnotationUid());
+        comment.setAnnotationId(dtoComment.getAnnotationId());
         commentRepository.save(comment);
         return new ResponseEntity<DtoComment>(toDtoComment(comment), HttpStatus.CREATED);
     }

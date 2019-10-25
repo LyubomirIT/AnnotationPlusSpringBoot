@@ -21,24 +21,24 @@ public class AnnotationController {
         return annotationService.createAnnotation(dtoAnnotation);
     }
 
-    @PutMapping("/annotation/{uid}")
-    public DtoAnnotation updateAnnotation(@PathVariable(value = "uid") String uid,
+    @PutMapping("/annotation/{id}")
+    public DtoAnnotation updateAnnotation(@PathVariable(value = "id") Long id,
                                           @Valid @RequestBody DtoAnnotation dtoAnnotation){
-        return annotationService.updateAnnotation(uid, dtoAnnotation);
+        return annotationService.updateAnnotation(id, dtoAnnotation);
     }
 
-    @GetMapping("/annotation/{uid}")
-    public DtoAnnotation getAnnotationById(@PathVariable(value = "uid") String uid) {
-        return annotationService.getAnnotationByUid(uid);
+    @GetMapping("/annotation/{id}")
+    public DtoAnnotation getAnnotationById(@PathVariable(value = "id") Long id) {
+        return annotationService.getAnnotationById(id);
     }
 
-    @GetMapping("/annotation/category={annotationCategoryId}")
-    public List<DtoAnnotation> getAnnotationsByAnnotationCategoryIdAndUserId(@PathVariable(value = "annotationCategoryId") Long annotationCategoryId) {
+    @GetMapping("/annotation")
+    public List<DtoAnnotation> getAnnotations(@RequestParam(required = false) Long annotationCategoryId) {
         return annotationService.getAnnotationsByAnnotationCategoryIdAndUserId(annotationCategoryId);
     }
 
-    @DeleteMapping("/annotation/{uid}")
-    public ResponseEntity<?> deleteAnnotation(@PathVariable(value = "uid") String uid) {
-        return annotationService.deleteAnnotation(uid);
+    @DeleteMapping("/annotation/{id}")
+    public ResponseEntity<?> deleteAnnotation(@PathVariable(value = "id") Long id) {
+        return annotationService.deleteAnnotation(id);
     }
 }

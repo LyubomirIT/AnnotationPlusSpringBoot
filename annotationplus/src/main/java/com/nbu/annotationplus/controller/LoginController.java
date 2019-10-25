@@ -33,10 +33,17 @@ public class LoginController {
     @Autowired
     private NoteService noteService;
 
-    @RequestMapping(value={"/", "/login"}, method = RequestMethod.GET)
+    @RequestMapping(value= "/login", method = RequestMethod.GET)
     public ModelAndView login(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
+        return modelAndView;
+    }
+
+    @RequestMapping(value={"/", "/landing"}, method = RequestMethod.GET)
+    public ModelAndView home(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("landing");
         return modelAndView;
     }
 
@@ -102,7 +109,7 @@ public class LoginController {
     }
 
     @RequestMapping(value="/admin/home", method = RequestMethod.GET)
-    public ModelAndView home(){
+    public ModelAndView adminHome(){
         ModelAndView modelAndView = new ModelAndView();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findUserByEmail(auth.getName());
@@ -153,13 +160,13 @@ public class LoginController {
         return modelAndView;
     }
 
-    @RequestMapping(value="/admin/note", method = RequestMethod.GET)
-    public ModelAndView note(@RequestParam(required = false) Long id){
+    @RequestMapping(value="/admin/source", method = RequestMethod.GET)
+    public ModelAndView source(@RequestParam(required = false) Long id){
         DtoNote dtoNote = noteService.getNoteById(id);
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("admin/note");
-        modelAndView.addObject("noteContent", dtoNote.getContent());
-        modelAndView.addObject("noteName", dtoNote.getTitle());
+        modelAndView.setViewName("admin/source");
+        modelAndView.addObject("sourceContent", dtoNote.getContent());
+        modelAndView.addObject("sourceName", dtoNote.getTitle());
         return modelAndView;
     }
 
