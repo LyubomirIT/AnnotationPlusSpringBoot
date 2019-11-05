@@ -16,9 +16,8 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-
     @PostMapping("/readFile")
     public ResponseEntity<DtoHtml> readFile(@Valid @RequestParam("file") MultipartFile file) {
-        return fileService.readFile(file);
+        return fileService.convertFileToHtml(file);
     }
 }

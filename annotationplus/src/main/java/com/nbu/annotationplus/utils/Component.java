@@ -1,11 +1,9 @@
 package com.nbu.annotationplus.utils;
 
-import com.nbu.annotationplus.exception.InvalidInputParamsException;
-
 public enum Component {
     WEBSITE("Website"),
     ANNOTATION("Annotation"),
-    OTHER("Other");
+    OTHER ("Other");
 
     private String displayName;
 
@@ -13,12 +11,20 @@ public enum Component {
         this.displayName = displayName;
     }
 
-    public static Component getByName(String name) {
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /*public static Component getByName(String name) {
         for (Component component : values()) {
             if (name != null && name.equals(component.displayName)) {
                 return component;
             }
         }
-        throw new InvalidInputParamsException(name != null ? "The provided component: " +'"'+ name +'"'+ " does not exist." : "The component is missing.");
-    }
+        throw new InvalidInputParamsException(name != null ? "The provided component: " +'"'+ name +'"'+ " does not exist." : "Component is missing.");
+     }*/
 }

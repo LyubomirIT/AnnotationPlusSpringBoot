@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/icons/pencil.png}"/>
     <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/navbar.css}"/>
@@ -14,18 +15,10 @@
 
 <body>
 <div class="navbar">
-    <a href="/home" id="name1"> AnnotationPlus</a>
-    <!--<div>
-    <p><a href="/forgot-password"><i class="fa fa-fw fa-user"></i> Forgot Password</a></p>
-    <p><a href="/registration"><i class="fa fa-fw fa-user"></i> Sign Up</a></p>
-    </div>-->
+    <a href="/landing" id="name1"> AnnotationPlus</a>
 </div>
-
-
 <div class="wrapper">
     <h1>Create an account</h1>
-    <!--<p>Please create an account in order to access site's data.
-        If you alreay have an account, you can login <a href="/login">here</a>.</p>-->
     <form class="form" action="#" method="post" th:action="@{/registration}"
           th:object="${dtoUser}" role="form">
         <div align="center" th:if="${#fields.hasErrors('email')}">
@@ -41,13 +34,6 @@
         <input type="password" th:field="*{password}" placeholder="Password" class="email">
         <input value="Register" type="Submit" class="submit">
     </form>
-   <!-- <div style="text-align:center"  >
-        <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    </div>    -->
-   <!-- <div style="text-align: center">
-        <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    </div>-->
-    <!--<h2><span class="text-success" th:utext="${successMessage}"></span></h2> -->
     <div class="loading">Loading&#8230;</div>
 </div>
 <script  th:src="@{/js/index.js}"></script>

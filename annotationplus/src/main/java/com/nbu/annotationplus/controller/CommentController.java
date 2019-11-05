@@ -22,12 +22,12 @@ public class CommentController {
     }
 
     @DeleteMapping("/comment/{id}")
-    public ResponseEntity<?> deleteComment(@PathVariable(value = "id") Long id){
-        return commentService.deleteComment(id);
+    public ResponseEntity<?> deleteCommentById(@PathVariable(value = "id") Long id){
+        return commentService.deleteCommentById(id);
     }
 
-    @GetMapping("/comment/{id}")
-    public List<DtoComment> getAllComments(@PathVariable(value = "id") Long annotationId) {
+    @GetMapping("/comment")
+    public List<DtoComment> getAllComments(@RequestParam(required = false) Long annotationId) {
         return commentService.getAllComments(annotationId);
     }
 }

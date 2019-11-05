@@ -1,7 +1,5 @@
 package com.nbu.annotationplus.persistence.entity;
 
-import com.nbu.annotationplus.persistence.entity.User;
-
 import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;

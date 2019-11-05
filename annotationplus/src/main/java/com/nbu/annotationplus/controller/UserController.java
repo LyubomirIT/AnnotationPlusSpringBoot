@@ -30,29 +30,13 @@ public class UserController {
         return userService.getCurrentUser();
     }
 
-    //@PutMapping("/user")
-    //public User updateUser(@Valid @RequestBody User userDetails) {
-       //return userService.updateUser(userDetails);
-    //}
-
     @PutMapping("/user")
-    public ResponseEntity<DtoUser> updateUser(@Valid @RequestBody DtoUser dtoUser) {
-        return userService.updateUser(dtoUser);
+    public ResponseEntity<DtoUser> updateCurrentUser(@Valid @RequestBody DtoUser dtoUser) {
+        return userService.updateCurrentUser(dtoUser);
     }
 
     @PostMapping("/user")
     public ResponseEntity<DtoUser> createUser(@Valid @RequestBody DtoUser dtoUser) {
-        return userService.saveUser(dtoUser);
+        return userService.createUser(dtoUser);
     }
-
-    /*@PutMapping("/password")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody DtoPassword dtoPassword) {
-        return userService.updatePassword(dtoPassword);
-    }*/
-
-   /* @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable(value = "id") int userId) {
-        return userRepository.findById(userId);
-                //.orElseThrow(() -> new ResourceNotFoundException("Note", "id", userId));
-    }*/
 }

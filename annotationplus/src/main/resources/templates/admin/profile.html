@@ -5,10 +5,11 @@
 
 <head>
     <meta charset="utf-8">
-    <title>AnnotationPlus</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/pencil.png}"/>
+    <title>Profile</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/icons/pencil.png}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}"/>
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -17,307 +18,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style type="text/css">
-        @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
-        @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-
-
-        .isa_info i, .isa_success i, .isa_warning i, .isa_error i {
-            margin:10px 22px;
-            font-size:2em;
-            vertical-align:middle;
-        }
-        body{
-            /*margin-top:20px;*/
-            background:#f5f5f5;
-
-        }
-        /**
-         * Panels
-         */
-        /*** General styles ***/
-        .panel {
-            box-shadow: none;
-        }
-        .panel-heading {
-            border-bottom: 0;
-        }
-        .panel-title {
-            font-size: 17px;
-        }
-        .panel-title > small {
-            font-size: .75em;
-            color: #999999;
-        }
-        .panel-body *:first-child {
-            margin-top: 0;
-        }
-        .panel-footer {
-            border-top: 0;
-        }
-
-        .panel-default > .panel-heading {
-            color: #333333;
-            background-color: transparent;
-            border-color: rgba(0, 0, 0, 0.07);
-        }
-
-        form label {
-            /*color: #999999;*/
-            font-weight: bold;
-        }
-
-        .form-horizontal .form-group {
-            margin-left: -15px;
-            margin-right: -15px;
-        }
-        @media (min-width: 768px) {
-            .form-horizontal .control-label {
-                text-align: right;
-                margin-bottom: 0;
-                padding-top: 7px;
-            }
-        }
-        .modal-confirm {
-            color: #434e65;
-            width: 525px;
-        }
-        .modal-confirm .modal-content {
-            padding: 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: none;
-        }
-        .modal-confirm .modal-header {
-            background: #47c9a2;
-            border-bottom: none;
-            position: relative;
-            text-align: center;
-            margin: -20px -20px 0;
-            border-radius: 5px 5px 0 0;
-            padding: 35px;
-        }
-        .modal-confirm h4 {
-            text-align: center;
-            font-size: 36px;
-            margin: 10px 0;
-        }
-        .modal-confirm .form-control, .modal-confirm .btn {
-            min-height: 40px;
-            border-radius: 3px;
-        }
-        .modal-confirm .close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            color: #fff;
-            text-shadow: none;
-            opacity: 0.5;
-        }
-        .modal-confirm .close:hover {
-            opacity: 0.8;
-        }
-        .modal-confirm .icon-box {
-            color: #fff;
-            width: 95px;
-            height: 95px;
-            display: inline-block;
-            border-radius: 50%;
-            z-index: 9;
-            border: 5px solid #fff;
-            padding: 15px;
-            text-align: center;
-        }
-        .modal-confirm .icon-box i {
-            font-size: 64px;
-            margin: -4px 0 0 -4px;
-        }
-        .modal-confirm.modal-dialog {
-            margin-top: 80px;
-        }
-        .modal-confirm .btn {
-            color: #fff;
-            border-radius: 4px;
-            background: #eeb711;
-            text-decoration: none;
-            transition: all 0.4s;
-            line-height: normal;
-            border-radius: 30px;
-            margin-top: 10px;
-            padding: 6px 20px;
-            border: none;
-        }
-        .modal-confirm .btn:hover, .modal-confirm .btn:focus {
-            background: #eda645;
-            outline: none;
-        }
-        .modal-confirm .btn span {
-            margin: 1px 3px 0;
-            float: left;
-        }
-        .modal-confirm .btn i {
-            margin-left: 1px;
-            font-size: 20px;
-            float: right;
-        }
-        .trigger-btn {
-            display: inline-block;
-            margin: 100px auto;
-        }
-
-        /* The Close Button */
-        .close {
-            color: #aaaaaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-
-
-
-
-
-
-
-
-
-
-        /* Absolute Center Spinner */
-        .loading {
-            position: fixed;
-            z-index: 999;
-            height: 2em;
-            width: 2em;
-            overflow: show;
-            margin: auto;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-        }
-
-        /* Transparent Overlay */
-        .loading:before {
-            content: '';
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0, .8));
-
-            background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
-        }
-
-        /* :not(:required) hides these rules from IE9 and below */
-        .loading:not(:required) {
-            /* hide "loading..." text */
-            font: 0/0 a;
-            color: transparent;
-            text-shadow: none;
-            background-color: transparent;
-            border: 0;
-        }
-
-        .loading:not(:required):after {
-            content: '';
-            display: block;
-            font-size: 10px;
-            width: 1em;
-            height: 1em;
-            margin-top: -0.5em;
-            -webkit-animation: spinner 1500ms infinite linear;
-            -moz-animation: spinner 1500ms infinite linear;
-            -ms-animation: spinner 1500ms infinite linear;
-            -o-animation: spinner 1500ms infinite linear;
-            animation: spinner 1500ms infinite linear;
-            border-radius: 0.5em;
-            -webkit-box-shadow: rgba(255,255,255, 0.75) 1.5em 0 0 0, rgba(255,255,255, 0.75) 1.1em 1.1em 0 0, rgba(255,255,255, 0.75) 0 1.5em 0 0, rgba(255,255,255, 0.75) -1.1em 1.1em 0 0, rgba(255,255,255, 0.75) -1.5em 0 0 0, rgba(255,255,255, 0.75) -1.1em -1.1em 0 0, rgba(255,255,255, 0.75) 0 -1.5em 0 0, rgba(255,255,255, 0.75) 1.1em -1.1em 0 0;
-            box-shadow: rgba(255,255,255, 0.75) 1.5em 0 0 0, rgba(255,255,255, 0.75) 1.1em 1.1em 0 0, rgba(255,255,255, 0.75) 0 1.5em 0 0, rgba(255,255,255, 0.75) -1.1em 1.1em 0 0, rgba(255,255,255, 0.75) -1.5em 0 0 0, rgba(255,255,255, 0.75) -1.1em -1.1em 0 0, rgba(255,255,255, 0.75) 0 -1.5em 0 0, rgba(255,255,255, 0.75) 1.1em -1.1em 0 0;
-        }
-
-        /* Animation */
-
-        @-webkit-keyframes spinner {
-            0% {
-                -webkit-transform: rotate(0deg);
-                -moz-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-            100% {
-                -webkit-transform: rotate(360deg);
-                -moz-transform: rotate(360deg);
-                -ms-transform: rotate(360deg);
-                -o-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-        @-moz-keyframes spinner {
-            0% {
-                -webkit-transform: rotate(0deg);
-                -moz-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-            100% {
-                -webkit-transform: rotate(360deg);
-                -moz-transform: rotate(360deg);
-                -ms-transform: rotate(360deg);
-                -o-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-        @-o-keyframes spinner {
-            0% {
-                -webkit-transform: rotate(0deg);
-                -moz-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-            100% {
-                -webkit-transform: rotate(360deg);
-                -moz-transform: rotate(360deg);
-                -ms-transform: rotate(360deg);
-                -o-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-        @keyframes spinner {
-            0% {
-                -webkit-transform: rotate(0deg);
-                -moz-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-            100% {
-                -webkit-transform: rotate(360deg);
-                -moz-transform: rotate(360deg);
-                -ms-transform: rotate(360deg);
-                -o-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-    </style>
 </head>
 <body>
 
 <nav class="navbar navbar-default">
     <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
@@ -327,8 +32,6 @@
             </button>
             <a class="navbar-brand" href="/admin/home">AnnotationPlus</a>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li ><a href="/admin/home">Home <span class="sr-only">(current)</span></a></li>
@@ -349,8 +52,8 @@
                     </ul>
                 </li>
             </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+        </div>
+    </div>
 </nav>
 <div class="container bootstrap snippets">
     <div class="row">
@@ -379,7 +82,6 @@
                         <div class="form-group">
                             <div class="col-sm-10 col-sm-offset-2">
                                 <button id="submit" th:type="button" class="btn btn-primary">Save</button>
-                                <!--<button type="reset" class="btn btn-default">Cancel</button> -->
                             </div>
                         </div>
                         <div class="alert alert-danger alert-dismissible" role="alert" id="userError" style="text-align: center">
@@ -393,7 +95,6 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">E-mail address</label>
                             <div class="col-sm-10" id="email">
-                                <!--<input type="email" class="form-control" id="email">-->
                             </div>
                         </div>
                         <div id="myModal" class="modal fade">

@@ -4,10 +4,8 @@ import javax.validation.Valid;
 
 import com.nbu.annotationplus.dto.DtoNote;
 import com.nbu.annotationplus.dto.DtoUser;
-import com.nbu.annotationplus.persistence.entity.Note;
 import com.nbu.annotationplus.persistence.entity.PasswordResetToken;
 import com.nbu.annotationplus.persistence.entity.User;
-import com.nbu.annotationplus.persistence.repository.NoteRepository;
 import com.nbu.annotationplus.persistence.repository.PasswordResetTokenRepository;
 import com.nbu.annotationplus.service.NoteService;
 import com.nbu.annotationplus.service.UserService;
@@ -58,43 +56,11 @@ public class LoginController {
         return modelAndView;
     }
 
-    /*@RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public ModelAndView createNewUser(@Valid User user, BindingResult bindingResult) {
-        ModelAndView modelAndView = new ModelAndView();
-        User userExists = userService.findUserByEmail(user.getEmail());
-        if(user.getEmail() == null){
-            bindingResult
-                    .rejectValue("email", "error.user",
-                            "Please provide a valid Email");
-        }
-        if(user.getEmail().trim().equals("")){
-            bindingResult
-                    .rejectValue("email", "error.user",
-                            "Please provide a valid Email");
-        }
-        if (userExists != null) {
-            bindingResult
-                    .rejectValue("email", "error.user",
-                            "There is already a user registered with the email provided");
-        }
-        if (bindingResult.hasErrors()) {
-            modelAndView.setViewName("registration");
-        } else {
-            userService.saveUser(user);
-            modelAndView.addObject("successMessage", "User has been registered successfully");
-            modelAndView.addObject("user", new User());
-           // modelAndView.setViewName("registration");
-            modelAndView.setViewName("login");
-
-        }
-        return modelAndView;
-    }*/
-
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView createNewUser(@Valid DtoUser dtoUser, BindingResult bindingResult) {
         ModelAndView modelAndView = new ModelAndView();
         try{
-            userService.saveUser(dtoUser);
+            userService.createUser(dtoUser);
             modelAndView.addObject("successMessage", "User has been registered successfully");
             modelAndView.addObject("dtoUser", new DtoUser());
             modelAndView.setViewName("login");
@@ -169,14 +135,4 @@ public class LoginController {
         modelAndView.addObject("sourceName", dtoNote.getTitle());
         return modelAndView;
     }
-
-    /*@RequestMapping(value="/admin/viewer", method = RequestMethod.GET)
-    public ModelAndView viewer(@RequestParam(required = false) Long id){
-        Note note = noteRepository.findNoteById(id);
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("admin/viewer");
-        modelAndView.addObject("noteContent", note.getContent());
-        modelAndView.addObject("noteName", note.getTitle());
-        return modelAndView;
-    }*/
 }

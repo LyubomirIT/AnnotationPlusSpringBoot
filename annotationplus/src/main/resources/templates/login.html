@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="shortcut icon" type="image/png" th:href="@{/images/pencil.png}"/>
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/icons/pencil.png}"/>
     <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/navbar.css}"/>
@@ -13,17 +13,10 @@
 </head>
 <body>
 <div class="navbar">
-    <a href="/home" id="name1"> AnnotationPlus</a>
-    <!--<div>
-    <p><a href="/forgot-password"><i class="fa fa-fw fa-user"></i> Forgot Password</a></p>
-    <p><a href="/registration"><i class="fa fa-fw fa-user"></i> Sign Up</a></p>
-    </div>-->
+    <a href="/landing" id="name1"> AnnotationPlus</a>
 </div>
 <div class="wrapper">
-    <!--<h1 id="name1">AnnotationPlus</h1> -->
     <h1>Sign In</h1>
-   <!-- <p>To login to the application please enter your email address and password.
-    If you do no have an account you can create one <a href="/registration">here</a>.</p>-->
     <div align="center">
     <p style="font-size: 30; color: green;" class="text-success" th:utext="${successMessage}"></p>
     </div>
@@ -44,16 +37,10 @@
         <input name="Submit" value="Sign In" id="loginButton" type="Submit"
                 class="submit">
     </form>
-    <!--<div align="center" th:if="${param.error}">
-        <p style="font-size: 30; color: #FF1C19;">Invalid Email and/or Password, please try again</p>
-    </div> -->
     <p style="text-align: center; margin-top: 1px;">
     <a href="/forgot-password" style="display: block; float: left" >Forgot password?</a>
         <a href="/registration" style="display: block; float: right">Create an Account! </a>
      </p>
-    <!--<div style="text-align: center">
-        <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    </div>-->
     <div class="loading">Loading&#8230;</div>
 </div>
 <script  th:src="@{/js/index.js}"></script>

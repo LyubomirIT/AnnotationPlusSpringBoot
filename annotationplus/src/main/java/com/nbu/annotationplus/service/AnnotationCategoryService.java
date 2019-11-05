@@ -6,7 +6,7 @@ import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.persistence.entity.AnnotationCategory;
 import com.nbu.annotationplus.persistence.repository.AnnotationCategoryRepository;
 import com.nbu.annotationplus.persistence.repository.NoteRepository;
-import com.nbu.annotationplus.utils.ParseUtils;
+import com.nbu.annotationplus.utils.ValidationUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,26 +41,34 @@ public class AnnotationCategoryService {
         Long currentUserId = userService.getUserId();
         List<DtoAnnotationCategory> list;
         list = new ArrayList<>();
-        List<AnnotationCategory> annotationCategoryList = annotationCategoryRepository.findByUserIdAndNoteIdOrderByCreatedTsDesc(currentUserId,noteId);
-        for(AnnotationCategory annotationCategory: annotationCategoryList){
-            list.add(toDtoAnnotationCategory(annotationCategory));
+        List<AnnotationCategory> annotationCategoryList;
+        if(noteId == null){
+            annotationCategoryList = annotationCategoryRepository.findByUserIdOrderByCreatedTsDesc(currentUserId);
+            for(AnnotationCategory annotationCategory: annotationCategoryList){
+                list.add(toDtoAnnotationCategory(annotationCategory));
+            }
+            return list;
+        }else {
+            annotationCategoryList = annotationCategoryRepository.findByUserIdAndNoteIdOrderByCreatedTsDesc(currentUserId,noteId);
+            for (AnnotationCategory annotationCategory : annotationCategoryList) {
+                list.add(toDtoAnnotationCategory(annotationCategory));
+            }
+            return list;
         }
-        return list;
     }
 
     @Transactional
-    public DtoAnnotationCategory getAnnotationCategory(Long id){
+    public DtoAnnotationCategory getAnnotationCategoryById(Long id){
         Long currentUserId = userService.getUserId();
         AnnotationCategory annotationCategory = annotationCategoryRepository.findByIdAndUserId(id,currentUserId);
         if(annotationCategory == null){
             throw new ResourceNotFoundException("Annotation Category", "id", id);
-
         }
         return toDtoAnnotationCategory(annotationCategory);
     }
 
     @Transactional
-    public ResponseEntity<?> deleteAnnotationCategory(Long id){
+    public ResponseEntity<?> deleteAnnotationCategoryById(Long id){
         Long currentUserId = userService.getUserId();
         AnnotationCategory annotationCategory = annotationCategoryRepository.findByIdAndUserId(id,currentUserId);
         if(annotationCategory== null){
@@ -73,7 +81,7 @@ public class AnnotationCategoryService {
     }
 
     @Transactional
-    public DtoAnnotationCategory updateAnnotationCategory(Long id, DtoAnnotationCategory dtoAnnotationCategory){
+    public DtoAnnotationCategory updateAnnotationCategoryById(Long id, DtoAnnotationCategory dtoAnnotationCategory){
         Long currentUserId = userService.getUserId();
         AnnotationCategory annotationCategory = annotationCategoryRepository.findByIdAndUserId(id,currentUserId);
         if(annotationCategory== null){
@@ -117,8 +125,6 @@ public class AnnotationCategoryService {
     }
 
     private void validateAnnotationCategoryName(String annotationCategoryName){
-        if(ParseUtils.validateTitle(annotationCategoryName)){
-            throw new InvalidInputParamsException("Invalid Name");
-        }
+        ValidationUtils.validateName(annotationCategoryName);
     }
 }

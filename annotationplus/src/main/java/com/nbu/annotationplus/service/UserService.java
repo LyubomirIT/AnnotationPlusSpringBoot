@@ -9,7 +9,7 @@ import com.nbu.annotationplus.persistence.entity.User;
 import com.nbu.annotationplus.persistence.repository.RoleRepository;
 import com.nbu.annotationplus.persistence.repository.UserRepository;
 import com.nbu.annotationplus.utils.AuthUtils;
-import com.nbu.annotationplus.utils.ParseUtils;
+import com.nbu.annotationplus.utils.UserUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,10 +43,10 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<DtoUser> saveUser(DtoUser dtoUser) {
-        validateFirstAndLastName(dtoUser);
-        validateEmail(dtoUser);
-        validatePassword(dtoUser.getPassword());
+    public ResponseEntity<DtoUser> createUser(DtoUser dtoUser) {
+        UserUtils.validateFirstAndLastUserName(dtoUser.getName(),dtoUser.getLastName());
+        UserUtils.validateEmail((dtoUser.getEmail()));
+        UserUtils.validatePassword(dtoUser.getPassword());
         User existingUser = userRepository.findByEmail(dtoUser.getEmail());
         if (existingUser != null){
             throw new InvalidInputParamsException("User with that email already exists");
@@ -64,18 +64,16 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<DtoUser> updateUser(DtoUser dtoUser){
+    public ResponseEntity<DtoUser> updateCurrentUser(DtoUser dtoUser){
         Authentication authentication = validateUser();
         String userEmail = authentication.getName();
         User currentUser = userRepository.findByEmail(userEmail);
-        validateFirstAndLastName(dtoUser);
+        UserUtils.validateFirstAndLastUserName(dtoUser.getName(),dtoUser.getLastName());
         currentUser.setName(dtoUser.getName().trim());
         currentUser.setLastName(dtoUser.getLastName().trim());
         userRepository.save(currentUser);
         return new ResponseEntity<DtoUser>(HttpStatus.OK);
     }
-
-    //private StandardPBEStringEncryptor standardPBEStringEncryptor = new StandardPBEStringEncryptor();
 
     @Transactional
     public ResponseEntity<?> updatePassword (DtoPassword dtoPassword){
@@ -90,8 +88,7 @@ public class UserService {
 
     public DtoUser getCurrentUser(){
         Authentication authentication = validateUser();
-        String userEmail = authentication.getName();
-        return toDtoUser(userRepository.findByEmail(userEmail));
+        return toDtoUser(findUserByEmail(authentication.getName()));
     }
 
     public Long getUserId(){
@@ -101,21 +98,12 @@ public class UserService {
 
     private String getCurrentUserPassword(){
         Authentication authentication = validateUser();
-        String userEmail = authentication.getName();
-        User user = userRepository.findByEmail(userEmail);
+        User user = userRepository.findByEmail(authentication.getName());
         return user.getPassword();
     }
 
-    /*public User findByEmail(String email){
-        return userRepository.findByEmail(email);
-    }*/
-
-   /* public void updatePassword(String password, Long userId){
-        userRepository.updatePassword(password, userId);
-    }*/
-
     private Authentication validateUser() {
-        Authentication authentication = AuthUtils.getAuthenticatedUser();
+        Authentication authentication = AuthUtils.getAuthentication();
         if (authentication == null) {
             throw new UnauthorizedException("Unauthorized");
         }
@@ -124,37 +112,16 @@ public class UserService {
         }
     }
 
-    private void validateFirstAndLastName(DtoUser user){
-        if(ParseUtils.validateTitle(user.getName())){
-            throw new InvalidInputParamsException("Invalid First Name");
-        }
-        if(ParseUtils.validateTitle(user.getLastName())){
-            throw new InvalidInputParamsException("Invalid Last Name");
-        }
-    }
-
-    private void validateEmail(DtoUser user){
-        if(!ParseUtils.validateEmail(user.getEmail())){
-            throw new InvalidInputParamsException("Email must be a valid email address");
-        }
-    }
-
     private void validateUpdatePassword(DtoPassword dtoPassword) {
         if (!bCryptPasswordEncoder.matches(dtoPassword.getPassword(),getCurrentUserPassword())) {
             throw new InvalidInputParamsException("Invalid Current Password");
         }
-        validatePassword(dtoPassword.getNewPassword());
+        UserUtils.validatePassword(dtoPassword.getNewPassword());
         if (!dtoPassword.getConfirmNewPassword().equals(dtoPassword.getNewPassword())) {
-            throw new InvalidInputParamsException(ParseUtils.PASSWORDS_NOT_THE_SAME_ERROR);
+            throw new InvalidInputParamsException(UserUtils.PASSWORDS_NOT_THE_SAME_ERROR);
         }
         if (bCryptPasswordEncoder.matches(dtoPassword.getConfirmNewPassword(),getCurrentUserPassword())) {
             throw new InvalidInputParamsException("New Password cannot be the same as your Current Password");
-        }
-    }
-
-    private void validatePassword(String password) {
-        if (ParseUtils.validatePassword(password)) {
-            throw new InvalidInputParamsException(ParseUtils.INVALID_PASSWORD_ERROR);
         }
     }
 
@@ -163,6 +130,7 @@ public class UserService {
         DtoUser dtoUser = modelMapper.map(user, DtoUser.class);
         dtoUser.setPassword(null);
         dtoUser.setRoles(null);
+        //dtoUser.setId(null);
         return dtoUser;
     }
 }

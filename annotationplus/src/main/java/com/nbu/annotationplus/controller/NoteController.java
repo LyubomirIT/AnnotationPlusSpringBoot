@@ -16,37 +16,30 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
 
-    @PostMapping("/notes")
+    @PostMapping("/note")
     public ResponseEntity<DtoNote> createNote(@Valid @RequestBody DtoNote dtoNote) {
         return noteService.createNote(dtoNote);
     }
 
-    @GetMapping("/notes/{id}")
+    @GetMapping("/note/{id}")
     public DtoNote getNoteById(@PathVariable(value = "id") Long id) {
         return noteService.getNoteById(id);
     }
 
-    @GetMapping("/notes")
-    public List <DtoNote> getNotesByUserId() {
-        return noteService.getNotesByUserId();
 
+    @GetMapping("/note")
+    public List<DtoNote> getAllNotes(@RequestParam(required = false) Long categoryId) {
+        return noteService.getAllNotes(categoryId);
     }
 
-    @GetMapping("/notes/category={categoryId}")
-    public List <DtoNote> getNotesByUserId(@PathVariable(value = "categoryId") Long categoryId) {
-        return noteService.getNotesByCategoryIdAndUserId(categoryId);
-
+    @PutMapping("/note/{id}")
+    public DtoNote updateNoteById(@PathVariable(value = "id") Long id, @Valid @RequestBody DtoNote dtoNote) {
+        return noteService.updateNoteById(id,dtoNote);
     }
 
-    @PutMapping("/notes/{id}")
-    public DtoNote updateNote(@PathVariable(value = "id") Long id,
-                           @Valid @RequestBody DtoNote dtoNote) {
-        return noteService.updateNote(id,dtoNote);
-    }
-
-    @DeleteMapping("/notes/{id}")
-    public ResponseEntity<?> deleteNote(@PathVariable(value = "id") Long id) {
-        return noteService.deleteNote(id);
+    @DeleteMapping("/note/{id}")
+    public ResponseEntity<?> deleteNoteById(@PathVariable(value = "id") Long id) {
+        return noteService.deleteNoteById(id);
     }
 
 }

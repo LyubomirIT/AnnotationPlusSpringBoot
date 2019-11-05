@@ -1,7 +1,5 @@
 package com.nbu.annotationplus.persistence.entity;
 
-import com.nbu.annotationplus.persistence.entity.Role;
-
 import javax.persistence.*;
 import java.util.Set;
 
@@ -46,7 +44,7 @@ public class User {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<com.nbu.annotationplus.persistence.entity.Role> roles;
+    private Set<Role> roles;
 
     public String getPassword() {
         return password;
@@ -94,6 +92,14 @@ public class User {
 
     public int getActive() {
         return active;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 
     public Set<Role> getRoles() {

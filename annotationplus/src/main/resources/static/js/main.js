@@ -1,34 +1,4 @@
 $(document).ready(function() {
-
-   /* $(document).ajaxComplete(function (e, xhr, settings) {
-        console.log("completed");
-        console.log(xhr.status);
-        console.log(xhr);
-        var redirect = null;
-        try {
-            redirect = $.parseJSON(xhr.responseText).redirect;
-            if (redirect) {
-                console.log("302 222");
-                window.location.href = redirect;
-            }
-        } catch (e) {
-            return;
-        }
-        if (xhr.status == 200) {
-            console.log("302");
-            var redirect = null;
-            try {
-                redirect = $.parseJSON(xhr.responseText).redirect;
-                if (redirect) {
-                    console.log("302 222");
-                    window.location.href = redirect;
-                }
-            } catch (e) {
-                return;
-            }
-        }
-    });*/
-
     var BreakException = {};
     var editSourceButton = $('#editSource');
     var viewAnnotationButton = $('#viewAnnotation');
@@ -61,11 +31,6 @@ $(document).ready(function() {
             return true;
         }
     }
-
-    $(document).ajaxSuccess(function() {
-        $( ".log" ).text( "Triggered ajaxSuccess handler." );
-        console.log("pesho");
-    });
 
     function animateSuccess(message){
         $('.notify')
@@ -248,7 +213,7 @@ $(document).ready(function() {
 
 function populateSourceGridByCategoryId(){
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '/api/notes/category=' + categoryId);
+    httpRequest.open('GET', '/api/note?categoryId=' + categoryId);
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -313,7 +278,7 @@ function populateSourceGridByCategoryId(){
         $(this).prop("disabled",true);
         $.ajax({
             type: "DELETE",
-            url: "/api/notes/" + noteId,
+            url: "/api/note/" + noteId,
             success: function () {
                 formContainer.css("display","none");
                 animateSuccess("Source: " + "'" + noteName + "'" + " deleted successfully");
@@ -414,7 +379,7 @@ function populateSourceGridByCategoryId(){
         };
         $.ajax({
             type: "PUT",
-            url: "/api/notes/" + noteId,
+            url: "/api/note/" + noteId,
             data: JSON.stringify(dataObject),
             contentType: "application/json",
             dataType: "application/json",
@@ -486,7 +451,7 @@ function populateSourceGridByCategoryId(){
                             var dataObject = {"title": fileName, "content": html, "category": {"id":categoryId}};
                             $.ajax({
                                 type: "POST",
-                                url: "/api/notes/",
+                                url: "/api/note/",
                                 data: JSON.stringify(dataObject),
                                 contentType: "application/json",
                                 dataType: "application/json",
@@ -559,10 +524,7 @@ function populateSourceGridByCategoryId(){
         } else if($(this).val().trim() === noteName) {
             $(".categoryErrorMessage").text("");
             $("#updateSourceName").prop('disabled', true);
-        } else if($(this).val().trim().length > 50){
-            $("#sourceErrorMessage").text("Name cannot be longer than 50 characters");
-            $("#updateSourceName").prop('disabled', true);
-        } else if($(this).val().trim() != "" && $(this).val().trim().length < 51 && $(this).val() !== noteName) {
+        }  else if($(this).val().trim() != "" && $(this).val() !== noteName) {
             $("#sourceErrorMessage").text("");
             $("#updateSourceName").prop('disabled', false);
         }
@@ -618,7 +580,7 @@ function populateSourceGridByCategoryId(){
                             dataObject = {"title": sourceUrl, "content": html, "category": {"id":categoryId}};
                             $.ajax({
                                 type: "POST",
-                                url: "/api/notes/",
+                                url: "/api/note/",
                                 data: JSON.stringify(dataObject),
                                 contentType: "application/json",
                                 dataType: "application/json",

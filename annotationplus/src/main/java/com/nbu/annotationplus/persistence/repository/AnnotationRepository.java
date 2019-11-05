@@ -12,6 +12,7 @@ public interface AnnotationRepository extends JpaRepository<Annotation, Long> {
     //Optional<Annotation> findAnnotationByUidAndUserId(String uid,Long userId);
     Annotation findByIdAndUserId(Long id, Long userId);
     void deleteByIdAndUserId(Long id,Long userId);
-    List<Annotation> findByAnnotationCategoryIdAndUserIdOrderByCreatedTsDesc(Long annotationCategoryId, Long UserId);
-    List<Annotation> findFirst10ByUserIdOrderByIdDesc(Long userId);
+    List<Annotation> findByAnnotationCategoryIdAndUserIdOrderByCreatedTsDesc(Long annotationCategoryId, Long userId);
+    //List<Annotation> findFirst10ByUserIdOrderByIdDesc(Long userId);
+    List<Annotation> findByUserIdOrderByIdDesc(Long userId);
 }

@@ -22,9 +22,8 @@ public class AnnotationController {
     }
 
     @PutMapping("/annotation/{id}")
-    public DtoAnnotation updateAnnotation(@PathVariable(value = "id") Long id,
-                                          @Valid @RequestBody DtoAnnotation dtoAnnotation){
-        return annotationService.updateAnnotation(id, dtoAnnotation);
+    public DtoAnnotation updateAnnotationById(@PathVariable(value = "id") Long id, @Valid @RequestBody DtoAnnotation dtoAnnotation){
+        return annotationService.updateAnnotationById(id, dtoAnnotation);
     }
 
     @GetMapping("/annotation/{id}")
@@ -33,12 +32,12 @@ public class AnnotationController {
     }
 
     @GetMapping("/annotation")
-    public List<DtoAnnotation> getAnnotations(@RequestParam(required = false) Long annotationCategoryId) {
-        return annotationService.getAnnotationsByAnnotationCategoryIdAndUserId(annotationCategoryId);
+    public List<DtoAnnotation> getAllAnnotations(@RequestParam(required = false) Long annotationCategoryId) {
+        return annotationService.getAllAnnotations(annotationCategoryId);
     }
 
     @DeleteMapping("/annotation/{id}")
-    public ResponseEntity<?> deleteAnnotation(@PathVariable(value = "id") Long id) {
-        return annotationService.deleteAnnotation(id);
+    public ResponseEntity<?> deleteAnnotationById(@PathVariable(value = "id") Long id) {
+        return annotationService.deleteAnnotationById(id);
     }
 }

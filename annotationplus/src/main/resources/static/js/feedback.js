@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $(window).bind('beforeunload', function () {
-        if ($("#name").val().trim() != "" || $("#message").val().trim() != "") {
+        if ($("#name").val().trim() !== "" || $("#message").val().trim() !== "") {
             return "You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?";
         }
     });
@@ -11,20 +11,20 @@ $(document).ready(function () {
         modal.css("display", "none");
     });
 
-    $('#message').on('input', function (e) {
-        if ($(this).val().trim() == "") {
+    $('#message').on('input', function () {
+        if ($(this).val().trim() === "") {
             $("#submit").prop('disabled', true);
         }
-        if ($(this).val().trim() != "" && $("#name").val().trim() != "") {
+        if ($(this).val().trim() !== "" && $("#name").val().trim() !== "") {
             $("#submit").prop('disabled', false);
         }
     });
 
-    $('#name').on('input', function (e) {
-        if ($(this).val().trim() == "") {
+    $('#name').on('input', function () {
+        if ($(this).val().trim() === "") {
             $("#submit").prop('disabled', true);
         }
-        if ($(this).val().trim() != "" && $("#message").val().trim() != "") {
+        if ($(this).val().trim() !== "" && $("#message").val().trim() !== "") {
             $("#submit").prop('disabled', false);
         }
     });
@@ -38,7 +38,6 @@ $(document).ready(function () {
             "name": $("#name").val(),
             "component": $("#component").val()
         };
-        //btn.prop('disabled', true);
         $.ajax({
             type: "POST",
             url: "/api/feedback",

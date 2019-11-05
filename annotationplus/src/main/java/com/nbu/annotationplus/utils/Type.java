@@ -1,7 +1,5 @@
 package com.nbu.annotationplus.utils;
 
-import com.nbu.annotationplus.exception.InvalidInputParamsException;
-
 public enum Type {
     BUG("Bug"),
     QUESTION("Question"),
@@ -14,12 +12,20 @@ public enum Type {
         this.displayName = displayName;
     }
 
-    public static Type getByName(String name) {
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    /*public static Type getByName(String name) {
         for (Type type : values()) {
             if (name != null && name.equals(type.displayName)) {
                 return type;
             }
         }
         throw new InvalidInputParamsException(name != null ? "The provided type: " +'"'+ name +'"'+ " does not exist." : "The type is missing.");
-    }
+    }*/
 }

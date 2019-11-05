@@ -4,8 +4,7 @@ function validateEmail(email) {
 }
 
 $(document).ready(function () {
-    $("#requestToken").click(function (e) {
-        //e.preventDefault();
+    $("#requestToken").click(function () {
         var dataObject = {
             "email": $("#email").val()
         };
@@ -40,8 +39,7 @@ $(document).ready(function () {
         });
     });
 
-    $("#resetPasswordButton").click(function (e) {
-        //e.preventDefault();
+    $("#resetPasswordButton").click(function () {
         var dataObject = {
             "token": $("#token").val(),
             "newPassword": $("#newPassword").val(),
@@ -80,8 +78,6 @@ $(document).ready(function () {
         });
     });
 
-    //$("#loginButton").prop("disabled", true);
-
     /*
     $('#loginButton').on('click', function(e) {
 
@@ -113,15 +109,13 @@ $(document).ready(function () {
         });
     */
 
-    $('#email').on('input', function (e) {
-
-
+    /*$('#email').on('input', function () {
         if ($.trim($(this).val()).length < 1 || $.trim($("#password").val()).length < 1) {
             /*$(this).css({
                 "border-color": "red",
                 "border-width": "3px",
                 "border-style": "solid"
-            });*/
+            });
             $("#loginButton").prop("disabled", true);
             //$("#loginEmailErrorMessage").css("display", "block");
             $("#loginButton").css("cursor", "not-allowed");
@@ -134,7 +128,7 @@ $(document).ready(function () {
                 "border-left": "1px solid #ccc",
                 "border-right": "1px solid #ccc",
                 "border-top": "1px solid #ccc",
-            });*/
+            });
             $("#loginButton").prop("disabled", false);
             //$("#loginEmailErrorMessage").css("display", "none");
             $("#loginButton").css("cursor", "pointer");
@@ -142,15 +136,13 @@ $(document).ready(function () {
 
     });
 
-    $('#password').on('input', function (e) {
-
-
+    $('#password').on('input', function () {
         if ($.trim($(this).val()).length < 1 || $.trim($("#email").val()).length < 1) {
             /*$(this).css({
                 "border-color": "red",
                 "border-width": "3px",
                 "border-style": "solid"
-            });*/
+            });
             $("#loginButton").prop("disabled", true);
             //$("#loginPasswordErrorMessage").css("display", "block");
             $("#loginButton").css("cursor", "not-allowed");
@@ -163,11 +155,11 @@ $(document).ready(function () {
                 "border-left": "1px solid #ccc",
                 "border-right": "1px solid #ccc",
                 "border-top": "1px solid #ccc",
-            });*/
+            });
             $("#loginButton").prop("disabled", false);
             // $("#loginPasswordErrorMessage").css("display", "none");
             $("#loginButton").css("cursor", "pointer");
         }
 
-    });
+    });*/
 });

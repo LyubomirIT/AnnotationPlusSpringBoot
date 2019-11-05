@@ -1,5 +1,8 @@
 package com.nbu.annotationplus.persistence.entity;
 
+import com.nbu.annotationplus.utils.Component;
+import com.nbu.annotationplus.utils.Type;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,10 +17,10 @@ public class Feedback extends BaseEntity {
     private String message;
 
     @Column(name = "type")
-    private String type;
+    private Type type;
 
     @Column(name = "component")
-    private String component;
+    private Component component;
 
     @Column(name = "email")
     private String email;
@@ -33,11 +36,11 @@ public class Feedback extends BaseEntity {
         return message;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public String getComponent() {
+    public Component getComponent() {
         return component;
     }
 
@@ -57,11 +60,11 @@ public class Feedback extends BaseEntity {
         this.message = message;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
-    public void setComponent(String component) {
+    public void setComponent(Component component) {
         this.component = component;
     }
 

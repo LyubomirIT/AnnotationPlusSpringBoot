@@ -6,7 +6,6 @@ import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.persistence.entity.Category;
 import com.nbu.annotationplus.persistence.entity.Note;
 import com.nbu.annotationplus.persistence.repository.*;
-import com.nbu.annotationplus.utils.ParseUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,10 +35,16 @@ public class NoteService {
         return modelMapper.map(note, DtoNote.class);
     }
 
+    private DtoNote toDtoNoteWithoutContent(Note note) {
+        DtoNote dtoNote = toDtoNote(note);
+        dtoNote.setContent(null);
+        return dtoNote;
+    }
+
     @Transactional
     public ResponseEntity<DtoNote> createNote(DtoNote dtoNote){
         Long currentUserId = userService.getUserId();
-        //validateNoteName(dtoNote.getTitle());
+        validateNoteName(dtoNote.getTitle());
         validateNoteContent(dtoNote.getContent());
         if(dtoNote.getCategory() == null){
             throw new InvalidInputParamsException("Category is required!");
@@ -77,31 +82,28 @@ public class NoteService {
     }
 
     @Transactional
-    public List<DtoNote> getNotesByCategoryIdAndUserId(Long categoryId){
+    public List<DtoNote> getAllNotes(Long categoryId){
         Long currentUserId = userService.getUserId();
         List<DtoNote> list;
         list = new ArrayList<>();
-        List<Note> noteList = noteRepository.findByCategoryIdAndUserId(categoryId, currentUserId);
-        for(Note note: noteList){
-            list.add(toDtoNote(note));
+        List<Note> noteList;
+        if(categoryId == null){
+            noteList = noteRepository.findByUserId(currentUserId);
+            for(Note note: noteList){
+                list.add(toDtoNoteWithoutContent(note));
+            }
+            return list;
+        }else {
+            noteList = noteRepository.findByCategoryIdAndUserId(categoryId, currentUserId);
+            for (Note note : noteList) {
+                list.add(toDtoNoteWithoutContent(note));
+            }
+            return list;
         }
-        return list;
     }
 
     @Transactional
-    public List<DtoNote> getNotesByUserId(){
-        Long currentUserId = userService.getUserId();
-        List<DtoNote> list;
-        list = new ArrayList<>();
-        List<Note> noteList = noteRepository.findByUserId(currentUserId);
-        for(Note note: noteList){
-            list.add(toDtoNote(note));
-        }
-        return list;
-    }
-
-    @Transactional
-    public ResponseEntity<?> deleteNote(Long id){
+    public ResponseEntity<?> deleteNoteById(Long id){
         Long currentUserId = userService.getUserId();
         Note note = noteRepository.findByIdAndUserId(id, currentUserId);
         if(note == null){
@@ -114,7 +116,7 @@ public class NoteService {
     }
 
     @Transactional
-    public DtoNote updateNote(Long id, DtoNote dtoNote){
+    public DtoNote updateNoteById(Long id, DtoNote dtoNote){
         Long currentUserId = userService.getUserId();
         Note note = noteRepository.findByIdAndUserId(id,currentUserId);
         if(note == null){
@@ -122,7 +124,6 @@ public class NoteService {
         }
         if(dtoNote.getTitle() != null && !dtoNote.getTitle().trim().equals("")){
             if(!note.getTitle().equals(dtoNote.getTitle().trim())){
-                validateNoteName(dtoNote.getTitle());
                 if(noteRepository.findByTitleAndUserId(dtoNote.getTitle().trim(),currentUserId).isPresent()){
                     throw new InvalidInputParamsException("Source with name: " + "'" + dtoNote.getTitle() + "'" + " already exists.");
                 }
@@ -150,13 +151,13 @@ public class NoteService {
     }
 
     private void validateNoteName(String noteName){
-        if(ParseUtils.validateTitle(noteName)){
-            throw new InvalidInputParamsException("Invalid Title");
+        if(noteName == null || noteName.trim().equals("")){
+            throw new InvalidInputParamsException("Тitle is required");
         }
     }
 
     private void validateNoteContent(String noteContent){
-        if(ParseUtils.validateContent(noteContent)){
+        if(noteContent == null || noteContent.trim().equals("")){
             throw new InvalidInputParamsException("Invalid Content");
         }
     }

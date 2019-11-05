@@ -1,6 +1,5 @@
 package com.nbu.annotationplus.service;
 
-import com.nbu.annotationplus.dto.DtoAnnotation;
 import com.nbu.annotationplus.dto.DtoComment;
 import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
@@ -23,9 +22,6 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     @Autowired
-    private NoteService noteService;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -41,11 +37,20 @@ public class CommentService {
         Long currentUserId = userService.getUserId();
         List<DtoComment> list;
         list = new ArrayList<>();
-        List<Comment> commentList = commentRepository.findByAnnotationIdAndUserIdOrderByCreatedTsDesc(annotationId, currentUserId);
-        for(Comment comment: commentList){
-            list.add(toDtoComment(comment));
+        List<Comment> commentList;
+        if(annotationId == null){
+            commentList = commentRepository.findByUserIdOrderByCreatedTsDesc(currentUserId);
+            for(Comment comment: commentList){
+                list.add(toDtoComment(comment));
+            }
+            return list;
+        }else {
+            commentList = commentRepository.findByAnnotationIdAndUserIdOrderByCreatedTsDesc(annotationId, currentUserId);
+            for (Comment comment : commentList) {
+                list.add(toDtoComment(comment));
+            }
+            return list;
         }
-        return list;
     }
 
     @Transactional
@@ -55,7 +60,7 @@ public class CommentService {
         if(dtoComment.getAnnotationId() == null ){
             throw new InvalidInputParamsException("Annotation Id is required");
         }
-        DtoAnnotation dtoAnnotation = annotationService.getAnnotationById(dtoComment.getAnnotationId());
+        annotationService.getAnnotationById(dtoComment.getAnnotationId());
         Comment comment = new Comment();
         comment.setUserId(currentUserId);
         comment.setUserName(userName);
@@ -69,7 +74,7 @@ public class CommentService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteComment(Long id){
+    public ResponseEntity<?> deleteCommentById(Long id){
         Long currentUserId = userService.getUserId();
         Comment comment = commentRepository.findByIdAndUserId(id,currentUserId);
         if(comment == null){

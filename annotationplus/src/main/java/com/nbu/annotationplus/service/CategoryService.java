@@ -5,7 +5,7 @@ import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.persistence.entity.Category;
 import com.nbu.annotationplus.persistence.repository.CategoryRepository;
-import com.nbu.annotationplus.utils.ParseUtils;
+import com.nbu.annotationplus.utils.ValidationUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,7 +60,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public ResponseEntity<?> deleteCategory(Long id) {
+    public ResponseEntity<?> deleteCategoryById(Long id) {
         Long currentUserId = userService.getUserId();
         Category category = categoryRepository.findByIdAndUserId(id, currentUserId);
         if(category == null){
@@ -73,7 +73,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public DtoCategory updateCategory(Long id, DtoCategory dtoCategory) {
+    public DtoCategory updateCategoryById(Long id, DtoCategory dtoCategory) {
         Long currentUserId = userService.getUserId();
         Category category = categoryRepository.findByIdAndUserId(id,currentUserId);
         if(category == null){
@@ -94,7 +94,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public DtoCategory getCategory(Long id) {
+    public DtoCategory getCategoryById(Long id) {
         Long currentUserId = userService.getUserId();
         Category category = categoryRepository.findByIdAndUserId(id, currentUserId);
         if(category == null){
@@ -106,8 +106,6 @@ public class CategoryService {
     }
 
     private void validateCategoryName(String categoryName){
-        if(ParseUtils.validateTitle(categoryName)){
-            throw new InvalidInputParamsException("Invalid Name");
-        }
+        ValidationUtils.validateName(categoryName);
     }
 }

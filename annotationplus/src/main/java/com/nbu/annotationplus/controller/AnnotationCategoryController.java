@@ -21,18 +21,18 @@ public class AnnotationCategoryController {
         return annotationCategoryService.createAnnotationCategory(dtoAnnotationCategory);
     }
 
-    @GetMapping("/annotationCategory/{noteId}")
-    public List<DtoAnnotationCategory> getAllAnnotationCategories(@PathVariable(value = "noteId")Long noteId) {
+    @GetMapping("/annotationCategory")
+    public List<DtoAnnotationCategory> getAllAnnotationCategories(@RequestParam(required = false) Long noteId) {
         return annotationCategoryService.getAllAnnotationCategories(noteId);
     }
 
     @DeleteMapping("/annotationCategory/{id}")
-    ResponseEntity<?> deleteAnnotationCategory(@PathVariable(value = "id") Long id) {
-        return annotationCategoryService.deleteAnnotationCategory(id);
+    ResponseEntity<?> deleteAnnotationCategoryById(@PathVariable(value = "id") Long id) {
+        return annotationCategoryService.deleteAnnotationCategoryById(id);
     }
 
     @PutMapping("/annotationCategory/{id}")
-    public DtoAnnotationCategory updateAnnotationCategory(@PathVariable(value = "id") Long id, @Valid @RequestBody DtoAnnotationCategory dtoAnnotationCategory) {
-        return annotationCategoryService.updateAnnotationCategory(id,dtoAnnotationCategory);
+    public DtoAnnotationCategory updateAnnotationCategoryById(@PathVariable(value = "id") Long id, @Valid @RequestBody DtoAnnotationCategory dtoAnnotationCategory) {
+        return annotationCategoryService.updateAnnotationCategoryById(id,dtoAnnotationCategory);
     }
 }

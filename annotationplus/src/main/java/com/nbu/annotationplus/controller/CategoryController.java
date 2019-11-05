@@ -27,18 +27,18 @@ public class CategoryController {
     }
 
     @DeleteMapping("/category/{id}")
-    public ResponseEntity<?> deleteCategory(@PathVariable(value = "id") Long id) {
-        return categoryService.deleteCategory(id);
+    public ResponseEntity<?> deleteCategoryById(@PathVariable(value = "id") Long id) {
+        return categoryService.deleteCategoryById(id);
     }
 
     @PutMapping("/category/{id}")
-    public DtoCategory updateCategory(@PathVariable(value = "id") Long id,
+    public DtoCategory updateCategoryById(@PathVariable(value = "id") Long id,
                            @Valid @RequestBody DtoCategory dtoCategory) {
-        return categoryService.updateCategory(id,dtoCategory);
+        return categoryService.updateCategoryById(id,dtoCategory);
     }
 
     @GetMapping("/category/{id}")
     public DtoCategory getCategoryById(@PathVariable(value = "id") Long id) {
-        return categoryService.getCategory(id);
+        return categoryService.getCategoryById(id);
     }
 }

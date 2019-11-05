@@ -8,7 +8,7 @@ import com.nbu.annotationplus.persistence.entity.PasswordResetToken;
 import com.nbu.annotationplus.persistence.entity.User;
 import com.nbu.annotationplus.persistence.repository.PasswordResetTokenRepository;
 import com.nbu.annotationplus.persistence.repository.UserRepository;
-import com.nbu.annotationplus.utils.ParseUtils;
+import com.nbu.annotationplus.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,11 +39,8 @@ public class PasswordService {
            throw new InvalidInputParamsException("Invalid Token");
        }
        if (resetToken.isExpired()){
-           throw new InvalidInputParamsException("Token is Expired.");
+           throw new InvalidInputParamsException("Token is Expired");
        }
-       /*if(!dtoPassword.getNewPassword().equals(dtoPassword.getConfirmNewPassword())){
-           throw new InvalidInputParamsException("Passwords must match.");
-       }*/
        validateResetPassword(dtoPassword);
        User user = resetToken.getUser();
        String updatedPassword = passwordEncoder.encode(dtoPassword.getConfirmNewPassword());
@@ -55,7 +52,7 @@ public class PasswordService {
 
     @Transactional
     public ResponseEntity<?> requestToken(DtoForgotPassword dtoForgotPassword, HttpServletRequest request){
-
+        UserUtils.validateEmail(dtoForgotPassword.getEmail());
         User user = userRepository.findByEmail(dtoForgotPassword.getEmail());
         if (user == null){
             throw new InvalidInputParamsException("User does not exist");
@@ -95,11 +92,9 @@ public class PasswordService {
     }
 
     private void validateResetPassword(DtoPassword dtoPassword) {
-        if (ParseUtils.validatePassword(dtoPassword.getNewPassword())) {
-            throw new InvalidInputParamsException(ParseUtils.INVALID_PASSWORD_ERROR);
-        }
+        UserUtils.validatePassword(dtoPassword.getNewPassword());
         if (!dtoPassword.getConfirmNewPassword().equals(dtoPassword.getNewPassword())) {
-            throw new InvalidInputParamsException(ParseUtils.PASSWORDS_NOT_THE_SAME_ERROR);
+            throw new InvalidInputParamsException(UserUtils.PASSWORDS_NOT_THE_SAME_ERROR);
         }
     }
 

@@ -15,24 +15,25 @@ $(document).ready(function() {
     var pen = $("<i class=\"fa fa-pen fa-1x editName\"></i>");
     var responseJson;
 
-    if(annotationId != null){
-        try{
-            $([document.documentElement, document.body]).animate({
-                scrollTop: $("#content [annotation-id=" + annotationId + "]").first().offset().top
-            }, 1000);
-        } catch (e) {
-            //do nothing
-        }
-    }
-
+    $('#content').css("width",$('#content').width() - 320);
     $("body").removeClass("b1 b2");
     $("#content > div ").css("margin-top", "0px");
+    $("#content > p").first().css("margin-top", "0px");
 
     $('[data-toggle="tooltip"]').tooltip();
 
     $(".buttonTooltip").click(function(){
         $('.tooltip').css("display","none");
     });
+
+    if(annotationId != null){
+        try{
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $("#content [annotation-id=" + annotationId + "]").first().offset().top
+            }, 1000);
+        } catch (e) {
+        }
+    }
 
     $(document)
         .ajaxStart(function () {
@@ -207,7 +208,10 @@ $(document).ready(function() {
     function listAnnotationCategories(){
     $.ajax({
         type: "GET",
-        url: "/api/annotationCategory/" + noteId,
+        url: "/api/annotationCategory",
+        data: {
+            noteId: noteId
+        },
         success: function (result) {
             if (result.length > 0) {
                 $('#categoriesContainer li').slice(2).remove();
@@ -339,13 +343,12 @@ listAnnotationCategories();
 
                 $.ajax({
                     type: "PUT",
-                    url: "/api/notes/" + noteId ,
+                    url: "/api/note/" + noteId ,
                     data: JSON.stringify(dataObject),
                     contentType: "application/json",
                     dataType: "application/json",
                     statusCode: {
-                        200: function (e) {
-                            console.log("Update Successfull")
+                        200: function () {
                         }
                     }
                 });
@@ -378,7 +381,7 @@ listAnnotationCategories();
 
                     $.ajax({
                         type: "PUT",
-                        url: "/api/notes/" + noteId ,
+                        url: "/api/note/" + noteId ,
                         data: JSON.stringify(dataObject),
                         contentType: "application/json",
                         dataType: "application/json",
@@ -403,11 +406,11 @@ listAnnotationCategories();
         document.getElementById("jscolor").jscolor.show();
     });
 
-    $("#cancel").click(function(e) {
+    $("#cancel").click(function() {
        $("#changeColorForm").css("display","none");
     });
 
-    $("#changeColorForm > div").click(function(e) {
+    $("#changeColorForm > div").click(function() {
         document.getElementById('jscolor').jscolor.show();
     });
 
@@ -452,6 +455,10 @@ listAnnotationCategories();
     });
 
     $("#toggleComments").click(function() {
+        if($("#sidebar-wrapper").width() === 0){
+            $('#content').css("width",$('#content').width() -320);
+            $('.btn-toolbar').css("padding-right","320px");
+        }
         annotationsContainer.css("display","none");
         categoriesContainer.css("display","none");
         commentContainer.css("display","block");
@@ -464,10 +471,13 @@ listAnnotationCategories();
         $("#sidebar-wrapper").css("width","320px");
         $("#toggleAnnotations").css("background-color","#6C6C6C");
         $("#toggleAnnotations > i").css("color","#fff");
-
     });
 
     $("#toggleAnnotations").click(function() {
+        if($("#sidebar-wrapper").width() === 0){
+            $('#content').css("width",$('#content').width() -320);
+            $('.btn-toolbar').css("padding-right","320px");
+        }
         commentContainer.css("display","none");
         annotationsContainer.css("display","block");
         categoriesContainer.css("display","block");
@@ -482,7 +492,7 @@ listAnnotationCategories();
         $("#toggleComments > i").css("color","#fff");
     });
 
-    $("#colors span").click(function(e) {
+    $("#colors span").click(function() {
          annotationColor = $(this).css("background-color");
          console.log(annotationColor);
             editMode = true;
@@ -495,7 +505,7 @@ listAnnotationCategories();
             }
     });
 
-    $("#highlighter").click(function(e) {
+    $("#highlighter").click(function() {
         if ($(this).attr("class").indexOf("disable") > -1) {
             console.log("no paint");
         } else {
@@ -524,6 +534,8 @@ listAnnotationCategories();
         $("#toggleComments > i").css("color","#fff");
         $("#toggleAnnotations").css("background-color","#6C6C6C");
         $("#toggleAnnotations > i").css("color","#fff");
+        $('#content').css("width",$('#content').width() + 320);
+        $('.btn-toolbar').css("padding-right","0px");
     });
 
     $("#cancelComment").click(function() {
@@ -541,7 +553,7 @@ listAnnotationCategories();
         }
     });
 
-    $("#saveComment").click(function(e) {
+    $("#saveComment").click(function() {
           dataObject = {
             "comment": $("#commentArea").val(),
             "annotationId": annotationId,
@@ -581,7 +593,7 @@ listAnnotationCategories();
     });
 
         $(function () {
-            $("#content").bind('mouseup', function (e) {
+            $("#content").bind('mouseup', function () {
                 if(editMode){
                     color(annotationColor);
                 }
@@ -630,7 +642,7 @@ listAnnotationCategories();
                                     span.setAttribute("category-id", annotationCategoryId);
                                 } else if (range.commonAncestorContainer.nodeType == '1') {
                                     console.log("nodeType " + range.commonAncestorContainer.nodeType)
-                                    /*var test =*/ range.commonAncestorContainer.querySelectorAll('span').forEach(function (e) {
+                                     range.commonAncestorContainer.querySelectorAll('span').forEach(function (e) {
                                         if (sel.containsNode(e, true)) {
                                             if (e.style.backgroundColor == color) {
                                                 console.log(e.style.backgroundColor);
@@ -649,7 +661,7 @@ listAnnotationCategories();
                         setTimeout(function () {
                         $.ajax({
                             type: "PUT",
-                            url: "/api/notes/" + noteId,
+                            url: "/api/note/" + noteId,
                             data: JSON.stringify(dataObject),
                             contentType: "application/json",
                             dataType: "application/json",
@@ -695,7 +707,7 @@ listAnnotationCategories();
 
     });
 
-    $("#confirmDelete").click(function(e) {
+    $("#confirmDelete").click(function() {
         $(this).prop("disabled",true);
         $.ajax({
                 type: "DELETE",
@@ -731,7 +743,7 @@ listAnnotationCategories();
                         dataObject = {"content": $("#content").html()};
                         $.ajax({
                             type: "PUT",
-                            url: "/api/notes/" + noteId ,
+                            url: "/api/note/" + noteId ,
                             data: JSON.stringify(dataObject),
                             contentType: "application/json",
                             dataType: "application/json",
@@ -749,10 +761,12 @@ listAnnotationCategories();
     $("#content").click(function(e) {
             if (e.target.getAttribute('annotation-id')) {
                 var attribute = e.target.getAttribute('annotation-id');
-                console.log(attribute)
                 $.ajax({
                     type: "GET",
-                    url: "/api/comment/" + attribute,
+                    url: "/api/comment",
+                    data: {
+                        annotationId: attribute
+                    },
                     success: function (result) {
                         if (result.length > 0) {
                             $('#commentContainer li').slice(2).remove();
