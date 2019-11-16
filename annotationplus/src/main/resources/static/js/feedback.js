@@ -5,6 +5,22 @@ $(document).ready(function () {
         }
     });
 
+    var successMessage = $('<div class=\"notify top-left do-show\" id=\"successMessage\" data-notification-status=\"success\"></div>');
+
+    function animateSuccess(message){
+        $(successMessage).remove();
+        $('body').append(successMessage).clone();
+        $(successMessage).text(message);
+    }
+
+    $(".closeDialog").click(function() {
+        $(".formContainer").css("display","none");
+    });
+
+    $(".close").click(function() {
+        $(".formContainer").css("display","none");
+    });
+
     var modal = $("#myModal");
     var span = $("#close");
     span.click(function () {
@@ -41,26 +57,21 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: "/api/feedback",
-            // data:{ "name": $("#name").val(), "lastName": $("#lastName").val() },
             data: JSON.stringify(dataObject),
             contentType: "application/json",
             dataType: "application/json",
             statusCode: {
                 201: function () {
-                    $('.trigger-btn').click();
                     $('#name').val("");
                     $('#message').val("");
                     $("#submit").prop('disabled', true);
+                    animateSuccess("Feedback send successfully");
                 },
-                400: function (data) {
-                    var json = $.parseJSON(data.responseText);
-                    setTimeout(function () {
-                        btn.prop('disabled', false);
-                    }, 1000);
+                400: function (e) {
+                    var json = $.parseJSON(e.responseText);
+                    btn.prop('disabled', false);
                     $("#userError>strong").text(json.message);
-                    $('#userError').fadeIn('fast', function () {
-                        //$('.isa_error').delay(3000).fadeOut();
-                    });
+                    $('#userError').fadeIn('fast', function () {});
                 }
             }
         });

@@ -9,18 +9,38 @@
     <link rel="shortcut icon" type="image/png" th:href="@{/images/icons/pencil.png}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script  th:src="@{/js/redirect.js}"></script>
+    <script  th:src="@{/js/bootstrap.min.js}"></script>
+    <script  th:src="@{/js/profile.js}"></script>
+    <script  th:src="@{/js/common.js}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}"/>
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-
+<div class="formContainer" id="sessionExpiredContainer">
+    <div class="modal fade confirmationDialog" id="sessionExpiredModal"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning" role="alert" style="font-size: 15px;">
+                        Session Expired. Please log in again to continue your work !
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary closeDialog" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -44,7 +64,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a href="#" th:utext="${userName}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
+                    <a th:inline="text" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">[[${userName}]] <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#"><span class="oi oi-person"></span>Settings</a></li>
                         <li role="separator" class="divider"></li>
@@ -81,11 +101,11 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-10 col-sm-offset-2">
-                                <button id="submit" th:type="button" class="btn btn-primary">Save</button>
+                                <button id="updateNames" th:type="button" class="btn btn-primary">Save</button>
                             </div>
                         </div>
                         <div class="alert alert-danger alert-dismissible" role="alert" id="userError" style="text-align: center">
-                            <button type="button" class="close" id="close2" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="close" id="closeNamesError" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <strong></strong>
                         </div>
                     </div>
@@ -140,12 +160,12 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-10 col-sm-offset-2">
-                                <button id="submit2" type="button" class="btn btn-primary">Update Password</button>
+                                <button id="updatePassword" type="button" class="btn btn-primary">Update Password</button>
                                 <!--<button type="reset" class="btn btn-default">Cancel</button>-->
                             </div>
                         </div>
                         <div class="alert alert-danger alert-dismissible" role="alert" id="passwordError" style="text-align: center">
-                            <button type="button" class="close" id="close1" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="close" id="closePasswordError" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <strong></strong>
                         </div>
                     </div>
@@ -157,7 +177,5 @@
     </div>
     <div class="loading">Loading&#8230;</div>
 </div>
-<script  th:src="@{/js/profile.js}"></script>
-<script  th:src="@{/js/common.js}"></script>
 </body>
 </html>

@@ -26,8 +26,8 @@ $(document).ready(function () {
                     $("#success").css("display", "block");
                     $("#email").val("");
                 },
-                400: function (data) {
-                    var json = $.parseJSON(data.responseText);
+                400: function (e) {
+                    var json = $.parseJSON(e.responseText);
                     setTimeout(function () {
                         btn.prop('disabled', false);
                     }, 1000);
@@ -64,8 +64,8 @@ $(document).ready(function () {
                     $("#newPassword").val("");
                     $("#confirmNewPassword").val("");
                 },
-                400: function (data) {
-                    var json = $.parseJSON(data.responseText);
+                400: function (e) {
+                    var json = $.parseJSON(e.responseText);
                     setTimeout(function () {
                         btn.prop('disabled', false);
                     }, 1000);
@@ -77,89 +77,4 @@ $(document).ready(function () {
             }
         });
     });
-
-    /*
-    $('#loginButton').on('click', function(e) {
-
-
-            if ($.trim($("#email").val()).length > 1 && !validateEmail(email)) {
-                $(this).css({
-                    "border-color": "red",
-                    "border-width": "3px",
-                    "border-style": "solid"
-                });
-                $("#loginButton").prop("disabled", true);
-                $("#loginEmailErrorMessage").css("display", "block");
-                $("#loginButton").css("cursor", "not-allowed");
-
-            }
-
-            if ($.trim($("#email").val()).length > 0 && validateEmail(email)) {
-                $(this).css({
-                    "border-bottom": "1px solid #ccc",
-                    "border-left": "1px solid #ccc",
-                    "border-right": "1px solid #ccc",
-                    "border-top": "1px solid #ccc",
-                });
-                //$("#loginButton").prop("disabled", false);
-                $("#loginEmailErrorMessage").css("display", "none");
-                //$("#loginButton").css("cursor", "pointer");
-            }
-
-        });
-    */
-
-    /*$('#email').on('input', function () {
-        if ($.trim($(this).val()).length < 1 || $.trim($("#password").val()).length < 1) {
-            /*$(this).css({
-                "border-color": "red",
-                "border-width": "3px",
-                "border-style": "solid"
-            });
-            $("#loginButton").prop("disabled", true);
-            //$("#loginEmailErrorMessage").css("display", "block");
-            $("#loginButton").css("cursor", "not-allowed");
-
-        }
-
-        if ($.trim($(this).val()).length > 0 && $.trim($("#password").val()).length > 0) {
-            /*$(this).css({
-                "border-bottom": "1px solid #ccc",
-                "border-left": "1px solid #ccc",
-                "border-right": "1px solid #ccc",
-                "border-top": "1px solid #ccc",
-            });
-            $("#loginButton").prop("disabled", false);
-            //$("#loginEmailErrorMessage").css("display", "none");
-            $("#loginButton").css("cursor", "pointer");
-        }
-
-    });
-
-    $('#password').on('input', function () {
-        if ($.trim($(this).val()).length < 1 || $.trim($("#email").val()).length < 1) {
-            /*$(this).css({
-                "border-color": "red",
-                "border-width": "3px",
-                "border-style": "solid"
-            });
-            $("#loginButton").prop("disabled", true);
-            //$("#loginPasswordErrorMessage").css("display", "block");
-            $("#loginButton").css("cursor", "not-allowed");
-
-        }
-
-        if ($.trim($(this).val()).length > 0 && $.trim($("#email").val()).length > 0) {
-            /*$(this).css({
-                "border-bottom": "1px solid #ccc",
-                "border-left": "1px solid #ccc",
-                "border-right": "1px solid #ccc",
-                "border-top": "1px solid #ccc",
-            });
-            $("#loginButton").prop("disabled", false);
-            // $("#loginPasswordErrorMessage").css("display", "none");
-            $("#loginButton").css("cursor", "pointer");
-        }
-
-    });*/
 });

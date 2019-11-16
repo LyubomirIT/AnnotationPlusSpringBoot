@@ -6,20 +6,41 @@
     <title>Home</title>
     <link rel="shortcut icon" type="image/png" th:href="@{/images/icons/pencil.png}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/ag-grid.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/ag-theme-balham.css}"/>
     <script  th:src="@{/js/jquery-3.3.1.min.js}"></script>
-    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script  th:src="@{/js/redirect.js}"></script>
+    <script  th:src="@{/js/bootstrap.min.js}"></script>
     <script  th:src="@{/js/common.js}"></script>
     <script  th:src="@{/js/main.js}"></script>
+    <script  th:src="@{/js/ag-grid-community.min.noStyle.js}"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 </head>
 
 <body>
 <div class="loading">Loading&#8230;</div>
-<div class="notify top-left" data-notification-status="success"></div>
+<div class="formContainer" id="sessionExpiredContainer">
+    <div class="modal fade confirmationDialog" id="sessionExpiredModal"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning" role="alert" style="font-size: 15px;">
+                        Session Expired. Please log in again to continue your work !
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary closeDialog" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="formContainer" id="deleteSourceConfirmationContainer">
     <div class="modal fade confirmationDialog" id="confirmSourceDeleteModal"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -152,7 +173,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a href="#" th:utext="${userName}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
+                    <a th:inline="text" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">[[${userName}]] <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/admin/profile"><span class="oi oi-person"></span>Settings</a></li>
                         <li role="separator" class="divider"></li>

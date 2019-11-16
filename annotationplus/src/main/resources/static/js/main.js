@@ -32,14 +32,12 @@ $(document).ready(function() {
         }
     }
 
+    var successMessage = $('<div class=\"notify top-left do-show\" id=\"successMessage\" data-notification-status=\"success\"></div>');
+
     function animateSuccess(message){
-        $('.notify')
-            .removeClass("do-show");
-        setTimeout(
-            function()
-            {
-                $('.notify').addClass("do-show").text(message)
-            }, 1);
+        $(successMessage).remove();
+        $('body').append(successMessage).clone();
+        $(successMessage).text(message);
     }
 
     function selectRowByValue(value) {
@@ -135,6 +133,11 @@ $(document).ready(function() {
         httpRequest.open('GET', '/api/category');
         httpRequest.send();
         httpRequest.onreadystatechange = function () {
+            /*if(httpRequest.responseURL.indexOf("/login") > -1){
+                alert("Session Expired. Please login again");
+                window.open("/login", "_self");
+                return false;
+            }*/
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
                 if(httpResult.length < 1){
@@ -216,7 +219,12 @@ function populateSourceGridByCategoryId(){
     httpRequest.open('GET', '/api/note?categoryId=' + categoryId);
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+        if (httpRequest.responseURL.indexOf("/login") > -1) {
+            $(".formContainer").css("display","none");
+            $("#sessionExpiredContainer").css("display","block");
+            window.open("/login", "_blank");
+        }
+        else if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             sourceGridOptions.api.setRowData(httpResult);
         }
@@ -260,28 +268,29 @@ function populateSourceGridByCategoryId(){
     });
 
     delCategoryButton.click(function() {
-        $(this).prop("disabled",true);
         $.ajax({
             type: "DELETE",
             url: "/api/category/" + categoryId,
-            success: function () {
-                formContainer.css("display","none");
-                animateSuccess("Category: " + "'" + categoryName + "'" + " deleted successfully");
-                populateCategoryGrid();
-                populateAnnotationGrid();
-                delCategoryButton.prop("disabled",false);
+            statusCode: {
+                200: function () {
+                    formContainer.css("display", "none");
+                    animateSuccess("Category deleted successfully");
+                    populateCategoryGrid();
+                    populateAnnotationGrid();
+                    delCategoryButton.prop("disabled", false);
+                }
             }
         });
     });
 
     delSourceButton.click(function() {
-        $(this).prop("disabled",true);
         $.ajax({
             type: "DELETE",
             url: "/api/note/" + noteId,
-            success: function () {
+            statusCode:{
+            200: function () {
                 formContainer.css("display","none");
-                animateSuccess("Source: " + "'" + noteName + "'" + " deleted successfully");
+                animateSuccess("Source deleted successfully");
                 populateSourceGridByCategoryId();
                 populateAnnotationGrid();
                 editSourceButton.prop('disabled', true);
@@ -289,16 +298,16 @@ function populateSourceGridByCategoryId(){
                 deleteSourceButton.prop('disabled', true);
                 delSourceButton.prop("disabled",false);
             }
+            }
         });
     });
 
     openSourceButton.click(function() {
         $(this).prop('disabled', true);
-        window.open("/admin/source?id=" + noteId, "_self")
+        window.open("/admin/source?id=" + noteId, "_self");
     });
 
     $("#createCategory").click(function() {
-        $(this).prop("disabled",true);
         $(".categoryErrorMessage").text("");
         var dataObject = {
             "name":$("#categoryNameCreateValue").val().trim()
@@ -311,14 +320,10 @@ function populateSourceGridByCategoryId(){
             dataType: "application/json",
             statusCode: {
                 201: function (e) {
-                    if (e.redirect) {
-                        // data.redirect contains the string URL to redirect to
-                        window.location.href = e.redirect;
-                    }
                     $("#noCategoryInfo").css("display","none");
                     responseJson = $.parseJSON(e.responseText);
                     formContainer.css("display","none");
-                    animateSuccess("Category: " + "'" + responseJson.name + "'" + " created successfully");
+                    animateSuccess("Category created successfully");
                     $("#createCategory").prop("disabled",false);
                     $("#categoryNameCreateValue").val("");
                     selectRowByValue(responseJson.name);
@@ -333,7 +338,7 @@ function populateSourceGridByCategoryId(){
     });
 
     $("#updateCategoryName").click(function() {
-        $(this).prop("disabled",true);
+        //$(this).prop("disabled",true);
         $(".categoryErrorMessage").text("");
         var dataObject = {
             "name":$("#categoryName").val().trim()
@@ -346,13 +351,9 @@ function populateSourceGridByCategoryId(){
             dataType: "application/json",
             statusCode: {
                 200: function (e) {
-                    if (e.redirect) {
-                        // data.redirect contains the string URL to redirect to
-                        window.location.href = e.redirect;
-                    }
                     responseJson = $.parseJSON(e.responseText);
                     formContainer.css("display","none");
-                    animateSuccess("Category: " + "'" + responseJson.name + "'" + " updated successfully");
+                    animateSuccess("Category updated successfully");
                     $("#updateCategoryName").prop("disabled",false);
                     selectRowByValue(responseJson.name);
                 },
@@ -360,20 +361,12 @@ function populateSourceGridByCategoryId(){
                     responseJson = $.parseJSON(e.responseText);
                     $(".categoryErrorMessage").text(responseJson.message);
                     $("#updateCategoryName").prop("disabled",false);
-                }/*,
-                302: function () {
-                    console.log("302");
-                    window.open("/login","_self");
-                    //responseJson = $.parseJSON(e.responseText);
-                    //$(".categoryErrorMessage").text(responseJson.message);
-                    //$("#updateCategoryName").prop("disabled",false);
-                }*/
+                }
             }
         });
     });
 
     $("#updateSourceName").click(function() {
-        $(this).prop("disabled",true);
         var dataObject = {
             "title":$("#sourceName").val()
         };
@@ -387,7 +380,7 @@ function populateSourceGridByCategoryId(){
                 200: function () {
                     formContainer.css("display","none");
                     $("#updateSourceName").prop("disabled",false);
-                    animateSuccess("Source: " + "'" + noteName + "'" + " updated successfully");
+                    animateSuccess("Source updated successfully");
                     populateSourceGridByCategoryId();
                 },
                 400:function (e) {
@@ -434,7 +427,6 @@ function populateSourceGridByCategoryId(){
         var isFileValid = (allowedExtensions.indexOf(extension) > -1);
 
         if((isFileValid)){
-            //setTimeout(function () {
                 var formData = new FormData();
                 formData.append('file', file);
                 $.ajax({
@@ -475,7 +467,6 @@ function populateSourceGridByCategoryId(){
                         }
                     }
                 });
-           // }, 100);
         } else {
             $("#uploadFileErrorMessage").text("Invalid File Format");
             uploadFileButton.prop('disabled', false);
@@ -659,6 +650,11 @@ function populateSourceGridByCategoryId(){
         httpRequest.open('GET', '/api/annotation');
         httpRequest.send();
         httpRequest.onreadystatechange = function () {
+            /*if(httpRequest.responseURL.indexOf("/login") > -1){
+                alert("Session Expired. Please login again");
+                window.open("/login", "_self");
+                return false;
+            }*/
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
                 annotationGridOptions.api.setRowData(httpResult);

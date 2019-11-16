@@ -19,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -60,7 +62,7 @@ public class UserService {
         Role userRole = roleRepository.findByRole("ADMIN");
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         userRepository.save(user);
-        return new ResponseEntity<DtoUser>(HttpStatus.OK);
+        return new ResponseEntity<DtoUser>(toDtoUser(user),HttpStatus.OK);
     }
 
     @Transactional
@@ -71,6 +73,7 @@ public class UserService {
         UserUtils.validateFirstAndLastUserName(dtoUser.getName(),dtoUser.getLastName());
         currentUser.setName(dtoUser.getName().trim());
         currentUser.setLastName(dtoUser.getLastName().trim());
+        currentUser.setUpdatedTs(LocalDateTime.now(Clock.systemUTC()));
         userRepository.save(currentUser);
         return new ResponseEntity<DtoUser>(HttpStatus.OK);
     }
@@ -82,6 +85,7 @@ public class UserService {
         User currentUser = userRepository.findByEmail(userEmail);
         validateUpdatePassword(dtoPassword);
         currentUser.setPassword(bCryptPasswordEncoder.encode(dtoPassword.getConfirmNewPassword()));
+        currentUser.setUpdatedTs(LocalDateTime.now(Clock.systemUTC()));
         userRepository.save(currentUser);
         return ResponseEntity.ok().build();
     }

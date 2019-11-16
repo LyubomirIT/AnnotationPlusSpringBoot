@@ -68,7 +68,7 @@ public class FeedbackService {
     private void validateFeedbackName(String feedbackName){
         ValidationUtils.validateName(feedbackName);
     }
-     private void validateFeedBackMessage(String feedbackMessage){
+    private void validateFeedBackMessage(String feedbackMessage){
         if(feedbackMessage == null || feedbackMessage.trim().equals("")){
             throw new InvalidInputParamsException("Message cannot be empty");
         }

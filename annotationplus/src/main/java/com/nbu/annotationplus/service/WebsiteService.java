@@ -26,5 +26,4 @@ public class WebsiteService {
         }
         return new ResponseEntity<DtoHtml>(dtoHtml, HttpStatus.OK);
     }
-
 }

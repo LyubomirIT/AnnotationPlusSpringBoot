@@ -2,6 +2,7 @@ package com.nbu.annotationplus.dto;
 
 import com.nbu.annotationplus.persistence.entity.Role;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class DtoUser {
@@ -13,6 +14,8 @@ public class DtoUser {
     private String lastName;
     private int active;
     private Set<Role> roles;
+    private LocalDateTime createdTs;
+    private LocalDateTime updatedTs;
 
     public String getPassword() {
         return password;
@@ -68,5 +71,21 @@ public class DtoUser {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDateTime getCreatedTs() {
+        return createdTs;
+    }
+
+    public void setCreatedTs(LocalDateTime createdTs) {
+        this.createdTs = createdTs;
+    }
+
+    public LocalDateTime getUpdatedTs() {
+        return updatedTs;
+    }
+
+    public void setUpdatedTs(LocalDateTime updatedTs) {
+        this.updatedTs = updatedTs;
     }
 }
