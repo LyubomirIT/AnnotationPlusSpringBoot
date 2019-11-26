@@ -18,7 +18,7 @@ public class AnnotationCategory extends BaseEntity {
     private Long userId;
 
     @Column
-    private Long noteId;
+    private Long sourceId;
 
     @OneToMany(mappedBy = "annotationCategoryId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     private Set<Annotation> annotations;
@@ -47,12 +47,12 @@ public class AnnotationCategory extends BaseEntity {
         this.userId = userId;
     }
 
-    public Long getNoteId() {
-        return noteId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
     }
 
     public Set<Annotation> getAnnotations() {

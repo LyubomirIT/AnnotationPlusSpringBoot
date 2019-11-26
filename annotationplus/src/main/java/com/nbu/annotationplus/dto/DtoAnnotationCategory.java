@@ -7,10 +7,9 @@ public class DtoAnnotationCategory {
     private Long id;
     private Long userId;
     private String name;
-    private Long noteId;
+    private Long sourceId;
     private LocalDateTime createdTs;
     private LocalDateTime updatedTs;
-
 
     public Long getId() {
         return id;
@@ -52,11 +51,11 @@ public class DtoAnnotationCategory {
         this.updatedTs = updatedTs;
     }
 
-    public Long getNoteId() {
-        return noteId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
     }
 }

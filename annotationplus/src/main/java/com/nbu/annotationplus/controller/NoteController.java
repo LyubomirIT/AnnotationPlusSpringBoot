@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.controller;
+/*package com.nbu.annotationplus.controller;
 
 import com.nbu.annotationplus.dto.DtoNote;
 import com.nbu.annotationplus.service.NoteService;
@@ -43,3 +43,4 @@ public class NoteController {
     }
 
 }
+*/

@@ -37,7 +37,7 @@ public class User extends BaseEntity {
     private Set<AnnotationCategory> annotationCategories;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
-    private Set<Note> notes;
+    private Set<Source> sources;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     private Set<Category> categories;
@@ -134,12 +134,12 @@ public class User extends BaseEntity {
         this.annotationCategories = annotationCategories;
     }
 
-    public Set<Note> getNotes() {
-        return notes;
+    public Set<Source> getSources() {
+        return sources;
     }
 
-    public void setNotes(Set<Note> notes) {
-        this.notes = notes;
+    public void setSources(Set<Source> sources) {
+        this.sources = sources;
     }
 }
 

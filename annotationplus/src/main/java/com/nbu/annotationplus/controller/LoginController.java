@@ -2,12 +2,12 @@ package com.nbu.annotationplus.controller;
 
 import javax.validation.Valid;
 
-import com.nbu.annotationplus.dto.DtoNote;
+import com.nbu.annotationplus.dto.DtoSource;
 import com.nbu.annotationplus.dto.DtoUser;
 import com.nbu.annotationplus.persistence.entity.PasswordResetToken;
 import com.nbu.annotationplus.persistence.entity.User;
 import com.nbu.annotationplus.persistence.repository.PasswordResetTokenRepository;
-import com.nbu.annotationplus.service.NoteService;
+import com.nbu.annotationplus.service.SourceService;
 import com.nbu.annotationplus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -29,7 +29,7 @@ public class LoginController {
     private PasswordResetTokenRepository tokenRepository;
 
     @Autowired
-    private NoteService noteService;
+    private SourceService sourceService;
 
     @RequestMapping(value= "/login", method = RequestMethod.GET)
     public ModelAndView login(){
@@ -128,11 +128,11 @@ public class LoginController {
 
     @RequestMapping(value="/admin/source", method = RequestMethod.GET)
     public ModelAndView source(@RequestParam(required = false) Long id){
-        DtoNote dtoNote = noteService.getNoteById(id);
+        DtoSource dtoSource = sourceService.getSourceById(id);
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("admin/source");
-        modelAndView.addObject("sourceContent", dtoNote.getContent());
-        modelAndView.addObject("sourceName", dtoNote.getTitle());
+        modelAndView.addObject("sourceContent", dtoSource.getContent());
+        modelAndView.addObject("sourceName", dtoSource.getName());
         return modelAndView;
     }
 }

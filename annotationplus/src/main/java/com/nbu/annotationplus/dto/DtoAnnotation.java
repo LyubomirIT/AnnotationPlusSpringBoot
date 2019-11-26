@@ -7,7 +7,7 @@ public class DtoAnnotation {
     private Long id;
     private String username;
     private Long userId;
-    private Long noteId;
+    private Long sourceId;
     private Long annotationCategoryId;
     private String content;
     private String color;
@@ -38,12 +38,12 @@ public class DtoAnnotation {
         this.userId = userId;
     }
 
-    public Long getNoteId() {
-        return noteId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
     }
 
     public Long getAnnotationCategoryId() {

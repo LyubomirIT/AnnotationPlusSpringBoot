@@ -1,6 +1,6 @@
 $(document).ready(function() {
     var url = new URL(window.location.href);
-    var noteId = url.searchParams.get("id");
+    var sourceId = url.searchParams.get("id");
     var editMode = false;
     var annotationColor;
     var annotationCategoryId;
@@ -122,7 +122,7 @@ $(document).ready(function() {
     $("#createCategory").click(function () {
            dataObject = {
             "name": $("#categoryNameField").val(),
-            "noteId": noteId
+            "sourceId": sourceId
         };
         /*setTimeout(function () {
             $("#createCategory").prop('disabled', true);
@@ -231,7 +231,7 @@ $(document).ready(function() {
         type: "GET",
         url: "/api/annotationCategory",
         data: {
-            noteId: noteId
+            sourceId: sourceId
         },
         statusCode: {
             200: function (e) {
@@ -377,7 +377,7 @@ listAnnotationCategories();
 
                     $.ajax({
                         type: "PUT",
-                        url: "/api/note/" + noteId,
+                        url: "/api/source/" + sourceId,
                         data: JSON.stringify(dataObject),
                         contentType: "application/json",
                         dataType: "application/json",
@@ -414,7 +414,7 @@ listAnnotationCategories();
 
                     $.ajax({
                         type: "PUT",
-                        url: "/api/note/" + noteId ,
+                        url: "/api/source/" + sourceId ,
                         data: JSON.stringify(dataObject),
                         contentType: "application/json",
                         dataType: "application/json",
@@ -584,7 +584,7 @@ listAnnotationCategories();
           dataObject = {
             "comment": $("#commentArea").val(),
             "annotationId": annotationId,
-            "noteId": noteId
+            "sourceId": sourceId
         };
         $.ajax({
             type: "POST",
@@ -631,7 +631,7 @@ listAnnotationCategories();
             var select = getSelected();
             if (/\S/.test(select)) {
               dataObject = {
-                "noteId": noteId,
+                "sourceId": sourceId,
                 "annotationCategoryId": annotationCategoryId,
                 "content": select.toString(),
                 "color": '#' + rgbToHex(color).toUpperCase()
@@ -686,7 +686,7 @@ listAnnotationCategories();
                         setTimeout(function () {
                         $.ajax({
                             type: "PUT",
-                            url: "/api/note/" + noteId,
+                            url: "/api/source/" + sourceId,
                             data: JSON.stringify(dataObject),
                             contentType: "application/json",
                             dataType: "application/json",
@@ -765,7 +765,7 @@ listAnnotationCategories();
                         dataObject = {"content": $("#content").html()};
                         $.ajax({
                             type: "PUT",
-                            url: "/api/note/" + noteId ,
+                            url: "/api/source/" + sourceId ,
                             data: JSON.stringify(dataObject),
                             contentType: "application/json",
                             dataType: "application/json",

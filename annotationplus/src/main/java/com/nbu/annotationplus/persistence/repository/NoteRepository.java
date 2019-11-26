@@ -1,4 +1,4 @@
-package com.nbu.annotationplus.persistence.repository;
+/*package com.nbu.annotationplus.persistence.repository;
 
 import com.nbu.annotationplus.persistence.entity.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,3 +14,4 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
     Optional<Note> findByTitleAndUserId(String title, Long userId);
     Note findByIdAndUserId(Long id, Long userId);
 }
+*/

@@ -16,10 +16,10 @@ $(document).ready(function() {
     var file = '';
     var extension= '';
     var allowedExtensions = ["pdf", "docx", "doc", "txt"];
-    var noteId = '';
+    var sourceId = '';
     var categoryId = '';
     var categoryName = '';
-    var noteName = '';
+    var sourceName = '';
     var responseJson = '';
     var annotationId;
 
@@ -166,7 +166,7 @@ $(document).ready(function() {
     }
 
     var sourceColumnDefs = [
-        {headerName: "Source Name", field: "title", checkboxSelection: true, sortable: true,},
+        {headerName: "Source Name", field: "name", checkboxSelection: true, sortable: true,},
         {headerName: "Date Created", field: "createdTs", sortable: true, cellRenderer: dateParser},
         {headerName: "Last Updated", field: "updatedTs", sortable: true, sort: 'desc', cellRenderer: dateParser},
         {headerName: "Id", field: "id", hide: true}
@@ -197,11 +197,11 @@ $(document).ready(function() {
             editSourceButton.prop('disabled', false);
             openSourceButton.prop('disabled', false);
             deleteSourceButton.prop('disabled', false);
-            noteId = '';
-            noteName = '';
+            sourceId = '';
+            sourceName = '';
             selectedRows.forEach(function (selectedRow) {
-                noteId += selectedRow.id;
-                noteName += selectedRow.title;
+                sourceId += selectedRow.id;
+                sourceName += selectedRow.name;
             });
         } else {
             editSourceButton.prop('disabled', true);
@@ -216,7 +216,7 @@ $(document).ready(function() {
 
 function populateSourceGridByCategoryId(){
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '/api/note?categoryId=' + categoryId);
+    httpRequest.open('GET', '/api/source?categoryId=' + categoryId);
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.responseURL.indexOf("/login") > -1) {
@@ -257,7 +257,7 @@ function populateSourceGridByCategoryId(){
 
     editSourceButton.click(function() {
         $("#updateSourceContainer").css("display","block");
-        $("#sourceName").val(noteName);
+        $("#sourceName").val(sourceName);
         $("#updateSourceName").prop('disabled', true);
     });
 
@@ -286,7 +286,7 @@ function populateSourceGridByCategoryId(){
     delSourceButton.click(function() {
         $.ajax({
             type: "DELETE",
-            url: "/api/note/" + noteId,
+            url: "/api/source/" + sourceId,
             statusCode:{
             200: function () {
                 formContainer.css("display","none");
@@ -304,7 +304,7 @@ function populateSourceGridByCategoryId(){
 
     openSourceButton.click(function() {
         $(this).prop('disabled', true);
-        window.open("/admin/source?id=" + noteId, "_self");
+        window.open("/admin/source?id=" + sourceId, "_self");
     });
 
     $("#createCategory").click(function() {
@@ -368,11 +368,11 @@ function populateSourceGridByCategoryId(){
 
     $("#updateSourceName").click(function() {
         var dataObject = {
-            "title":$("#sourceName").val()
+            "name":$("#sourceName").val()
         };
         $.ajax({
             type: "PUT",
-            url: "/api/note/" + noteId,
+            url: "/api/source/" + sourceId,
             data: JSON.stringify(dataObject),
             contentType: "application/json",
             dataType: "application/json",
@@ -440,10 +440,10 @@ function populateSourceGridByCategoryId(){
                         200: function (e) {
                             responseJson = $.parseJSON(e);
                             var html = responseJson.html;
-                            var dataObject = {"title": fileName, "content": html, "category": {"id":categoryId}};
+                            var dataObject = {"name": fileName, "content": html, "category": {"id":categoryId}};
                             $.ajax({
                                 type: "POST",
-                                url: "/api/note/",
+                                url: "/api/source/",
                                 data: JSON.stringify(dataObject),
                                 contentType: "application/json",
                                 dataType: "application/json",
@@ -512,10 +512,10 @@ function populateSourceGridByCategoryId(){
         if($(this).val().trim() == "" ){
             $("#sourceErrorMessage").text("Name cannot be empty");
             $("#updateSourceName").prop('disabled', true);
-        } else if($(this).val().trim() === noteName) {
+        } else if($(this).val().trim() === sourceName) {
             $(".categoryErrorMessage").text("");
             $("#updateSourceName").prop('disabled', true);
-        }  else if($(this).val().trim() != "" && $(this).val() !== noteName) {
+        }  else if($(this).val().trim() != "" && $(this).val() !== sourceName) {
             $("#sourceErrorMessage").text("");
             $("#updateSourceName").prop('disabled', false);
         }
@@ -568,10 +568,10 @@ function populateSourceGridByCategoryId(){
                         200: function (e) {
                             responseJson = $.parseJSON(e.responseText);
                             var html = responseJson.html;
-                            dataObject = {"title": sourceUrl, "content": html, "category": {"id":categoryId}};
+                            dataObject = {"name": sourceUrl, "content": html, "category": {"id":categoryId}};
                             $.ajax({
                                 type: "POST",
-                                url: "/api/note/",
+                                url: "/api/source/",
                                 data: JSON.stringify(dataObject),
                                 contentType: "application/json",
                                 dataType: "application/json",
@@ -600,7 +600,7 @@ function populateSourceGridByCategoryId(){
 
     viewAnnotationButton.click(function() {
         $(this).prop('disabled', true);
-        window.open("/admin/source?id=" + noteId + '&annotation-id=' + annotationId, "_self")
+        window.open("/admin/source?id=" + sourceId + '&annotation-id=' + annotationId, "_self")
     });
 
     function onAnnotationSelection() {
@@ -609,10 +609,10 @@ function populateSourceGridByCategoryId(){
         if (length > 0) {
             viewAnnotationButton.prop('disabled', false);
             annotationId = '';
-            noteId = '';
+            sourceId = '';
             selectedAnnotationRows.forEach(function (selectedRow) {
                 annotationId += selectedRow.id;
-                noteId = selectedRow.noteId;
+                sourceId = selectedRow.sourceId;
             });
         } else {
             viewAnnotationButton.prop('disabled', true);
@@ -623,7 +623,7 @@ function populateSourceGridByCategoryId(){
         {headerName: "Content", field: "content", checkboxSelection: true, sortable: true,},
         {headerName: "Date Created", field: "createdTs", sortable: true, sort: 'desc', cellRenderer: dateParser},
         {headerName: "Id", field: "id", hide: true},
-        {headerName: "Note Id", field: "noteId", hide: true}
+        {headerName: "Source Id", field: "sourceId", hide: true}
     ];
 
     var annotationGridOptions = {

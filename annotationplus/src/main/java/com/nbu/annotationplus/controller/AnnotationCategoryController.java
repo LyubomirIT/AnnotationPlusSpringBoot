@@ -22,8 +22,8 @@ public class AnnotationCategoryController {
     }
 
     @GetMapping("/annotationCategory")
-    public List<DtoAnnotationCategory> getAllAnnotationCategories(@RequestParam(required = false) Long noteId) {
-        return annotationCategoryService.getAllAnnotationCategories(noteId);
+    public List<DtoAnnotationCategory> getAllAnnotationCategories(@RequestParam(required = false) Long sourceId) {
+        return annotationCategoryService.getAllAnnotationCategories(sourceId);
     }
 
     @DeleteMapping("/annotationCategory/{id}")

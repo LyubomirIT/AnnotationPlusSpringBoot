@@ -5,7 +5,7 @@ import com.nbu.annotationplus.exception.InvalidInputParamsException;
 import com.nbu.annotationplus.exception.ResourceNotFoundException;
 import com.nbu.annotationplus.persistence.entity.AnnotationCategory;
 import com.nbu.annotationplus.persistence.repository.AnnotationCategoryRepository;
-import com.nbu.annotationplus.persistence.repository.NoteRepository;
+import com.nbu.annotationplus.persistence.repository.SourceRepository;
 import com.nbu.annotationplus.utils.ValidationUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class AnnotationCategoryService {
     private AnnotationCategoryRepository annotationCategoryRepository;
 
     @Autowired
-    private NoteRepository noteRepository;
+    private SourceRepository sourceRepository;
 
     @Autowired
     private UserService userService;
@@ -37,19 +37,19 @@ public class AnnotationCategoryService {
     }
 
     @Transactional
-    public List<DtoAnnotationCategory> getAllAnnotationCategories(Long noteId){
+    public List<DtoAnnotationCategory> getAllAnnotationCategories(Long sourceId){
         Long currentUserId = userService.getUserId();
         List<DtoAnnotationCategory> list;
         list = new ArrayList<>();
         List<AnnotationCategory> annotationCategoryList;
-        if(noteId == null){
+        if(sourceId == null){
             annotationCategoryList = annotationCategoryRepository.findByUserIdOrderByCreatedTsDesc(currentUserId);
             for(AnnotationCategory annotationCategory: annotationCategoryList){
                 list.add(toDtoAnnotationCategory(annotationCategory));
             }
             return list;
         }else {
-            annotationCategoryList = annotationCategoryRepository.findByUserIdAndNoteIdOrderByCreatedTsDesc(currentUserId,noteId);
+            annotationCategoryList = annotationCategoryRepository.findByUserIdAndSourceIdOrderByCreatedTsDesc(currentUserId,sourceId);
             for (AnnotationCategory annotationCategory : annotationCategoryList) {
                 list.add(toDtoAnnotationCategory(annotationCategory));
             }
@@ -90,7 +90,7 @@ public class AnnotationCategoryService {
         if(dtoAnnotationCategory.getName() != null && !dtoAnnotationCategory.getName().trim().equals("")){
             if(!annotationCategory.getName().equals(dtoAnnotationCategory.getName().trim())){
                 validateAnnotationCategoryName(dtoAnnotationCategory.getName());
-                if(annotationCategoryRepository.findByNameAndNoteIdAndUserId(dtoAnnotationCategory.getName(),annotationCategory.getNoteId(),currentUserId).isPresent()){
+                if(annotationCategoryRepository.findByNameAndSourceIdAndUserId(dtoAnnotationCategory.getName(),annotationCategory.getSourceId(),currentUserId).isPresent()){
                     throw new InvalidInputParamsException("Annotation Category with name: " + "'" + dtoAnnotationCategory.getName() + "'" + " already exists.");
                 }
                 annotationCategory.setName(dtoAnnotationCategory.getName().trim());
@@ -104,18 +104,18 @@ public class AnnotationCategoryService {
     @Transactional
     public ResponseEntity<DtoAnnotationCategory> createAnnotationCategory(DtoAnnotationCategory dtoAnnotationCategory){
         Long currentUserId = userService.getUserId();
-        if(dtoAnnotationCategory.getNoteId() == null){
-            throw new InvalidInputParamsException("Note Id is required");
+        if(dtoAnnotationCategory.getSourceId() == null){
+            throw new InvalidInputParamsException("Source Id is required");
         }
-        if(noteRepository.findByIdAndUserId(dtoAnnotationCategory.getNoteId(),currentUserId) == null){
-            throw new ResourceNotFoundException("Note", "id", dtoAnnotationCategory.getNoteId());
+        if(sourceRepository.findByIdAndUserId(dtoAnnotationCategory.getSourceId(),currentUserId) == null){
+            throw new ResourceNotFoundException("Source", "id", dtoAnnotationCategory.getSourceId());
         }
         validateAnnotationCategoryName(dtoAnnotationCategory.getName());
-        if (!annotationCategoryRepository.findByNameAndNoteIdAndUserId(dtoAnnotationCategory.getName(),dtoAnnotationCategory.getNoteId(),currentUserId).isPresent()) {
+        if (!annotationCategoryRepository.findByNameAndSourceIdAndUserId(dtoAnnotationCategory.getName(),dtoAnnotationCategory.getSourceId(),currentUserId).isPresent()) {
             AnnotationCategory annotationCategory = new AnnotationCategory();
             annotationCategory.setUserId(currentUserId);
             annotationCategory.setName(dtoAnnotationCategory.getName());
-            annotationCategory.setNoteId(dtoAnnotationCategory.getNoteId());
+            annotationCategory.setSourceId(dtoAnnotationCategory.getSourceId());
             annotationCategoryRepository.save(annotationCategory);
             return new ResponseEntity<DtoAnnotationCategory>(toDtoAnnotationCategory(annotationCategory), HttpStatus.CREATED);
         } else {

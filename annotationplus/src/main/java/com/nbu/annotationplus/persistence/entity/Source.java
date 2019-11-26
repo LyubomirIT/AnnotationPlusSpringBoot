@@ -1,4 +1,4 @@
-/*package com.nbu.annotationplus.persistence.entity;
+package com.nbu.annotationplus.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -6,8 +6,8 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "note")
-public class Note extends BaseEntity {
+@Table(name = "source")
+public class Source extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class Note extends BaseEntity {
     private Category category;
 
     @Column
-    private String title;
+    private String name;
 
     @Column
     private String content;
@@ -27,13 +27,13 @@ public class Note extends BaseEntity {
     @Column
     private Long userId;
 
-    @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "sourceId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     private Set<AnnotationCategory> annotationCategories;
 
     //@OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     //private Set<Comment> comments;
 
-    @OneToMany(mappedBy = "noteId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "sourceId", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
     private Set<Annotation> annotations;
 
     public Long getId() {
@@ -44,12 +44,12 @@ public class Note extends BaseEntity {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getContent() {
@@ -90,7 +90,7 @@ public class Note extends BaseEntity {
 
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
-    }
+    }*/
 
     public Set<Annotation> getAnnotations() {
         return annotations;
@@ -100,4 +100,3 @@ public class Note extends BaseEntity {
         this.annotations = annotations;
     }
 }
-*/

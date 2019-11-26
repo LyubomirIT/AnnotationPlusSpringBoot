@@ -18,7 +18,7 @@ public class Annotation extends BaseEntity {
     private Long userId;
 
     @Column
-    private Long noteId;
+    private Long sourceId;
 
     @Column
     private String content;
@@ -64,12 +64,12 @@ public class Annotation extends BaseEntity {
         this.userId = userId;
     }
 
-    public Long getNoteId() {
-        return noteId;
+    public Long getSourceId() {
+        return sourceId;
     }
 
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
+    public void setSourceId(Long sourceId) {
+        this.sourceId = sourceId;
     }
 
     public Long getAnnotationCategoryId() {

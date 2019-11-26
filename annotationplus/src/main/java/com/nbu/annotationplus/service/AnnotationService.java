@@ -47,7 +47,7 @@ public class AnnotationService {
             Annotation annotation = new Annotation();
             annotation.setAnnotationCategoryId(dtoAnnotation.getAnnotationCategoryId());
             annotation.setUserId(currentUserId);
-            annotation.setNoteId(dtoAnnotationCategory.getNoteId());
+            annotation.setSourceId(dtoAnnotationCategory.getSourceId());
             annotation.setUsername(userName);
             if(dtoAnnotation.getContent() == null || dtoAnnotation.getContent().trim().equals("")){
                 throw new InvalidInputParamsException("Invalid Content");

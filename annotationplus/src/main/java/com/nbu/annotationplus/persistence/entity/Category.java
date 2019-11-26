@@ -21,7 +21,7 @@ public class Category extends BaseEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch=FetchType.LAZY)
-    private Set<Note> notes;
+    private Set<Source> sources;
 
     public Long getId() {
         return id;
@@ -47,11 +47,11 @@ public class Category extends BaseEntity {
         this.userId = userId;
     }
 
-    public Set<Note> getNotes() {
-        return notes;
+    public Set<Source> getSources() {
+        return sources;
     }
 
-    public void setNotes(Set<Note> notes) {
-        this.notes = notes;
+    public void setSources(Set<Source> sources) {
+        this.sources = sources;
     }
 }
