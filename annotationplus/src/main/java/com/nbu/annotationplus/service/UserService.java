@@ -67,7 +67,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<DtoUser> updateCurrentUser(DtoUser dtoUser){
-        Authentication authentication = validateUser();
+        Authentication authentication = validateExistingUser();
         String userEmail = authentication.getName();
         User currentUser = userRepository.findByEmail(userEmail);
         UserUtils.validateFirstAndLastUserName(dtoUser.getName(),dtoUser.getLastName());
@@ -80,7 +80,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<?> updatePassword (DtoPassword dtoPassword){
-        Authentication authentication = validateUser();
+        Authentication authentication = validateExistingUser();
         String userEmail = authentication.getName();
         User currentUser = userRepository.findByEmail(userEmail);
         validateUpdatePassword(dtoPassword);
@@ -91,7 +91,7 @@ public class UserService {
     }
 
     public DtoUser getCurrentUser(){
-        Authentication authentication = validateUser();
+        Authentication authentication = validateExistingUser();
         return toDtoUser(findUserByEmail(authentication.getName()));
     }
 
@@ -101,12 +101,12 @@ public class UserService {
     }
 
     private String getCurrentUserPassword(){
-        Authentication authentication = validateUser();
+        Authentication authentication = validateExistingUser();
         User user = userRepository.findByEmail(authentication.getName());
         return user.getPassword();
     }
 
-    private Authentication validateUser() {
+    private Authentication validateExistingUser() {
         Authentication authentication = AuthUtils.getAuthentication();
         if (authentication == null) {
             throw new UnauthorizedException("Unauthorized");
