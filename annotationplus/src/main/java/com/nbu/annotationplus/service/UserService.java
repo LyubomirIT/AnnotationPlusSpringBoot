@@ -59,7 +59,7 @@ public class UserService {
         user.setLastName(dtoUser.getLastName().trim());
         user.setPassword(bCryptPasswordEncoder.encode(dtoUser.getPassword()));
         user.setActive(1);
-        Role userRole = roleRepository.findByRole("ADMIN");
+        Role userRole = roleRepository.findByName("ADMIN");
         user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
         userRepository.save(user);
         return new ResponseEntity<DtoUser>(toDtoUser(user),HttpStatus.OK);
