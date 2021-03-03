@@ -1,6 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Montserrat:400,700);
 @import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 .isa_info i, .isa_success i, .isa_warning i, .isa_error i {
     margin:10px 22px;
@@ -10,12 +10,8 @@
 body{
     /*margin-top:20px;*/
     background:#f5f5f5;
-
 }
-/**
- * Panels
- */
-/*** General styles ***/
+
 .panel {
     box-shadow: none;
 }
@@ -145,7 +141,6 @@ form label {
     margin: 100px auto;
 }
 
-/* The Close Button */
 .close {
     color: #aaaaaa;
     float: right;
@@ -159,7 +154,7 @@ form label {
     text-decoration: none;
     cursor: pointer;
 }
-/* Absolute Center Spinner */
+
 .loading {
     position: fixed;
     z-index: 999;
@@ -173,7 +168,6 @@ form label {
     right: 0;
 }
 
-/* Transparent Overlay */
 .loading:before {
     content: '';
     display: block;
@@ -187,7 +181,6 @@ form label {
     background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
 }
 
-/* :not(:required) hides these rules from IE9 and below */
 .loading:not(:required) {
     /* hide "loading..." text */
     font: 0/0 a;
@@ -290,7 +283,6 @@ form label {
     display: block !important;
 }
 
-
 .formContainer {
     /* max-width: 400px; */
     width: 100%;
@@ -321,10 +313,6 @@ form label {
     z-index: 1001;
 }
 
-
-
-
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 @keyframes fade-in {
     from {
         visibility: hidden;
@@ -340,7 +328,6 @@ form label {
         transform: translateY(0);
     }
 }
-
 
 .top-left {
     position: fixed;
@@ -363,7 +350,7 @@ form label {
     }
 }
 .top-left.do-show {
-    animation: slide-in-left 1s ease-in-out forwards, slide-in-left 1s ease-in-out reverse forwards 5s;
+    animation: slide-in-left 1s ease-in-out forwards;
 }
 .top-left[data-notification-status="notice"] {
     background-color: #29b6f6;

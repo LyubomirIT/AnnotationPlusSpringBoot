@@ -11,6 +11,10 @@ $(document).ready(function () {
         $(successMessage).remove();
         $('body').append(successMessage).clone();
         $(successMessage).text(message);
+        $(successMessage).css("display","flex");
+        setTimeout(function() {
+            $(successMessage).fadeOut("slow");
+        }, 5000);
     }
 
     $(".closeDialog").click(function() {
@@ -65,7 +69,7 @@ $(document).ready(function () {
                     $('#name').val("");
                     $('#message').val("");
                     $("#submit").prop('disabled', true);
-                    animateSuccess("Feedback send successfully");
+                    animateSuccess("Feedback sent successfully");
                 },
                 400: function (e) {
                     var json = $.parseJSON(e.responseText);

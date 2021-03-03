@@ -1,6 +1,11 @@
-/*dark background to support form theme*/
 body {
-  background: url(http://subtlepatterns2015.subtlepatterns.netdna-cdn.com/patterns/dark_wall.png);
+  background: url(../images/dark_wall.jpg);
+}
+
+@media (max-width: 340px) {
+  p a {
+    float:none !important;
+  }
 }
 
 #name11{
@@ -12,17 +17,14 @@ color: red;
 }
 
 #loginEmailErrorMessage{
-
     display: none;
     margin-bottom: 10px;
     margin-top: 0px;
     color:red;
 }
 
-/*sass variables used*/
-/*site container*/
 .wrapper {
-  width: 420px;
+  max-width: 420px;
   margin: 0 auto;
 }
 
@@ -170,33 +172,6 @@ input[type="submit"]:hover {
   top: 0px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .lds-dual-ring {
   display: inline-block;
   width: 64px;
@@ -234,32 +209,6 @@ input[type="submit"]:hover {
   transform: translateX(-50%) translateY(-210%);
 }
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .lds-spinner {
   color: official;

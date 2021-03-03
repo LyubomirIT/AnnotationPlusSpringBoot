@@ -5,4 +5,4 @@ alter table `source` modify `content` LONGTEXT;
 alter table `source` modify `name` LONGTEXT;
 alter table `annotation` modify `content` LONGTEXT;
 alter table `feedback` modify `message` LONGTEXT;
-SET GLOBAL max_allowed_packet = 1024*1024*14;
+SET GLOBAL max_allowed_packet = 1000000000;

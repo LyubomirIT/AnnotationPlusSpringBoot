@@ -38,6 +38,10 @@ $(document).ready(function() {
         $(successMessage).remove();
         $('body').append(successMessage).clone();
         $(successMessage).text(message);
+        $(successMessage).css("display","flex");
+        setTimeout(function() {
+            $(successMessage).fadeOut("slow");
+        }, 5000);
     }
 
     function selectRowByValue(value) {
@@ -450,6 +454,7 @@ function populateSourceGridByCategoryId(){
                                 statusCode: {
                                     201: function (e) {
                                         responseJson = $.parseJSON(e.responseText);
+                                        inputFileField.val("");
                                         window.open("/admin/source?id=" + responseJson.id, "_self");
                                     },
                                     400: function (e) {

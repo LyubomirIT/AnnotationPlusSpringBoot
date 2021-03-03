@@ -1,3 +1,6 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,600,400italic);
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
 #test{
     width:20px;
 }
@@ -71,14 +74,6 @@
     cursor: pointer;
 }
 
-
-
-
-
-
-
-
-
 #commentBlock{
     display: none;
     position:fixed;
@@ -91,6 +86,7 @@
 
 .btn-toolbar{
     padding-right: 320px;
+    min-width: 600px;
 }
 
 .fa {
@@ -207,9 +203,6 @@
 }
 
 
-
-
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,600,400italic);
 * {
     margin: 0;
     padding: 0;
@@ -390,8 +383,10 @@ fieldset {
 
 
 #content{
-   /* width: 800px;*/
     margin-bottom: 70px;
+    word-break: break-word;
+    overflow: auto;
+   /* padding-right: 22px;*/
 }
 
 
@@ -514,8 +509,6 @@ fieldset {
     font-size: 13px;
 }
 
-
-
 #info:hover{
 
 }
@@ -567,6 +560,10 @@ fieldset {
     width: 320px;
 }
 
+.comment{
+    word-break: break-word;
+}
+
 .annotationsList{
     width: 320px;
     margin-bottom:130px;
@@ -580,7 +577,6 @@ fieldset {
     border-bottom: 1px solid black;
     padding-left: 6px;
 }
-
 
 *, *:before, *:after {
     /*box-sizing: inherit;*/
@@ -607,13 +603,9 @@ fieldset {
     z-index: 1000;
 }
 
-
-
 .rocker {
     display: inline-block;
     position: relative;
-
-
     font-size: 2em;
     font-weight: bold;
     text-align: center;
@@ -781,8 +773,6 @@ input:checked:focus + .switch-left + .switch-right {
     width: 100%;
 }
 
-
-
 .sidebar-nav {
     /*position: absolute;*/
     top: 0;
@@ -841,8 +831,6 @@ input:checked:focus + .switch-left + .switch-right {
     color: #fff;
     background: none;
 }
-
-
 
 .content-header {
     height: 65px;
@@ -969,8 +957,6 @@ input:checked:focus + .switch-left + .switch-right {
 
 }
 
-
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 @keyframes fade-in {
     from {
         visibility: hidden;
@@ -986,7 +972,6 @@ input:checked:focus + .switch-left + .switch-right {
         transform: translateY(0);
     }
 }
-
 
 .top-left {
     position: fixed;
@@ -1009,7 +994,7 @@ input:checked:focus + .switch-left + .switch-right {
     }
 }
 .top-left.do-show {
-    animation: slide-in-left 1s ease-in-out forwards, slide-in-left 1s ease-in-out reverse forwards 5s;
+    animation: slide-in-left 1s ease-in-out forwards;
 }
 .top-left[data-notification-status="notice"] {
     background-color: #29b6f6;

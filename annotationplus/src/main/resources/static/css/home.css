@@ -1,14 +1,20 @@
-/*#holder { border: 10px dashed #ccc; width: 300px; height: 300px; margin: 20px auto;}
-#holder.hover { border: 10px dashed #333; }*/
-
-/*#grids{
-    text-align: center;
-    overflow: hidden;
-}*/
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 .grids{
     text-align: center;
     overflow: hidden;
+}
+
+#categoryButtons input{
+    margin-top: 10px;
+}
+
+#noteButtons input{
+    margin-top: 10px;
+}
+
+#gridTitles{
+    word-break: break-word;
 }
 
 #gridsSecondRow{
@@ -33,9 +39,6 @@
     width: 100%;
 }
 
-
-
-/* Absolute Center Spinner */
 .loading {
     position: fixed;
     z-index: 99999999;
@@ -49,7 +52,6 @@
     right: 0;
 }
 
-/* Transparent Overlay */
 .loading:before {
     content: '';
     display: block;
@@ -63,9 +65,7 @@
     background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
 }
 
-/* :not(:required) hides these rules from IE9 and below */
 .loading:not(:required) {
-    /* hide "loading..." text */
     font: 0/0 a;
     color: transparent;
     text-shadow: none;
@@ -155,21 +155,6 @@
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .formContainer {
     font-family: "Roboto", Helvetica, Arial, sans-serif;
     font-weight: 100;
@@ -179,21 +164,12 @@
     z-index:1001;
 }
 
-/*#fileUploadContainer:before{
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0, .8));
-    background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
-}*/
-
-
 .formContainer{
     width: 100%;
     height: 100%;
     background: radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0, .8));
     background: -webkit-radial-gradient(rgba(20, 20, 20,.8), rgba(0, 0, 0,.8));
 }
-
 
 .formContainer{
     /* max-width: 400px;*/
@@ -228,7 +204,6 @@
 }
 
 .confirmationDialog{
-
     /*left: 50% !important;*/
     top: 10% !important;
     /*bottom: 45% !important;
@@ -237,16 +212,11 @@
     opacity: 1 !important;
     line-height: inherit !important;
     display: block !important;
-
 }
 
 .ag-header-cell-label {
     justify-content: center !important;
 }
-
-
-
-
 
 .footer-distributed{
     background-color: #292c2f;
@@ -265,8 +235,6 @@
     font-size: 14px;
     margin: 0;
 }
-
-/* Footer links */
 
 .footer-distributed p.footer-links{
     font-size:18px;
@@ -304,8 +272,6 @@
     margin-left: 3px;
 }
 
-/* If you don't want the footer to be responsive, remove these media queries */
-
 @media (max-width: 600px) {
 
     .footer-distributed .footer-left,
@@ -330,38 +296,6 @@
     display: block;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 @keyframes fade-in {
     from {
         visibility: hidden;
@@ -377,7 +311,6 @@
         transform: translateY(0);
     }
 }
-
 
 .top-left {
     position: fixed;
@@ -400,7 +333,7 @@
     }
 }
 .top-left.do-show {
-    animation: slide-in-left 1s ease-in-out forwards, slide-in-left 1s ease-in-out reverse forwards 5s;
+    animation: slide-in-left 1s ease-in-out forwards;
 }
 .top-left[data-notification-status="notice"] {
     background-color: #29b6f6;

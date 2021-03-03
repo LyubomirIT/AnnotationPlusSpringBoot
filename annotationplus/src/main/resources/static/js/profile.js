@@ -13,6 +13,10 @@ $(document).ready(function () {
         $(successMessage).remove();
         $('body').append(successMessage).clone();
         $(successMessage).text(message);
+        $(successMessage).css("display","flex");
+        setTimeout(function() {
+            $(successMessage).fadeOut("slow");
+        }, 2500);
     }
 
     function validatePassword() {
@@ -68,19 +72,12 @@ $(document).ready(function () {
     }
 
     $("#passwordError").css("display","none");
-    $("#close1").click(function() {
+    $("#closePasswordError").click(function() {
         $("#passwordError").css("display","none");
     });
     $("#userError").css("display","none");
-    $("#close2").click(function() {
+    $("#closeNamesError").click(function() {
         $("#userError").css("display","none");
-    });
-
-    var modal = $("#myModal");
-    var span = $("#close");
-
-    span.click(function() {
-        modal.css("display", "none");
     });
 
     var firstNameValue;
