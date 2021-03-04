@@ -7,6 +7,11 @@ body {
   font-size: 14px;
 }
 
+.btn_1:hover {
+  color: #fff !important;
+  background-color: #0042ff;
+}
+
 @media only screen and (min-width: 1200px) and (max-width: 3640px){
 .container {
     max-width: 1170px;
