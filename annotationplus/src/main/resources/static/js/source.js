@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     var url = new URL(window.location.href);
     var sourceId = url.searchParams.get("id");
     var editMode = false;
@@ -18,27 +18,31 @@ $(document).ready(function() {
 
     var successMessage = $('<div class=\"notify top-left do-show\" id=\"successMessage\" data-notification-status=\"success\"></div>');
 
-    function animateSuccess(message){
+    function animateSuccess(message) {
         $(successMessage).remove();
         $('body').append(successMessage).clone();
         $(successMessage).text(message);
-        $(successMessage).css("display","flex");
-        setTimeout(function() {
+        $(successMessage).css("display", "flex");
+        setTimeout(function () {
             $(successMessage).fadeOut("slow");
         }, 5000);
     }
 
-    content.css("width",content.width() - 370);
+    if ($("#content > div.page")[0]) {
+        content.css("word-break", "unset");
+    }
+
+    content.css("width", content.width() - 370);
     $("body").removeClass("b1 b2");
 
     $('[data-toggle="tooltip"]').tooltip();
 
-    $(".buttonTooltip").click(function(){
-        $('.tooltip').css("display","none");
+    $(".buttonTooltip").click(function () {
+        $('.tooltip').css("display", "none");
     });
 
-    if(annotationId != null){
-        try{
+    if (annotationId != null) {
+        try {
             setTimeout(function () {
                 $([document.documentElement, document.body]).animate({
                     scrollTop: $("#content [annotation-id=" + annotationId + "]").first().offset().top
@@ -49,14 +53,14 @@ $(document).ready(function() {
         }
     }
 
-    $(document).ajaxSend(function(evt, request, settings) {
-        if(settings.type.toLowerCase() === "post" || settings.type.toLowerCase() === "put" || settings.type.toLowerCase() === "delete" ){
+    $(document).ajaxSend(function (evt, request, settings) {
+        if (settings.type.toLowerCase() === "post" || settings.type.toLowerCase() === "put" || settings.type.toLowerCase() === "delete") {
             $("#desact > i").removeClass('fa fa-exclamation-triangle fa-2x');
             $("#desact > i").removeClass('fa fa-check-circle fa-2x').addClass('fa fa-spinner fa-2x fa-spin');
-            $("#desact ").attr("data-original-title","Loading...");
+            $("#desact ").attr("data-original-title", "Loading...");
         }
     }).ajaxComplete(function (evt, request, settings) {
-        if(settings.type.toLowerCase() === "post" || settings.type.toLowerCase() === "put" || settings.type.toLowerCase() === "delete") {
+        if (settings.type.toLowerCase() === "post" || settings.type.toLowerCase() === "put" || settings.type.toLowerCase() === "delete") {
             if (request.status !== 400 && request.status !== 200 && request.status !== 201 && request.status !== 404) {
                 $("#desact  > i").removeClass('fa fa-spinner fa-2x fa-spin').addClass('fa fa-exclamation-triangle fa-2x');
                 $("#desact ").attr("data-original-title", "There are unsaved changes from your last request");
@@ -72,7 +76,7 @@ $(document).ready(function() {
             return (this.length > n) ? this.substr(0, n - 1) + '...' : this;
         };
 
-    $(document).on("click",".comment", function() {
+    $(document).on("click", ".comment", function () {
         var parent = $(this).parent();
         //annotationId = e.target.getAttribute('annotation-id');
         annotationId = parent.attr('annotation-id');
@@ -126,7 +130,7 @@ $(document).ready(function() {
     }
 
     $("#createCategory").click(function () {
-           dataObject = {
+        dataObject = {
             "name": $("#categoryNameField").val(),
             "sourceId": sourceId
         };
@@ -142,20 +146,20 @@ $(document).ready(function() {
             statusCode: {
                 201: function () {
                     listAnnotationCategories();
-                    $('.formContainer').css("display","none");
+                    $('.formContainer').css("display", "none");
                     $('#categoryNameField').val("");
                     animateSuccess("Annotation category successfully created")
                 },
-            400: function (e) {
-                responseJson = $.parseJSON(e.responseText);
-                setTimeout(function () {
-                    $("#createCategory").prop('disabled', false);
-                }, 1000);
-                $("#createCategoryErrorMessage").text(responseJson.message);
-                $('#createCategoryErrorMessage').fadeIn('fast', function () {
-                });
+                400: function (e) {
+                    responseJson = $.parseJSON(e.responseText);
+                    setTimeout(function () {
+                        $("#createCategory").prop('disabled', false);
+                    }, 1000);
+                    $("#createCategoryErrorMessage").text(responseJson.message);
+                    $('#createCategoryErrorMessage').fadeIn('fast', function () {
+                    });
+                }
             }
-        }
         });
     });
 
@@ -165,7 +169,7 @@ $(document).ready(function() {
         };
         $.ajax({
             type: "PUT",
-            url: "/api/annotationCategory/"+ annotationCategoryId,
+            url: "/api/annotationCategory/" + annotationCategoryId,
             data: JSON.stringify(dataObject),
             contentType: "application/json",
             dataType: "application/json",
@@ -173,7 +177,7 @@ $(document).ready(function() {
                 200: function (e) {
                     responseJson = $.parseJSON(e.responseText);
                     $(".categoryName.selected").contents().first()[0].textContent = responseJson.name;
-                    $('.formContainer').css("display","none");
+                    $('.formContainer').css("display", "none");
                     $('#updateCategoryNameField').val("");
                     animateSuccess("Annotation category successfully updated")
                 },
@@ -194,7 +198,7 @@ $(document).ready(function() {
         $("#createCategoryContainer").show();
     });
 
-    $(document).on("click",".editName", function() {
+    $(document).on("click", ".editName", function () {
         annotationCategoryName = $(this).parent().text().trim();
         $("#updateCategoryNameField").val(annotationCategoryName);
         $("#updateCategoryContainer").show();
@@ -232,57 +236,57 @@ $(document).ready(function() {
         $("#info").css("display", "none");
     });
 
-    function listAnnotationCategories(){
-    $.ajax({
-        type: "GET",
-        url: "/api/annotationCategory",
-        data: {
-            sourceId: sourceId
-        },
-        statusCode: {
-            200: function (e) {
-                try {
-                    if (e.length > 0) {
-                        $('#categoriesContainer li').slice(2).remove();
-                        $("#categoriesMessage").text("");
-                        for (var i = 0; i < e.length; i++) {
-                            var annotationCategory = e[i];
-                            var li = $("<li class='categoriesList'></li>");
-                            var name = $("<div class='categoryName'><div>");
-                            name.text(annotationCategory.name);
-                            name.attr('id', annotationCategory.id);
-                            li.css('height', '30px');
-                            var div = $("<div class='rectangle'></div>");
-                            div.append(name);
-                            li.append(div);
-                            $("#categoriesContainer").append(li);
+    function listAnnotationCategories() {
+        $.ajax({
+            type: "GET",
+            url: "/api/annotationCategory",
+            data: {
+                sourceId: sourceId
+            },
+            statusCode: {
+                200: function (e) {
+                    try {
+                        if (e.length > 0) {
+                            $('#categoriesContainer li').slice(2).remove();
+                            $("#categoriesMessage").text("");
+                            for (var i = 0; i < e.length; i++) {
+                                var annotationCategory = e[i];
+                                var li = $("<li class='categoriesList'></li>");
+                                var name = $("<div class='categoryName'><div>");
+                                name.text(annotationCategory.name);
+                                name.attr('id', annotationCategory.id);
+                                li.css('height', '30px');
+                                var div = $("<div class='rectangle'></div>");
+                                div.append(name);
+                                li.append(div);
+                                $("#categoriesContainer").append(li);
+                            }
+                            $(".categoryName").removeClass('selected');
+                            $(".categoryName:first").removeClass('categoryName').addClass('categoryName selected');
+                            $(".categoryName:first").append(trash);
+                            $(".categoryName:first").append(pen);
+                            annotationCategoryId = $(".selected").attr('id');
+                            $("#highlighter").attr("data-original-title", "Annotate using highlighter");
+                            $("#highlighter").removeClass('btn btn-primary buttonTooltip disable').addClass('btn btn-primary buttonTooltip');
+                            listAnnotationsByCategory();
+                        } else {
+                            $('#categoriesContainer li').slice(2).remove();
+                            $("#categoriesMessage").text("No Created Categories");
+                            $("#highlighter").removeClass('btn btn-primary buttonTooltip').addClass('btn btn-primary buttonTooltip disable');
+                            $("#highlighter").attr("data-original-title", "Create a category before annotating !");
                         }
-                        $(".categoryName").removeClass('selected');
-                        $(".categoryName:first").removeClass('categoryName').addClass('categoryName selected');
-                        $(".categoryName:first").append(trash);
-                        $(".categoryName:first").append(pen);
-                        annotationCategoryId = $(".selected").attr('id');
-                        $("#highlighter").attr("data-original-title", "Annotate using highlighter");
-                        $("#highlighter").removeClass('btn btn-primary buttonTooltip disable').addClass('btn btn-primary buttonTooltip');
-                        listAnnotationsByCategory();
-                    } else {
+                    } catch (e) {
                         $('#categoriesContainer li').slice(2).remove();
-                        $("#categoriesMessage").text("No Created Categories");
-                        $("#highlighter").removeClass('btn btn-primary buttonTooltip').addClass('btn btn-primary buttonTooltip disable');
-                        $("#highlighter").attr("data-original-title", "Create a category before annotating !");
+                        $("#categoriesMessage").text("Unable to get categories");
                     }
-                } catch (e) {
-                    $('#categoriesContainer li').slice(2).remove();
-                    $("#categoriesMessage").text("Unable to get categories");
                 }
             }
-        }
-    });
-}
+        });
+    }
 
-listAnnotationCategories();
+    listAnnotationCategories();
 
-    function listAnnotationsByCategory(){
+    function listAnnotationsByCategory() {
         $.ajax({
             type: "GET",
             url: "/api/annotation",
@@ -314,7 +318,7 @@ listAnnotationCategories();
                             $('#annotationsContainer li').slice(2).remove();
                             $("#annotationsMessage").text("No Annotations For This Category");
                         }
-                    }catch (e) {
+                    } catch (e) {
                         $('#annotationsContainer li').slice(2).remove();
                         $("#annotationsMessage").text("Unable to get annotations");
                     }
@@ -323,7 +327,7 @@ listAnnotationCategories();
         });
     }
 
-    $(document).on("click",".categoryName", function(e) {
+    $(document).on("click", ".categoryName", function (e) {
         if (e.target.getAttribute('class') === "categoryName") {
             annotationCategoryId = e.target.getAttribute('id');
             $(".editName").remove();
@@ -340,9 +344,9 @@ listAnnotationCategories();
         }
     });
 
-    content.click(function(event) {
-        $("#commentBlock").css("display","none");
-        $("#changeColorForm").css("display","none");
+    content.click(function (event) {
+        $("#commentBlock").css("display", "none");
+        $("#changeColorForm").css("display", "none");
         if (event.target.getAttribute('annotation-id')) {
             annotationId = event.target.getAttribute('annotation-id');
             $.ajax({
@@ -356,12 +360,12 @@ listAnnotationCategories();
                     }
                 }
             });
-        } else{
-            $("#info").css("display","none");
+        } else {
+            $("#info").css("display", "none");
         }
     });
 
-    $("#deleteAnnotation").click(function() {
+    $("#deleteAnnotation").click(function () {
 
         $.ajax({
             type: "DELETE",
@@ -398,15 +402,15 @@ listAnnotationCategories();
         });
     });
 
-    $("#comment").click(function(e) {
-        hoverdiv(e,"commentBlock");
+    $("#comment").click(function (e) {
+        hoverdiv(e, "commentBlock");
     });
 
-    $('#update').click(function(){
-        $("[annotation-id =" +  annotationId + "]").css("background-color", '#' + $("#jscolor").val());
+    $('#update').click(function () {
+        $("[annotation-id =" + annotationId + "]").css("background-color", '#' + $("#jscolor").val());
         annotationColor = $("#jscolor").val();
         dataObject = {
-            "color":'#' + annotationColor.toUpperCase()
+            "color": '#' + annotationColor.toUpperCase()
         };
         $.ajax({
             type: "PUT",
@@ -420,7 +424,7 @@ listAnnotationCategories();
 
                     $.ajax({
                         type: "PUT",
-                        url: "/api/source/" + sourceId ,
+                        url: "/api/source/" + sourceId,
                         data: JSON.stringify(dataObject),
                         contentType: "application/json",
                         dataType: "application/json",
@@ -435,144 +439,139 @@ listAnnotationCategories();
         });
     });
 
-    $("#pencil").click(function(e) {
+    $("#pencil").click(function (e) {
         var jscolor = $('#jscolor');
-        jscolor.val(rgbToHex($("[annotation-id =" +  annotationId + "]").css("background-color")).toUpperCase());
-        hoverdiv(e,"changeColorForm");
+        jscolor.val(rgbToHex($("[annotation-id =" + annotationId + "]").css("background-color")).toUpperCase());
+        hoverdiv(e, "changeColorForm");
         document.getElementById("jscolor").jscolor.show();
     });
 
-    $("#cancel").click(function() {
-       $("#changeColorForm").css("display","none");
+    $("#cancel").click(function () {
+        $("#changeColorForm").css("display", "none");
     });
 
-    $("#changeColorForm > div").click(function() {
+    $("#changeColorForm > div").click(function () {
         document.getElementById('jscolor').jscolor.show();
     });
 
-    $("#categoryNameField").on('input', function() {
-        if($(this).val().trim() == ""){
+    $("#categoryNameField").on('input', function () {
+        if ($(this).val().trim() == "") {
             $("#createCategory").prop('disabled', true);
             $("#createCategoryErrorMessage").text("Category Name cannot be empty !");
-            $('#createCategoryErrorMessage').fadeIn('fast', function(){
+            $('#createCategoryErrorMessage').fadeIn('fast', function () {
             });
-        }
-        else if($(this).val().trim() != "" && $(this).val().trim().length < 51){
+        } else if ($(this).val().trim() != "" && $(this).val().trim().length < 51) {
             $("#createCategory").prop('disabled', false);
-        }
-        else if($(this).val().trim().length > 50){
+        } else if ($(this).val().trim().length > 50) {
             $("#createCategory").prop('disabled', true);
             $("#createCategoryErrorMessage").text("Category Name cannot be longer than 50 characters !");
-            $('#createCategoryErrorMessage').fadeIn('fast', function(){
+            $('#createCategoryErrorMessage').fadeIn('fast', function () {
             });
         }
     });
 
-    $("#updateCategoryNameField").on('input', function() {
-        if($(this).val().trim() == ""){
+    $("#updateCategoryNameField").on('input', function () {
+        if ($(this).val().trim() == "") {
             $("#updateCategory").prop('disabled', true);
             $("#updateCategoryErrorMessage").text("Category Name cannot be empty !");
-            $('#updateCategoryErrorMessage').fadeIn('fast', function(){
+            $('#updateCategoryErrorMessage').fadeIn('fast', function () {
             });
-        }
-        else if($(this).val().trim() === annotationCategoryName) {
+        } else if ($(this).val().trim() === annotationCategoryName) {
             $("#updateCategoryErrorMessage").text("");
             $("#updateCategory").prop('disabled', true);
-        }
-        else if($(this).val().trim() != "" && $(this).val().trim().length < 51){
+        } else if ($(this).val().trim() != "" && $(this).val().trim().length < 51) {
             $("#updateCategory").prop('disabled', false);
-        }
-        else if($(this).val().trim().length > 50){
+        } else if ($(this).val().trim().length > 50) {
             $("#updateCategory").prop('disabled', true);
             $("#updateCategoryErrorMessage").text("Category Name cannot be longer than 50 characters !");
-            $('#updateCategoryErrorMessage').fadeIn('fast', function(){
+            $('#updateCategoryErrorMessage').fadeIn('fast', function () {
             });
         }
     });
 
-    $("#toggleComments").click(function() {
-        if($("#sidebar-wrapper").width() === 0){
-            content.css("width",content.width() -320);
-            $('.btn-toolbar').css("padding-right","320px");
+    $("#toggleComments").click(function () {
+        if ($("#sidebar-wrapper").width() === 0) {
+            content.css("width", content.width() - 320);
+            $('.btn-toolbar').css("padding-right", "320px");
         }
-        annotationsContainer.css("display","none");
-        categoriesContainer.css("display","none");
-        commentContainer.css("display","block");
-        $(this).css("right","570px");
-        $(this).css("margin-right","-250px");
-        $(this).css("background-color","lightgray");
-        $("#toggleComments > i").css("color","black");
-        $("#toggleAnnotations").css("right","570px");
-        $("#toggleAnnotations").css("margin-right","-250px");
-        $("#sidebar-wrapper").css("width","320px");
-        $("#toggleAnnotations").css("background-color","#6C6C6C");
-        $("#toggleAnnotations > i").css("color","#fff");
+        annotationsContainer.css("display", "none");
+        categoriesContainer.css("display", "none");
+        commentContainer.css("display", "block");
+        $(this).css("right", "570px");
+        $(this).css("margin-right", "-250px");
+        $(this).css("background-color", "lightgray");
+        $("#toggleComments > i").css("color", "black");
+        $("#toggleAnnotations").css("right", "570px");
+        $("#toggleAnnotations").css("margin-right", "-250px");
+        $("#sidebar-wrapper").css("width", "320px");
+        $("#toggleAnnotations").css("background-color", "#6C6C6C");
+        $("#toggleAnnotations > i").css("color", "#fff");
     });
 
-    $("#toggleAnnotations").click(function() {
-        if($("#sidebar-wrapper").width() === 0){
-            content.css("width",content.width() -320);
-            $('.btn-toolbar').css("padding-right","320px");
+    $("#toggleAnnotations").click(function () {
+        if ($("#sidebar-wrapper").width() === 0) {
+            content.css("width", content.width() - 320);
+            $('.btn-toolbar').css("padding-right", "320px");
         }
-        commentContainer.css("display","none");
-        annotationsContainer.css("display","block");
-        categoriesContainer.css("display","block");
-        $(this).css("right","570px");
-        $(this).css("margin-right","-250px");
-        $(this).css("background-color","lightgray");
-        $("#toggleAnnotations > i").css("color","black");
-        $("#toggleComments").css("right","570px");
-        $("#toggleComments").css("margin-right","-250px");
-        $("#sidebar-wrapper").css("width","320px");
-        $("#toggleComments").css("background-color","#6C6C6C");
-        $("#toggleComments > i").css("color","#fff");
+        commentContainer.css("display", "none");
+        annotationsContainer.css("display", "block");
+        categoriesContainer.css("display", "block");
+        $(this).css("right", "570px");
+        $(this).css("margin-right", "-250px");
+        $(this).css("background-color", "lightgray");
+        $("#toggleAnnotations > i").css("color", "black");
+        $("#toggleComments").css("right", "570px");
+        $("#toggleComments").css("margin-right", "-250px");
+        $("#sidebar-wrapper").css("width", "320px");
+        $("#toggleComments").css("background-color", "#6C6C6C");
+        $("#toggleComments > i").css("color", "#fff");
     });
 
-    $("#colors span").click(function() {
-         annotationColor = $(this).css("background-color");
-            editMode = true;
-         $("#highlighter").attr("data-original-title","Disable annotation");
-            $("#colors").css("display","none");
-            switch (annotationColor) {
-                default:
-                    $("body").css('cursor', 'url(../cursors/highlight_FFCC99.cur), auto');
-            }
+    $("#colors span").click(function () {
+        annotationColor = $(this).css("background-color");
+        editMode = true;
+        $("#highlighter").attr("data-original-title", "Disable annotation");
+        $("#colors").css("display", "none");
+        switch (annotationColor) {
+            default:
+                $("body").css('cursor', 'url(../cursors/highlight_FFCC99.cur), auto');
+        }
     });
 
-    $("#highlighter").click(function() {
+    $("#highlighter").click(function () {
         if ($(this).attr("class").indexOf("disable") > -1) {
         } else {
             $("body").css('cursor', 'default');
-        if (!editMode) {
-            if ($("#colors").css("display") == 'block') {
-                $("#colors").css("display", "none");
+            if (!editMode) {
+                if ($("#colors").css("display") == 'block') {
+                    $("#colors").css("display", "none");
+                } else {
+                    $("#colors").css("display", "block");
+                }
             } else {
-                $("#colors").css("display", "block");
+                editMode = false;
+                $("#colors").css("display", "none");
+                $("#highlighter").attr("data-original-title", "Annotate using highlighter");
             }
-        } else {
-            editMode = false;
-            $("#colors").css("display", "none");
-            $("#highlighter").attr("data-original-title","Annotate using highlighter");
         }
-    }
     });
 
-    $("#slide-submenu").click(function() {
-        $("#sidebar-wrapper").css("width","0px");
-        $("#toggleComments").css("right","0");
-        $("#toggleComments").css("margin-right","0px");
-        $("#toggleAnnotations").css("right","0");
-        $("#toggleAnnotations").css("margin-right","0px");
-        $("#toggleComments").css("background-color","#6C6C6C");
-        $("#toggleComments > i").css("color","#fff");
-        $("#toggleAnnotations").css("background-color","#6C6C6C");
-        $("#toggleAnnotations > i").css("color","#fff");
-        content.css("width",content.width() + 320);
-        $('.btn-toolbar').css("padding-right","0px");
+    $("#slide-submenu").click(function () {
+        $("#sidebar-wrapper").css("width", "0px");
+        $("#toggleComments").css("right", "0");
+        $("#toggleComments").css("margin-right", "0px");
+        $("#toggleAnnotations").css("right", "0");
+        $("#toggleAnnotations").css("margin-right", "0px");
+        $("#toggleComments").css("background-color", "#6C6C6C");
+        $("#toggleComments > i").css("color", "#fff");
+        $("#toggleAnnotations").css("background-color", "#6C6C6C");
+        $("#toggleAnnotations > i").css("color", "#fff");
+        content.css("width", content.width() + 320);
+        $('.btn-toolbar').css("padding-right", "0px");
     });
 
-    $("#cancelComment").click(function() {
-        $("#commentBlock").css("display","none");
+    $("#cancelComment").click(function () {
+        $("#commentBlock").css("display", "none");
         $('textarea').val("");
     });
 
@@ -581,13 +580,13 @@ listAnnotationCategories();
         if (target != $("#pencil")[0] && target != $("#pencil > i")[0]) {
             $("#changeColorForm").css("display", "none");
         }
-        if(target != $("#comment")[0] && target != $("#comment > i")[0]){
+        if (target != $("#comment")[0] && target != $("#comment > i")[0]) {
             $("#commentBlock").css("display", "none");
         }
     });
 
-    $("#saveComment").click(function() {
-          dataObject = {
+    $("#saveComment").click(function () {
+        dataObject = {
             "comment": $("#commentArea").val(),
             "annotationId": annotationId,
             "sourceId": sourceId
@@ -602,7 +601,7 @@ listAnnotationCategories();
                 201: function (e) {
                     var responseJson = $.parseJSON(e.responseText);
                     var date = convertUTCDateToLocalDate(new Date(responseJson.createdTs));
-                    $("#commentBlock").css("display","none");
+                    $("#commentBlock").css("display", "none");
                     $('textarea').val("");
                     $('#commentsMessage').text("");
                     var li = $("<li class='commentList'></li>");
@@ -612,12 +611,12 @@ listAnnotationCategories();
                     var div = $("<div class='rectangle' annotation-id=" + "'" + responseJson.annotationId + "'" + "></div>");
                     div.attr("category-id", annotationCategoryId);
                     var trash = $("<span class='deleteComment'><i class='fa fa-trash fa-2x delComment' aria-hidden='true'></i></span>");
-                    trash.attr("id",responseJson.id);
+                    trash.attr("id", responseJson.id);
                     div.append(trash);
                     div.append(email);
                     div.append(date);
                     div.append(comment);
-                    div.css("background-color",$("[annotation-id =" +  annotationId + "]").css("background-color"));
+                    div.css("background-color", $("[annotation-id =" + annotationId + "]").css("background-color"));
                     li.append(div);
                     $("#commentContainer li:nth-child(2)").after(li);
                 }
@@ -625,18 +624,18 @@ listAnnotationCategories();
         });
     });
 
-        $(function () {
-            content.bind('mouseup', function () {
-                if(editMode){
-                    color(annotationColor);
-                }
-            });
+    $(function () {
+        content.bind('mouseup', function () {
+            if (editMode) {
+                color(annotationColor);
+            }
         });
+    });
 
-        function color(color) {
-            var select = getSelected();
-            if (/\S/.test(select)) {
-              dataObject = {
+    function color(color) {
+        var select = getSelected();
+        if (/\S/.test(select)) {
+            dataObject = {
                 "sourceId": sourceId,
                 "annotationCategoryId": annotationCategoryId,
                 "content": select.toString(),
@@ -652,55 +651,55 @@ listAnnotationCategories();
                     201: function (e) {
                         var responseJson = $.parseJSON(e.responseText);
                         annotationId = responseJson.id;
-                            var sel = window.getSelection();
-                            if (sel.rangeCount && sel.getRangeAt) {
-                                var range = sel.getRangeAt(0);
-                            }
-                            document.designMode = "on";
-                            if (range) {
-                                sel.removeAllRanges();
-                                sel.addRange(range);
-                            }
-                            document.execCommand("BackColor", false, color);
-                            document.designMode = "off";
+                        var sel = window.getSelection();
+                        if (sel.rangeCount && sel.getRangeAt) {
+                            var range = sel.getRangeAt(0);
+                        }
+                        document.designMode = "on";
+                        if (range) {
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        }
+                        document.execCommand("BackColor", false, color);
+                        document.designMode = "off";
 
-                            //setTimeout(function () {
-                                if (range.commonAncestorContainer.nodeType === 3) {
-                                    //console.log("nodeType 3 annotationId: " + annotationId);
-                                    //console.log("nodeType " + range.commonAncestorContainer.nodeType);
-                                    var span = sel.anchorNode.parentNode;
-                                    span.setAttribute("annotation-id", annotationId);
-                                    span.setAttribute("category-id", annotationCategoryId);
-                                } else if (range.commonAncestorContainer.nodeType === 1) {
-                                    console.log("nodeType " + range.commonAncestorContainer.nodeType);
-                                     range.commonAncestorContainer.querySelectorAll('span').forEach(function (e) {
-                                        if (sel.containsNode(e, true)) {
-                                            if (e.style.backgroundColor === color) {
-                                                //console.log(e.style.backgroundColor);
-                                                //console.log(e);
-                                                //console.log("nodeType 1 annotationId: " + annotationId);
-                                                e.setAttribute("annotation-id", annotationId);
-                                                e.setAttribute("category-id", annotationCategoryId);
-                                            }
-                                        } else {
-                                        }
-                                    });
+                        //setTimeout(function () {
+                        if (range.commonAncestorContainer.nodeType === 3) {
+                            //console.log("nodeType 3 annotationId: " + annotationId);
+                            //console.log("nodeType " + range.commonAncestorContainer.nodeType);
+                            var span = sel.anchorNode.parentNode;
+                            span.setAttribute("annotation-id", annotationId);
+                            span.setAttribute("category-id", annotationCategoryId);
+                        } else if (range.commonAncestorContainer.nodeType === 1) {
+                            console.log("nodeType " + range.commonAncestorContainer.nodeType);
+                            range.commonAncestorContainer.querySelectorAll('span').forEach(function (e) {
+                                if (sel.containsNode(e, true)) {
+                                    if (e.style.backgroundColor === color) {
+                                        //console.log(e.style.backgroundColor);
+                                        //console.log(e);
+                                        //console.log("nodeType 1 annotationId: " + annotationId);
+                                        e.setAttribute("annotation-id", annotationId);
+                                        e.setAttribute("category-id", annotationCategoryId);
+                                    }
+                                } else {
                                 }
-                            //}, 200);
+                            });
+                        }
+                        //}, 200);
 
                         dataObject = {"content": content.html()};
                         setTimeout(function () {
-                        $.ajax({
-                            type: "PUT",
-                            url: "/api/source/" + sourceId,
-                            data: JSON.stringify(dataObject),
-                            contentType: "application/json",
-                            dataType: "application/json",
-                            statusCode: {
-                                200: function () {
+                            $.ajax({
+                                type: "PUT",
+                                url: "/api/source/" + sourceId,
+                                data: JSON.stringify(dataObject),
+                                contentType: "application/json",
+                                dataType: "application/json",
+                                statusCode: {
+                                    200: function () {
+                                    }
                                 }
-                            }
-                        });
+                            });
                         }, 300);
                         listAnnotationsByCategory();
                     },
@@ -708,10 +707,10 @@ listAnnotationCategories();
                     }
                 }
             });
-            }
         }
+    }
 
-    $(document).on("click",".delComment", function(e) {
+    $(document).on("click", ".delComment", function (e) {
         commentId = $(e.target).parent().attr("id");
         $.ajax({
             type: "DELETE",
@@ -721,7 +720,7 @@ listAnnotationCategories();
             statusCode: {
                 200: function () {
                     $(e.target).closest(".commentList").remove();
-                    if($('.commentList').length < 1){
+                    if ($('.commentList').length < 1) {
                         $("#commentsMessage").text("No comments for this annotation");
                     }
                     animateSuccess("Comment successfully deleted");
@@ -730,122 +729,122 @@ listAnnotationCategories();
         });
     });
 
-    $(document).on("click",".delCategory", function(e) {
+    $(document).on("click", ".delCategory", function (e) {
         annotationCategoryId = $(e.target).parent().attr("id");
-        $("#deleteCategoryContainer").css("display","block");
+        $("#deleteCategoryContainer").css("display", "block");
     });
 
-    $("#confirmDelete").click(function() {
+    $("#confirmDelete").click(function () {
         //$(this).prop("disabled",true);
         $.ajax({
-                type: "DELETE",
-                url: "/api/annotationCategory/" + annotationCategoryId,
-                contentType: "application/json",
-                dataType: "application/json",
-                statusCode: {
-                    200: function () {
-                        $('#commentContainer li').slice(2).remove();
-                        $('#annotationsContainer li').slice(2).remove();
-                        $("#commentsMessage").text("Please click on a annotation !");
-                        $("#" +  annotationCategoryId + "").closest(".categoriesList").remove();
-                        $("[category-id =" +  annotationCategoryId + "]").css("background-color", "");
-                        $("[category-id =" +  annotationCategoryId + "]").removeAttr("annotation-id");
-                        $("[category-id =" +  annotationCategoryId + "]").removeAttr("category-id");
-                        $("#deleteCategoryContainer").css("display","none");
-                        $("#confirmDelete").prop("disabled",false);
-                        if($('.categoryName').length < 1){
-                            $("#categoriesMessage").text("No Created Categories");
-                            $("#annotationsMessage").text("Please select a category");
-                            $(".categoriesList").remove();
-                            $("#highlighter").removeClass('btn btn-primary buttonTooltip').addClass('btn btn-primary buttonTooltip disable');
-                            $("#highlighter").attr("data-original-title","Create a category before annotating !");
-                            $("body").css('cursor', 'default');
-                            editMode = false;
-                        } else {
-                            $(".categoryName:first").removeClass('categoryName').addClass('categoryName selected');
-                            $(".categoryName:first").append(trash);
-                            $(".categoryName:first").append(pen);
-                            annotationCategoryId = $(".selected").attr('id');
-                            listAnnotationsByCategory();
-                        }
-                        dataObject = {"content": content.html()};
-                        $.ajax({
-                            type: "PUT",
-                            url: "/api/source/" + sourceId ,
-                            data: JSON.stringify(dataObject),
-                            contentType: "application/json",
-                            dataType: "application/json",
-                            statusCode: {
-                                200: function () {
-                                    animateSuccess("Annotation category successfully deleted");
-                                }
-                            }
-                        });
+            type: "DELETE",
+            url: "/api/annotationCategory/" + annotationCategoryId,
+            contentType: "application/json",
+            dataType: "application/json",
+            statusCode: {
+                200: function () {
+                    $('#commentContainer li').slice(2).remove();
+                    $('#annotationsContainer li').slice(2).remove();
+                    $("#commentsMessage").text("Please click on a annotation !");
+                    $("#" + annotationCategoryId + "").closest(".categoriesList").remove();
+                    $("[category-id =" + annotationCategoryId + "]").css("background-color", "");
+                    $("[category-id =" + annotationCategoryId + "]").removeAttr("annotation-id");
+                    $("[category-id =" + annotationCategoryId + "]").removeAttr("category-id");
+                    $("#deleteCategoryContainer").css("display", "none");
+                    $("#confirmDelete").prop("disabled", false);
+                    if ($('.categoryName').length < 1) {
+                        $("#categoriesMessage").text("No Created Categories");
+                        $("#annotationsMessage").text("Please select a category");
+                        $(".categoriesList").remove();
+                        $("#highlighter").removeClass('btn btn-primary buttonTooltip').addClass('btn btn-primary buttonTooltip disable');
+                        $("#highlighter").attr("data-original-title", "Create a category before annotating !");
+                        $("body").css('cursor', 'default');
+                        editMode = false;
+                    } else {
+                        $(".categoryName:first").removeClass('categoryName').addClass('categoryName selected');
+                        $(".categoryName:first").append(trash);
+                        $(".categoryName:first").append(pen);
+                        annotationCategoryId = $(".selected").attr('id');
+                        listAnnotationsByCategory();
                     }
+                    dataObject = {"content": content.html()};
+                    $.ajax({
+                        type: "PUT",
+                        url: "/api/source/" + sourceId,
+                        data: JSON.stringify(dataObject),
+                        contentType: "application/json",
+                        dataType: "application/json",
+                        statusCode: {
+                            200: function () {
+                                animateSuccess("Annotation category successfully deleted");
+                            }
+                        }
+                    });
                 }
+            }
         });
     });
 
-    content.click(function(e) {
-            if (e.target.getAttribute('annotation-id')) {
-                var attribute = e.target.getAttribute('annotation-id');
-                $.ajax({
-                    type: "GET",
-                    url: "/api/comment",
-                    data: {
-                        annotationId: attribute
-                    },
-                    statusCode: {
-                        200: function (e) {
-                            try {
-                                if (e.length > 0) {
-                                    $('#commentContainer li').slice(2).remove();
-                                    $('#commentsMessage').text("");
-                                    $("#message").text("");
-                                    for (var i = 0; i < e.length; i++) {
-                                        var comment = e[i];
-                                        var dateCreated = convertUTCDateToLocalDate(new Date(comment.createdTs));
-                                        var li = $("<li class='commentList'></li>");
-                                        var email = $("<div class='email'><div>").text(comment.userName);
-                                        var date = $("<div class='date'><div>").text(dateCreated.toLocaleString());
-                                        var commentDiv = $("<div class='comment'><div>").text(comment.comment);
-                                        var div = $("<div class='rectangle' annotation-id=" + "'" + attribute + "'" + "></div>");
-                                        var trash = $("<span class='deleteComment'><i class='fa fa-trash fa-2x delComment' aria-hidden='true'></i></span>");
-                                        trash.attr("id", comment.id);
-                                        div.append(trash);
-                                        div.append(email);
-                                        div.append(date);
-                                        div.append(commentDiv);
-                                        div.css("background-color", $("[annotation-id =" + annotationId + "]").css("background-color"));
-                                        li.append(div);
-                                        commentContainer.append(li);
-                                    }
-                                } else {
-                                    $('#commentContainer li').slice(2).remove();
-                                    $("#commentsMessage").text("No comments for this annotation");
-                                }
-                            } catch (e) {
+    content.click(function (e) {
+        if (e.target.getAttribute('annotation-id')) {
+            var attribute = e.target.getAttribute('annotation-id');
+            $.ajax({
+                type: "GET",
+                url: "/api/comment",
+                data: {
+                    annotationId: attribute
+                },
+                statusCode: {
+                    200: function (e) {
+                        try {
+                            if (e.length > 0) {
                                 $('#commentContainer li').slice(2).remove();
-                                $("#commentsMessage").text("An error occurred while getting comments");
+                                $('#commentsMessage').text("");
+                                $("#message").text("");
+                                for (var i = 0; i < e.length; i++) {
+                                    var comment = e[i];
+                                    var dateCreated = convertUTCDateToLocalDate(new Date(comment.createdTs));
+                                    var li = $("<li class='commentList'></li>");
+                                    var email = $("<div class='email'><div>").text(comment.userName);
+                                    var date = $("<div class='date'><div>").text(dateCreated.toLocaleString());
+                                    var commentDiv = $("<div class='comment'><div>").text(comment.comment);
+                                    var div = $("<div class='rectangle' annotation-id=" + "'" + attribute + "'" + "></div>");
+                                    var trash = $("<span class='deleteComment'><i class='fa fa-trash fa-2x delComment' aria-hidden='true'></i></span>");
+                                    trash.attr("id", comment.id);
+                                    div.append(trash);
+                                    div.append(email);
+                                    div.append(date);
+                                    div.append(commentDiv);
+                                    div.css("background-color", $("[annotation-id =" + annotationId + "]").css("background-color"));
+                                    li.append(div);
+                                    commentContainer.append(li);
+                                }
+                            } else {
+                                $('#commentContainer li').slice(2).remove();
+                                $("#commentsMessage").text("No comments for this annotation");
                             }
+                        } catch (e) {
+                            $('#commentContainer li').slice(2).remove();
+                            $("#commentsMessage").text("An error occurred while getting comments");
                         }
                     }
-                });
-            }
-        });
-
-        function getSelected() {
-            if (window.getSelection) {
-                return window.getSelection();
-            } else if (document.getSelection) {
-                return document.getSelection();
-            } else {
-                var selection = document.selection && document.selection.createRange();
-                if (selection.text) {
-                    return selection.text;
                 }
-                return false;
+            });
+        }
+    });
+
+    function getSelected() {
+        if (window.getSelection) {
+            return window.getSelection();
+        } else if (document.getSelection) {
+            return document.getSelection();
+        } else {
+            var selection = document.selection && document.selection.createRange();
+            if (selection.text) {
+                return selection.text;
             }
             return false;
         }
+        return false;
+    }
 });
