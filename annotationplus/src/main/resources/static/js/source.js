@@ -25,7 +25,7 @@ $(document).ready(function () {
         $(successMessage).css("display", "flex");
         setTimeout(function () {
             $(successMessage).fadeOut("slow");
-        }, 5000);
+        }, 2000);
     }
 
     if ($("#content > div.page")[0]) {
@@ -47,7 +47,7 @@ $(document).ready(function () {
                 $([document.documentElement, document.body]).animate({
                     scrollTop: $("#content [annotation-id=" + annotationId + "]").first().offset().top
                 }, 1000);
-            }, 1500);
+            }, 1000);
 
         } catch (e) {
         }

@@ -16,7 +16,7 @@ $(document).ready(function () {
         $(successMessage).css("display","flex");
         setTimeout(function() {
             $(successMessage).fadeOut("slow");
-        }, 2500);
+        }, 2000);
     }
 
     function validatePassword() {

@@ -18,6 +18,7 @@ public class WebsiteService {
         DtoHtml dtoHtml = new DtoHtml();
         try {
             Document document = Jsoup.connect(dtoWebsite.getUrl()).get();
+            document.select("script").remove();
             String html = document.body().html();
             //dtoHtml.setHtml(document.toString());
             dtoHtml.setHtml(html);

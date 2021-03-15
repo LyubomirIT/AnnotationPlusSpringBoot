@@ -14,7 +14,7 @@ $(document).ready(function () {
         $(successMessage).css("display","flex");
         setTimeout(function() {
             $(successMessage).fadeOut("slow");
-        }, 5000);
+        }, 2000);
     }
 
     $(".closeDialog").click(function() {
