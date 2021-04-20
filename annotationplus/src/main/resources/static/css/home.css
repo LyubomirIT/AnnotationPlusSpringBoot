@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
+html, body{
+height: 100%;
+}
+
+.container{
+height: 100%;
+margin-bottom: 335px;
+}
+
 .grids{
     text-align: center;
     overflow: hidden;
