@@ -4,6 +4,12 @@ html, body{
 height: 100%;
 }
 
+@media (max-width: 490px) {
+  .container {
+    margin-bottom: 450px !important;
+  }
+}
+
 .container{
 height: 100%;
 margin-bottom: 335px;
