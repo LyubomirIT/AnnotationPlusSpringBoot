@@ -344,22 +344,33 @@ $(document).ready(function () {
         }
     });
 
-    content.click(function (event) {
+    function getAnnotationInfoPopUp(event) {
+        $.ajax({
+            type: "GET",
+            url: "/api/annotation/" + annotationId,
+            statusCode: {
+                200: function(e) {
+                    $("#info").css("display", "none");
+                    $("#username").text("By " + e.username);
+                    hoverdiv(event, "info");
+                }
+            }
+        });
+    }
+
+    content.click(function(event) {
         $("#commentBlock").css("display", "none");
         $("#changeColorForm").css("display", "none");
         if (event.target.getAttribute('annotation-id')) {
             annotationId = event.target.getAttribute('annotation-id');
-            $.ajax({
-                type: "GET",
-                url: "/api/annotation/" + annotationId,
-                statusCode: {
-                    200: function (e) {
-                        $("#info").css("display", "none");
-                        $("#username").text("By " + e.username);
-                        hoverdiv(event, "info");
-                    }
-                }
-            });
+            getAnnotationInfoPopUp(event);
+            //console.log('first if')
+        //} else if (!event.target.getAttribute('annotation-id') && $(event.target).parent().attr("annotation-id")) {
+        } else if (!event.target.getAttribute('annotation-id') && $(event.target).closest('span[annotation-id]') != null && $(event.target).closest('span[annotation-id]').length != 0) {
+           // annotationId = $(event.target).parent().attr("annotation-id");
+            annotationId = $(event.target).closest('span[annotation-id]').attr("annotation-id");
+            getAnnotationInfoPopUp(event);
+            //console.log('second if')
         } else {
             $("#info").css("display", "none");
         }
@@ -785,51 +796,62 @@ $(document).ready(function () {
         });
     });
 
-    content.click(function (e) {
-        if (e.target.getAttribute('annotation-id')) {
-            var attribute = e.target.getAttribute('annotation-id');
-            $.ajax({
-                type: "GET",
-                url: "/api/comment",
-                data: {
-                    annotationId: attribute
-                },
-                statusCode: {
-                    200: function (e) {
-                        try {
-                            if (e.length > 0) {
-                                $('#commentContainer li').slice(2).remove();
-                                $('#commentsMessage').text("");
-                                $("#message").text("");
-                                for (var i = 0; i < e.length; i++) {
-                                    var comment = e[i];
-                                    var dateCreated = convertUTCDateToLocalDate(new Date(comment.createdTs));
-                                    var li = $("<li class='commentList'></li>");
-                                    var email = $("<div class='email'><div>").text(comment.userName);
-                                    var date = $("<div class='date'><div>").text(dateCreated.toLocaleString());
-                                    var commentDiv = $("<div class='comment'><div>").text(comment.comment);
-                                    var div = $("<div class='rectangle' annotation-id=" + "'" + attribute + "'" + "></div>");
-                                    var trash = $("<span class='deleteComment'><i class='fa fa-trash fa-2x delComment' aria-hidden='true'></i></span>");
-                                    trash.attr("id", comment.id);
-                                    div.append(trash);
-                                    div.append(email);
-                                    div.append(date);
-                                    div.append(commentDiv);
-                                    div.css("background-color", $("[annotation-id =" + annotationId + "]").css("background-color"));
-                                    li.append(div);
-                                    commentContainer.append(li);
-                                }
-                            } else {
-                                $('#commentContainer li').slice(2).remove();
-                                $("#commentsMessage").text("No comments for this annotation");
-                            }
-                        } catch (e) {
+    function getAllCommentsForAnAnnotation(e,attribute) {
+        $.ajax({
+            type: "GET",
+            url: "/api/comment",
+            data: {
+                annotationId: attribute
+            },
+            statusCode: {
+                200: function(e) {
+                    try {
+                        if (e.length > 0) {
                             $('#commentContainer li').slice(2).remove();
-                            $("#commentsMessage").text("An error occurred while getting comments");
+                            $('#commentsMessage').text("");
+                            $("#message").text("");
+                            for (var i = 0; i < e.length; i++) {
+                                var comment = e[i];
+                                var dateCreated = convertUTCDateToLocalDate(new Date(comment.createdTs));
+                                var li = $("<li class='commentList'></li>");
+                                var email = $("<div class='email'><div>").text(comment.userName);
+                                var date = $("<div class='date'><div>").text(dateCreated.toLocaleString());
+                                var commentDiv = $("<div class='comment'><div>").text(comment.comment);
+                                var div = $("<div class='rectangle' annotation-id=" + "'" + attribute + "'" + "></div>");
+                                var trash = $("<span class='deleteComment'><i class='fa fa-trash fa-2x delComment' aria-hidden='true'></i></span>");
+                                trash.attr("id", comment.id);
+                                div.append(trash);
+                                div.append(email);
+                                div.append(date);
+                                div.append(commentDiv);
+                                div.css("background-color", $("[annotation-id =" + annotationId + "]").css("background-color"));
+                                li.append(div);
+                                commentContainer.append(li);
+                            }
+                        } else {
+                            $('#commentContainer li').slice(2).remove();
+                            $("#commentsMessage").text("No comments for this annotation");
                         }
+                    } catch (e) {
+                        $('#commentContainer li').slice(2).remove();
+                        $("#commentsMessage").text("An error occurred while getting comments");
                     }
                 }
-            });
+            }
+        });
+    }
+
+    content.click(function(e) {
+        if (e.target.getAttribute('annotation-id')) {
+            var attribute = e.target.getAttribute('annotation-id');
+            getAllCommentsForAnAnnotation(e, attribute);
+           // console.log('first if')
+        //} else if (!event.target.getAttribute('annotation-id') && $(event.target).parent().attr("annotation-id")) {
+          } else if (!e.target.getAttribute('annotation-id') && $(e.target).closest('span[annotation-id]') != null && $(e.target).closest('span[annotation-id]').length != 0) {
+            var attribute = $(e.target).closest('span[annotation-id]').attr("annotation-id");
+            //var attribute = $(e.target).parent().attr("annotation-id");
+            getAllCommentsForAnAnnotation(e, attribute);
+            //console.log('second if')
         }
     });
 
